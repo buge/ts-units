@@ -1,14 +1,72 @@
 import {Exponent, Add as AddExponent} from './exponent';
 
-//export type Dimensions = {readonly [key in BaseQuantity]?: number};
+/**
+ * The dimensions of a quantity.
+ *
+ * For example, the dimensions of a length (`[L]`) will be represented as
+ * `{length: 1}` and those of an area (`[L]²`) as `{length: 2}`. The
+ * dimensions of velocity (`[L][T]^-1`) as `{length: 1, time: -1}`.
+ *
+ * Note that the dimensions of a quantity can also be the empty set. We do not
+ * represent exponents as 0 but as undefined so a ratio `[L]/[L] = [1]` or
+ * simply `{}`. In these cases we say that a quantity is dimensionless or that
+ * it is a quantity of dimension one.
+ *
+ * Dimension types is how this library ensures type safety. In particular, we
+ * currently do not ensure type safety for different quantity kinds of the same
+ * dimensions. For example, both planar angles (`[L]/[L]`) and solid angles
+ * (`[L]^2/[L]^2`) collapse to `[1]` and therefore cannot be distinguished in
+ * variable assignments.
+ */
 export type Dimensions = Readonly<Record<string, Exponent>>;
 
 /**
+ * The dimensions of a dimensionless quantity. Also known as the dimensions of
+ * the “quantity of dimension one”.
+ *
+ * Denoted as `[1]`.
+ */
+export type One = {};
+export const One: One = {};
+
+/**
+ * The dimensions of the SI base quantity of time.
+ *
+ * Denoted by `[T]`.
+ */
+export type Time = {time: 1};
+export const Time: Time = {time: 1};
+
+/**
+ * The dimensions of the SI base quantity of length.
+ *
+ * Denoted by `[L]`.
+ */
+export type Length = {length: 1};
+export const Length: Length = {length: 1};
+
+/**
+ * The dimensions of the SI base quantity of mass.
+ *
+ * Denoted by `[M]`.
+ */
+export type Mass = {mass: 1};
+export const Mass: Mass = {mass: 1};
+
+/**
+ * The dimensions of the SI base quantity of temperature.
+ *
+ * Denoted by `[Θ]`.
+ */
+export type Temperature = {temperature: 1};
+export const Temperature: Temperature = {temperature: 1};
+
+/**
  * Adds the two dimensional vectors.
- * 
+ *
  * This is used, for example, when multiplying two units or quantities with one
  * another.
- * 
+ *
  * `Add` is both a type:
  * ```
  *   type Length = {length: 1};
@@ -16,7 +74,7 @@ export type Dimensions = Readonly<Record<string, Exponent>>;
  *   type Velocity = Add<Length, Frequency>;
  *   //   ^ {length: 1, time: -1}
  * ```
- * 
+ *
  * And also a function:
  * ```
  *   const length = {length: 1};
@@ -48,7 +106,7 @@ export function Add<A extends Dimensions, B extends Dimensions>(a: A, b: B): Add
 /**
  * Retrieves the exponent of a given dimension in set of dimensions. Returns
  * `undefined` if the exponent is not defined.
- * 
+ *
  * For example:
  * ```
  *   type Velocity = {length: 1, time: -1};
@@ -59,129 +117,3 @@ export function Add<A extends Dimensions, B extends Dimensions>(a: A, b: B): Add
  * ```
  */
 type Get<D extends Dimensions, K> = K extends keyof D ? D[K] : undefined;
-
-
-// Probably delete everything below this line.
-
-export type BaseQuantity =
-  'time' |
-  'length' |
-  'mass' |
-  'current' |
-  'temperature' |
-  'amount' |
-  'luminosity';
-
-export type One = {};
-export const One: One = {};
-
-export type Time = {time: 1};
-export const Time: Time = {time: 1};
-
-export type Length = {length: 1};
-export const Length: Length = {length: 1};
-
-export type Area = {length: 2};
-export const Area: Area = {length: 2};
-
-export type Volume = {length: 3};
-export const Volume: Volume = {length: 3};
-
-export type Mass = {mass: 1};
-export const Mass: Mass = {mass: 1};
-
-export type Temperature = {temperature: 1};
-export const Temperature: Temperature = {temperature: 1};
-
-
-/*
-export function times(d1: Dimensions, d2: Dimensions): Dimensions {
-  function maybeAdd(f1?: number, f2?: number): number|undefined {
-    const f3 = (f1 || 0) + (f2 || 0);
-    return f3 === 0 ? undefined : f3;
-  }
-
-  return {
-    time: maybeAdd(d1.time, d2.time),
-    length:  maybeAdd(d1.length, d2.length),
-    mass:  maybeAdd(d1.mass, d2.mass),
-    current:  maybeAdd(d1.current, d2.current),
-    temperature:  maybeAdd(d1.temperature, d2.temperature),
-    amount:  maybeAdd(d1.amount, d2.amount),
-    luminosity:  maybeAdd(d1.luminosity, d2.luminosity),
-  }
-}
-*/
-
-/**
- * Divide two dimensions.
- * 
- * Some examples:
- * 
- *    `[L] / [T] = [L T^-1]`
- *    `[1] / [T] = [T^-1]`
- * 
- * @param d1 numerator
- * @param d2 denominator
- */
-/*export function divide(d1: Dimensions, d2: Dimensions): Dimensions {
-  function maybeSubtract(f1?: number, f2?: number): number|undefined {
-    const f3 = (f1 || 0) - (f2 || 0);
-    return f3 === 0 ? undefined : f3;
-  }
-
-  return {
-    time: maybeSubtract(d1.time, d2.time),
-    length:  maybeSubtract(d1.length, d2.length),
-    mass:  maybeSubtract(d1.mass, d2.mass),
-    current:  maybeSubtract(d1.current, d2.current),
-    temperature:  maybeSubtract(d1.temperature, d2.temperature),
-    amount:  maybeSubtract(d1.amount, d2.amount),
-    luminosity:  maybeSubtract(d1.luminosity, d2.luminosity),
-  }
-}
-*/
-
-export const SYMBOLS: {readonly [key in BaseQuantity]: string} = {
-  time: 'T',
-  length: 'L',
-  mass: 'M',
-  current: 'I',
-  temperature: 'Θ',
-  amount: 'N',
-  luminosity: 'J',
-}
-
-export function toString(d: Dimensions, formatter: Formatter = stringFormatter): string {
-  let s = [];
-  for (const key of Object.keys(SYMBOLS)) {
-    const baseQuantity: BaseQuantity = key as BaseQuantity;
-    if (d[baseQuantity]) {
-      s.push(formatter.formatBaseQuantity(baseQuantity, d[baseQuantity]!));
-    }
-  }
-
-  return formatter.formatDimension(s);
-}
-
-export interface Formatter {
-  formatBaseQuantity(baseQuantity: BaseQuantity, exponent: number): string
-  formatDimension(formattedQuantities: string[]): string;
-}
-
-export const stringFormatter: Formatter = {
-  formatBaseQuantity: (baseQuantity: BaseQuantity, exponent: number): string => {
-    if (exponent === 1) {
-      return SYMBOLS[baseQuantity];
-    }
-    return `[${SYMBOLS[baseQuantity]}]^${exponent}`
-  },
-
-  formatDimension: (formattedQuantities: string[]): string => {
-    if (formattedQuantities.length < 1) {
-      return '[1]';
-    }
-
-    return formattedQuantities.join('');
-  },
-}

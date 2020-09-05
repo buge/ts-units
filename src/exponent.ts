@@ -55,10 +55,6 @@ export type Exponent = -4 | -3 | -2 | -1 | undefined | 1 | 2 | 3 | 4;
 export type Add<A extends Exponent, B extends Exponent> =
   ZeroToUndefined<_Add[UndefinedToZero<A>][UndefinedToZero<B>]>;
 
-interface foo {
-  [-1]: 0
-}
-
 interface _Add extends ArithmeticTable {
   [-4]: {
     [-4]: never, [-3]: never, [-2]: never, [-1]: never,
@@ -97,7 +93,6 @@ interface _Add extends ArithmeticTable {
     [0]: 4, [1]: never, [2]: never, [3]: never, [4]: never,
   },
 }
-
 
 /**
  * Exponents as used in the arithmetic lookup tables in this file. This is the

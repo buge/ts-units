@@ -1,5 +1,5 @@
-  "name": "ts-units",
 {
+  "name": "ts-units",
   "version": "1.0.0",
   "description": "Physical Units for TypeScript",
   "main": "index.js",
