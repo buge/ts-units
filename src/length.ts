@@ -1,7 +1,13 @@
 import {Quantity, Unit, makeUnit, makeSiPrefixes} from './unit';
 import {Length as LengthDimension} from './dimension';
 
+/** A quantity of length. */
 export type Length = Quantity<LengthDimension>;
+
+/**
+ * The meter is the SI base unit of length. All other length units are defined
+ * as scaled values of the meter.
+ */
 export const meters: Unit<LengthDimension> = makeUnit('m', LengthDimension);
 
 export const [
