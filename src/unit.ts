@@ -44,6 +44,17 @@ export interface Unit<D extends Dimensions> {
   times<D2 extends Multiplicand<D>>(symbol: string, unit: Unit<D2>):
       Unit<Times<D, D2>>
   
+  /**
+   * Divides this one by another.
+   *
+   * Example:
+   * ```
+   *   const velocity = meters.per('m/s', seconds);
+   * ```
+   *
+   * @param symbol The symbol for the new unit.
+   * @param unit The unit to divide this one with.
+   */
   per<D2 extends Divisor<D>>(symbol: string, unit: Unit<D2>):
       Unit<Over<D, D2>>
 }
