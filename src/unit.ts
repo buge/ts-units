@@ -1,4 +1,4 @@
-import {Dimensions, Times as AddDimensions} from './dimension';
+import {Dimensions, Times, Multiplicand} from './dimension';
 
 export interface Unit<D extends Dimensions> {
   readonly symbol: string;
@@ -12,9 +12,14 @@ export interface Unit<D extends Dimensions> {
 
   /**
    * Derive a scaled unit from this one.
+   *
+   * The new unit will have the same dimensionality and as the receiver.
    * 
-   * The new unit will have the same dimensionality and the same base unit as
-   * the receiver.
+   * Examples:
+   * ```
+   *   const feet = yards.scaled('ft', 3);
+   *   const fahrenheit = kelvin.scaled('ºF', 9/5, -459.67);
+   * ```
    *
    * @param symbol The symbol for the new unit.
    * @param scale The number of new units in the current one (e.g.
@@ -24,7 +29,20 @@ export interface Unit<D extends Dimensions> {
    */
   scaled(symbol: string, scale: number, offset?: number): Unit<D>
 
-  times<D2 extends Dimensions>(symbol: string, unit: Unit<D2>): Unit<AddDimensions<D, D2>>
+  /**
+   * Multiplies a given unit with this one.
+   *
+   * Examples:
+   * ```
+   *   const newtons = metersPerSecond.times('N', kilograms);
+   *   const joules = newtons.times('J', meters);
+   * ```
+   *
+   * @param symbol The symbol for the new unit.
+   * @param unit The unit to multiply this one with.
+   */
+  times<D2 extends Multiplicand<D>>(symbol: string, unit: Unit<D2>):
+      Unit<Times<D, D2>>
 }
 
 export interface Quantity<D extends Dimensions> {
@@ -61,14 +79,14 @@ export function makeUnit<D extends Dimensions>(
       (unit.offset * scale) + (offset || 0))
   }
 
-  unit.times = function<D2 extends Dimensions>(this: Unit<D>, symbol: string, other: Unit<D2>) {
+  unit.times = function<D2 extends Multiplicand<D>>(this: Unit<D>, symbol: string, other: Unit<D2>) {
     if (this.offset || other.offset) {
       throw new Error(
         `Cannot multiply units with offsets (unit ${this.symbol} has offset ` +
         `${this.offset} and unit ${other.symbol} has offset ${other.offset}`);
     }
 
-    const dimensions = AddDimensions(unit.dimension, other.dimension);
+    const dimensions = Times(unit.dimension, other.dimension);
 
     let scale = this.scale * other.scale;
 

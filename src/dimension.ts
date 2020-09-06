@@ -1,4 +1,4 @@
-import {Exponent, Add as AddExponent} from './exponent';
+import * as exp from './exponent';
 
 /**
  * The dimensions of a quantity.
@@ -18,7 +18,7 @@ import {Exponent, Add as AddExponent} from './exponent';
  * (`[L]^2/[L]^2`) collapse to `[1]` and therefore cannot be distinguished in
  * variable assignments.
  */
-export type Dimensions = Readonly<Record<string, Exponent>>;
+export type Dimensions = Readonly<Record<string, exp.Exponent>>;
 
 /**
  * The dimensions of a dimensionless quantity. Also known as the dimensions of
@@ -80,25 +80,51 @@ export const Temperature: Temperature = {temperature: 1};
  *   //   ^ {length: 1, time: -1}
  * ```
  */
-export type Times<A extends Dimensions, B extends Dimensions> = {
-  [K in keyof A | keyof B]: AddExponent<Get<A, K>, Get<B, K>>
+export type Times<A extends Dimensions, B extends Multiplicand<A>> = {
+  [K in keyof A | keyof B]: exp.Add<Get<A, K>, Get<B, K>>
 }
 
-export function Times<A extends Dimensions, B extends Dimensions>(a: A, b: B): Times<A, B> {
+export function Times<
+    A extends Dimensions,
+    B extends Multiplicand<A>>(a: A, b: B): Times<A, B> {
   const keys = new Set<string>();
   Object.keys(a).forEach(x => keys.add(x));
   Object.keys(b).forEach(x => keys.add(x));
 
-  const ret: Record<string, Exponent> = {};
+  const ret: Record<string, exp.Exponent> = {};
   for (const key of keys) {
-    const val = (a[key] || 0) + (b[key] || 0);
+    const val = (a[key] || 0) + (b[key] as number || 0);
+    if (!exp.isExponent(val)) {
+      throw new Error(
+        `Overflow in ${key} when adding ${a[key]} and ${b[key]}`);
+    }
+
     if (val) {
-      ret[key] = val as Exponent;
+      ret[key] = val;
     }
   }
 
   return ret as Times<A, B>;
 }
+
+/**
+ * Returns the types that can be multiplied with the given dimensions without
+ * overflowing exponents.
+ *
+ * For example:
+ * ```
+ *   type Volume = {length: 3};
+ *   type multiplicands = Multiplicand<Volume>;
+ *   //   ^ {length?: -4 | -3 | -2 | -1 | 1}
+ * ```
+ *
+ * That is, if the multiplicand has a property `length` then it may only have
+ * an exponent `[-4, 1]` as we will otherwise overflow the maximum permissible
+ * exponent of 4.
+ */
+export type Multiplicand<A extends Dimensions> = Partial<{
+  [K in keyof A]: exp.Addable<Get<A, K>>
+}> & Dimensions;
 
 /**
  * Retrieves the exponent of a given dimension in set of dimensions. Returns

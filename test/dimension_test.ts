@@ -28,5 +28,18 @@ describe('dimension', () => {
 
       expect(length).to.deep.equal({length: 1});
     });
+
+    it('throws error on runtime exponent overflow', () => {
+      type Volume = {length: 3};
+      const volume: Volume = {length: 3};
+
+      type Area = {length: 2};
+      const area: Area = {length: 2};
+
+      // You have to try pretty hard to circumvent the type safety.
+      const pretendVolumeIsArea = (volume as unknown) as Area;
+      expect(() => Times(area, pretendVolumeIsArea))
+          .to.throw('Overflow in length');
+    });
   });
 });
