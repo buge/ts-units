@@ -62,16 +62,13 @@ export type Temperature = {temperature: 1};
 export const Temperature: Temperature = {temperature: 1};
 
 /**
- * Adds the two dimensional vectors.
+ * Multiplies two dimensions, adding their exponents.
  *
- * This is used, for example, when multiplying two units or quantities with one
- * another.
- *
- * `Add` is both a type:
+ * `Times` is both a type:
  * ```
  *   type Length = {length: 1};
  *   type Frequency = {time: -1};
- *   type Velocity = Add<Length, Frequency>;
+ *   type Velocity = Times<Length, Frequency>;
  *   //   ^ {length: 1, time: -1}
  * ```
  *
@@ -79,15 +76,15 @@ export const Temperature: Temperature = {temperature: 1};
  * ```
  *   const length = {length: 1};
  *   const frequency = {time: -1};
- *   const velocity = Add(length, frequency);
+ *   const velocity = Times(length, frequency);
  *   //   ^ {length: 1, time: -1}
  * ```
  */
-export type Add<A extends Dimensions, B extends Dimensions> = {
+export type Times<A extends Dimensions, B extends Dimensions> = {
   [K in keyof A | keyof B]: AddExponent<Get<A, K>, Get<B, K>>
 }
 
-export function Add<A extends Dimensions, B extends Dimensions>(a: A, b: B): Add<A, B> {
+export function Times<A extends Dimensions, B extends Dimensions>(a: A, b: B): Times<A, B> {
   const keys = new Set<string>();
   Object.keys(a).forEach(x => keys.add(x));
   Object.keys(b).forEach(x => keys.add(x));
@@ -100,7 +97,7 @@ export function Add<A extends Dimensions, B extends Dimensions>(a: A, b: B): Add
     }
   }
 
-  return ret as Add<A, B>;
+  return ret as Times<A, B>;
 }
 
 /**

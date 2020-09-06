@@ -1,8 +1,8 @@
-import {Add} from '../src/dimension';
+import {Times} from '../src/dimension';
 import {expect} from 'chai';
 
 describe('dimension', () => {
-  describe('Add', () => {
+  describe('Times', () => {
     it('adds exponents', () => {
       type Length = {length: 1};
       const length: Length = {length: 1};
@@ -11,7 +11,7 @@ describe('dimension', () => {
       const area: Area = {length: 2};
       
       type Volume = {length: 3};
-      const volume: Volume = Add(length, area);
+      const volume: Volume = Times(length, area);
 
       expect(volume).to.deep.equal({length: 3});
     });
@@ -24,7 +24,7 @@ describe('dimension', () => {
       const velocity: Velocity = {length: 1, time: -1};
 
       type Length = {length: 1};
-      const length: Length = Add(time, velocity);
+      const length: Length = Times(time, velocity);
 
       expect(length).to.deep.equal({length: 1});
     });
