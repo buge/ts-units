@@ -33,13 +33,6 @@ describe('unit', () => {
         expect(celsius.offset).to.equal(-272.15);
       });
 
-      it('set correct base unit', () => {
-        const kelvin = makeUnit('K', Temperature);
-        const rankine = kelvin.scaled('ºR', 1.8);
-
-        expect(rankine.baseUnit).to.equal(kelvin);
-      });
-
       it('secondary scaled set correct scale', () => {
         const inches = makeUnit('in', Length);
         const feet = inches.scaled('ft', 12);
@@ -56,14 +49,6 @@ describe('unit', () => {
         expect(fahrenheit.scale).to.equal(9/5);
         expect(fahrenheit.offset).to.be.closeTo(-459.67, 0.001);
       });
-
-      it('secondary scaled set correct base unit', () => {
-        const inches = makeUnit('in', Length);
-        const feet = inches.scaled('ft', 12);
-        const yards = feet.scaled('yd', 3);
-
-        expect(yards.baseUnit).to.equal(inches);
-      });
     });
 
     describe('times', () => {
@@ -75,21 +60,12 @@ describe('unit', () => {
         expect(velocity.dimension).to.deep.equal({length: 1, time: -1});
       });
 
-      it ('is the base unit if derived from base units', () => {
-        const meters = makeUnit('m', Length);
-        const hertz = makeUnit('Hz', Frequency);
-
-        const velocity: Unit<Velocity> = meters.times('m/s', hertz);
-        expect(velocity.baseUnit).to.equal(velocity);
-      });
-
       it ('scales from the base unit if derived from scaled units', () => {
         const feet = makeUnit('m', Length).scaled('ft', 3.281);
         const bpm = makeUnit('Hz', Frequency).scaled('bpm', 60);
 
         const velocity: Unit<Velocity> = feet.times('f/m', bpm);
         expect(velocity.scale).to.be.closeTo(196.86, 0.01);
-        expect(velocity.baseUnit.symbol).to.equal('m⋅Hz');
       });
     });
   });

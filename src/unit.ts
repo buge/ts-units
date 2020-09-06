@@ -1,17 +1,14 @@
-import {Dimensions, Add as AddDimensions} from './dimension';
+import {Dimensions, Times as AddDimensions} from './dimension';
 
 export interface Unit<D extends Dimensions> {
   readonly symbol: string;
   readonly dimension: D
 
-  readonly baseUnit: Unit<D>
   readonly scale: number
   readonly offset: number
 
   /** Generate a new amount of this unit. */
   (amount: number): Quantity<D>
-
-  isBaseUnit(): boolean
 
   /**
    * Derive a scaled unit from this one.
@@ -43,7 +40,6 @@ export interface Quantity<D extends Dimensions> {
 export function makeUnit<D extends Dimensions>(
   symbol: string,
   dimension: D,
-  baseUnit?: Unit<D>,
   scale: number = 1,
   offset: number = 0
 ): Unit<D> {
@@ -54,19 +50,13 @@ export function makeUnit<D extends Dimensions>(
   unit.symbol = symbol;
   unit.dimension = dimension;
 
-  const actualBaseUnit: Unit<D> = baseUnit === undefined ? unit : baseUnit;
-  unit.baseUnit = actualBaseUnit;
-
   unit.scale = scale;
   unit.offset = offset;
-
-  unit.isBaseUnit = () => !baseUnit;
 
   unit.scaled = function(this: Unit<D>, symbol: string, scale: number, offset?: number) {
     return makeUnit(
       symbol,
       dimension,
-      actualBaseUnit,
       unit.scale * scale,
       (unit.offset * scale) + (offset || 0))
   }
@@ -81,11 +71,8 @@ export function makeUnit<D extends Dimensions>(
     const dimensions = AddDimensions(unit.dimension, other.dimension);
 
     let scale = this.scale * other.scale;
-    let baseUnit = undefined;
-    if (!this.isBaseUnit() || !other.isBaseUnit()) {
-      baseUnit = makeUnit(`${this.baseUnit.symbol}⋅${other.baseUnit.symbol}`, dimensions)
-    }
-    return makeUnit(symbol, dimensions, baseUnit, scale);
+
+    return makeUnit(symbol, dimensions, scale);
   }
 
   return unit;
@@ -104,16 +91,10 @@ export function makeQuantity<D extends Dimensions>(amount: number, unit: Unit<D>
         return this;
       }
 
-      // If we are not in the base unit, convert to that first.
-      let amount = this.amount;
-      if (this.unit !== this.unit.baseUnit) {
-        amount = (amount - this.unit.offset) / this.unit.scale;
-      }
-
-      // Scale to the other unit.
-      amount = amount * other.scale + other.offset;
-
-      return makeQuantity(amount, other);
+      return makeQuantity(
+        (amount - this.unit.offset) / this.unit.scale
+          * other.scale + other.offset,
+        other);
     },
 
     toString: function () {
