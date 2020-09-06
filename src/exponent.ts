@@ -116,7 +116,7 @@ interface _Add extends BinaryTable {
 export type Addable<A extends Exponent> =
   // Note that this _could_ have been defined by:
   // ```
-  // _Subtract<_Add[LookupExponent][A]>
+  // _Subtract[_Add[LookupExponent][A]][A]
   // ```
   // rather than by a table, but that causes TypeScript to start complaining
   // that our “type instantiation is excessively deep and possibly infinite”.
@@ -132,6 +132,98 @@ interface _Addable extends UnaryTable {
   [2]: -4 | -3 | -2 | -1 | undefined | 1 | 2,
   [3]: -4 | -3 | -2 | -1 | undefined | 1,
   [4]: -4 | -3 | -2 | -1 | undefined,
+}
+
+/**
+ * Subtracts two exponents.
+ *
+ * For example:
+ *
+ * ```
+ *   type foo = Subtract<3, 2>;
+ *   //   ^ 1
+ *   type bar = Subtract<-3, -2>;
+ *   //   ^ -1
+ * ```
+ *
+ * The resulting value must be in range of valid defined exponents, otherwise
+ * we return `never`:
+ *
+ * ```
+ *   type foo = Subtract<-2, 4>;
+ *   //   ^ 'never'
+ * ```
+ */
+export type Subtract<A extends Exponent, B extends Exponent> =
+  _Subtract[UndefinedToZero<A>][UndefinedToZero<B>];
+
+interface _Subtract extends BinaryTable {
+  [-4]: {
+    [-4]: undefined, [-3]: -1, [-2]: -2, [-1]: -3,
+    [0]: -4, [1]: never, [2]: never, [3]: never, [4]: never,
+  },
+  [-3]: {
+    [-4]: 1, [-3]: undefined, [-2]: -1, [-1]: -2,
+    [0]: -3, [1]: -4, [2]: never, [3]: never, [4]: never,
+  },
+  [-2]: {
+    [-4]: 2, [-3]: 1, [-2]: undefined, [-1]: -1,
+    [0]: -2, [1]: -3, [2]: -4, [3]: never, [4]: never,
+  },
+  [-1]: {
+    [-4]: 3, [-3]: 2, [-2]: 1, [-1]: undefined,
+    [0]: -1, [1]: -2, [2]: -3, [3]: -4, [4]: never,
+  },
+  [0]: {
+    [-4]: 4, [-3]: 3, [-2]: 2, [-1]: 1,
+    [0]: undefined, [1]: -1, [2]: -2, [3]: -3, [4]: -4,
+  },
+  [1]: {
+    [-4]: never, [-3]: 4, [-2]: 3, [-1]: 2,
+    [0]: 1, [1]: undefined, [2]: -1, [3]: -2, [4]: -3,
+  },
+  [2]: {
+    [-4]: never, [-3]: never, [-2]: 4, [-1]: 3,
+    [0]: 2, [1]: 1, [2]: undefined, [3]: -1, [4]: -2,
+  },
+  [3]: {
+    [-4]: never, [-3]: never, [-2]: never, [-1]: 4,
+    [0]: 3, [1]: 2, [2]: 1, [3]: undefined, [4]: -1,
+  },
+  [4]: {
+    [-4]: never, [-3]: never, [-2]: never, [-1]: never,
+    [0]: 4, [1]: 3, [2]: 2, [3]: 1, [4]: undefined,
+  },
+}
+
+/**
+ * Returns the exponents that can be subtracted from the given one without
+ * overflowing.
+ *
+ * For example:
+ * ```
+ *   type foo = Subtractable<3>;
+ *   //   ^ -4 | -3 | -2 | -1 | undefined | 1
+ */
+export type Subtractable<A extends Exponent> =
+  // Note that this _could_ have been defined by:
+  // ```
+  // _Add[_Subtract[LookupExponent][A]][A]
+  // ```
+  // rather than by a table, but that causes TypeScript to start complaining
+  // that our “type instantiation is excessively deep and possibly infinite”.
+  _Subtractable[UndefinedToZero<A>];
+
+interface _Subtractable extends UnaryTable {
+  [-4]: -4 | -3 | -2 | -1 | undefined,
+  [-3]: -4 | -3 | -2 | -1 | undefined | 1,
+  [-2]: -4 | -3 | -2 | -1 | undefined | 1 | 2,
+  [-1]: -4 | -3 | -2 | -1 | undefined | 1 | 2 | 3,
+  [0]: -4 | -3 | -2 | -1 | undefined | 1 | 2 | 3 | 4,
+  [1]: -3 | -2 | -1 | undefined | 1 | 2 | 3 | 4,
+  [2]: -2 | -1 | undefined | 1 | 2 | 3 | 4,
+  [3]: -1 | undefined | 1 | 2 | 3 | 4,
+  [4]: undefined | 1 | 2 | 3 | 4,
 }
 
 /**

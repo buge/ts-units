@@ -7,6 +7,9 @@ const Temperature: Temperature = {temperature: 1};
 type Length = {length: 1};
 const Length: Length = {length: 1};
 
+type Time = {time: 1};
+const Time: Time = {time: 1};
+
 type Frequency = {time: -1};
 const Frequency: Frequency = {time: -1};
 
@@ -64,9 +67,27 @@ describe('unit', () => {
         const feet = makeUnit('m', Length).scaled('ft', 3.281);
         const bpm = makeUnit('Hz', Frequency).scaled('bpm', 60);
 
-        const velocity: Unit<Velocity> = feet.times('f/m', bpm);
+        const velocity: Unit<Velocity> = feet.times('ft/min', bpm);
         expect(velocity.scale).to.be.closeTo(196.86, 0.01);
       });
+    });
+  });
+
+  describe('per', () => {
+    it ('subtracts dimensions', () => {
+      const meters = makeUnit('m', Length);
+      const seconds = makeUnit('s', Time);
+
+      const velocity: Unit<Velocity> = meters.per('m/s', seconds);
+      expect(velocity.dimension).to.deep.equal({length: 1, time: -1});
+    });
+
+    it ('scales from the base unit if derived from scaled units', () => {
+      const feet = makeUnit('m', Length).scaled('ft', 3.281);
+      const minutes = makeUnit('s', Time).scaled('min', 1/60);
+
+      const velocity: Unit<Velocity> = feet.per('ft/min', minutes);
+      expect(velocity.scale).to.be.closeTo(196.86, 0.01);
     });
   });
 });

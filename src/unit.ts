@@ -1,4 +1,4 @@
-import {Dimensions, Times, Multiplicand} from './dimension';
+import {Dimensions, Times, Over, Multiplicand, Divisor} from './dimension';
 
 export interface Unit<D extends Dimensions> {
   readonly symbol: string;
@@ -43,6 +43,9 @@ export interface Unit<D extends Dimensions> {
    */
   times<D2 extends Multiplicand<D>>(symbol: string, unit: Unit<D2>):
       Unit<Times<D, D2>>
+  
+  per<D2 extends Divisor<D>>(symbol: string, unit: Unit<D2>):
+      Unit<Over<D, D2>>
 }
 
 export interface Quantity<D extends Dimensions> {
@@ -86,11 +89,23 @@ export function makeUnit<D extends Dimensions>(
         `${this.offset} and unit ${other.symbol} has offset ${other.offset}`);
     }
 
-    const dimensions = Times(unit.dimension, other.dimension);
+    return makeUnit(
+      symbol,
+      Times(unit.dimension, other.dimension),
+      this.scale * other.scale);
+  }
 
-    let scale = this.scale * other.scale;
+  unit.per = function<D2 extends Divisor<D>>(this: Unit<D>, symbol: string, other: Unit<D2>) {
+    if (this.offset || other.offset) {
+      throw new Error(
+        `Cannot divide units with offsets (unit ${this.symbol} has offset ` +
+        `${this.offset} and unit ${other.symbol} has offset ${other.offset}`);
+    }
 
-    return makeUnit(symbol, dimensions, scale);
+    return makeUnit(
+      symbol,
+      Over(unit.dimension, other.dimension),
+      this.scale / other.scale);
   }
 
   return unit;
