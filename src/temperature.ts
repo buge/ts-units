@@ -1,9 +1,9 @@
-import {Quantity, Unit, makeUnit} from './unit';
-import {Temperature as T} from './dimension';
+import {Quantity, makeUnit} from './unit';
+import {Temperature as TemperatureDimension} from './dimension';
 
-export type Temperature = Quantity<T>;
-export const kelvin: Unit<T> = makeUnit('K', T);
+export type Temperature = Quantity<TemperatureDimension>;
+export const kelvin = makeUnit('K', TemperatureDimension);
 
-export const celsius: Unit<T> = kelvin.scaled('ºC', 1, -273.15);
-export const fahrenheit: Unit<T> = kelvin.scaled('ºF', 9/5, -459.67);
-export const rankine: Unit<T> = kelvin.scaled('ºR', 1.8);
+export const celsius = kelvin.scaled('ºC', 1, -273.15);
+export const fahrenheit = kelvin.scaled('ºF', 9/5, -459.67);
+export const rankine = kelvin.scaled('ºR', 1.8);
