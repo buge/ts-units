@@ -4,7 +4,7 @@
 
 Basic examples:
 
-```
+```typescript
 import {Length, kilometers, meters, yards} from 'ts-units/length';
 import {Length, seconds, hours} from 'ts-units/time';
 import {Speed} from 'ts-units/speed';
