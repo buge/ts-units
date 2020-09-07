@@ -31,38 +31,6 @@ export type One = {};
 export const One: One = {};
 
 /**
- * The dimensions of the SI base quantity of time.
- *
- * Denoted by `[T]`.
- */
-export type Time = {time: 1};
-export const Time: Time = {time: 1};
-
-/**
- * The dimensions of the SI base quantity of length.
- *
- * Denoted by `[L]`.
- */
-export type Length = {length: 1};
-export const Length: Length = {length: 1};
-
-/**
- * The dimensions of the SI base quantity of mass.
- *
- * Denoted by `[M]`.
- */
-export type Mass = {mass: 1};
-export const Mass: Mass = {mass: 1};
-
-/**
- * The dimensions of the SI base quantity of temperature.
- *
- * Denoted by `[Θ]`.
- */
-export type Temperature = {temperature: 1};
-export const Temperature: Temperature = {temperature: 1};
-
-/**
  * Multiplies two dimensions, adding their exponents.
  *
  * `Times` is both a type:

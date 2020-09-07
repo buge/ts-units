@@ -1,14 +1,23 @@
 import {Quantity, makeUnit, makeSiPrefixes} from './unit';
-import {Length as LengthDimension} from './dimension';
+
+namespace dimension {
+  /**
+   * The dimensions of the SI base quantity of length.
+   *
+   * Denoted by `[L]`.
+   */
+  export type Length = {length: 1};
+  export const Length: Length = {length: 1};
+}
 
 /** A quantity of length. */
-export type Length = Quantity<LengthDimension>;
+export type Length = Quantity<dimension.Length>;
 
 /**
- * The meter is the SI base unit of length. All other length units are defined
- * as scaled values of the meter.
+ * The meter, symbol `m`, is the SI base unit of length. All other units in
+ * this module are defined as scaled values of the meter.
  */
-export const meters = makeUnit('m', LengthDimension);
+export const meters = makeUnit('m', dimension.Length);
 
 export const [
   kilometers,
