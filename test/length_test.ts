@@ -1,5 +1,5 @@
 import {cm, m, km, inches, feet, yards, chains, furlongs, miles, angstrom, nanometers} from '../src/length';
-import { expect } from 'chai';
+import {expect} from 'chai';
 
 describe('length smoke tests', () => {
   const equalUnits = [

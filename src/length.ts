@@ -1,4 +1,4 @@
-import {Quantity, makeUnit, makeSiPrefixes} from './unit';
+import {Quantity, makeUnit} from './unit';
 
 namespace dimension {
   /**
@@ -27,7 +27,7 @@ export const [
   nanometers,
   picometers,
   femtometers
-] = makeSiPrefixes(meters, ['k', 'c', 'm', 'μ', 'n', 'p', 'f']);
+] = meters.withSiPrefix(['k', 'c', 'm', 'μ', 'n', 'p', 'f']);
 
 export const [km, m, cm, mm, nm] = [
   kilometers,
@@ -38,12 +38,12 @@ export const [km, m, cm, mm, nm] = [
 ];
 
 export const fermi = femtometers;
-export const angstrom = meters.scaled('Å', 1e10);
+export const angstrom = meters.scaled(1e10).withSymbol('Å');
 export const micron = micrometers;
 
-export const yards = meters.scaled('yd', 1 / 0.9144);
-export const feet = yards.scaled('ft', 3);
-export const inches = feet.scaled('in', 12);
-export const chains = yards.scaled('ch', 1 / 22);
-export const furlongs = chains.scaled('fur', 1 / 10)
-export const miles = furlongs.scaled('mi', 1 / 8);
+export const yards = meters.scaled(1 / 0.9144).withSymbol('yd');
+export const feet = yards.scaled(3).withSymbol('ft');
+export const inches = feet.scaled(12).withSymbol('in');
+export const chains = yards.scaled(1 / 22).withSymbol('ch');
+export const furlongs = chains.scaled(1 / 10).withSymbol('fur')
+export const miles = furlongs.scaled(1 / 8).withSymbol('mi');

@@ -18,6 +18,6 @@ export type Temperature = Quantity<dimension.Temperature>;
  */
 export const kelvin = makeUnit('K', dimension.Temperature);
 
-export const celsius = kelvin.scaled('ºC', 1, -273.15);
-export const fahrenheit = kelvin.scaled('ºF', 9/5, -459.67);
-export const rankine = kelvin.scaled('ºR', 1.8);
+export const celsius = kelvin.scaled(1, -273.15).withSymbol('ºC');
+export const fahrenheit = kelvin.scaled(9/5, -459.67).withSymbol('ºF');
+export const rankine = kelvin.scaled(1.8).withSymbol('ºR');

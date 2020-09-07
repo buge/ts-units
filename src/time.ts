@@ -1,4 +1,4 @@
-import {Quantity, makeUnit, makeSiPrefixes} from './unit';
+import {Quantity, makeUnit} from './unit';
 
 namespace dimension {
   /**
@@ -23,7 +23,7 @@ export const [
   milliseconds,
   microseconds,
   nanoseconds,
-] = makeSiPrefixes(seconds, ['m', 'μ', 'n']);
+] = seconds.withSiPrefix(['m', 'μ', 'n']);
 
 export const [s, msec, usec] = [
   seconds,
@@ -32,5 +32,5 @@ export const [s, msec, usec] = [
   nanoseconds,
 ];
 
-export const minutes = seconds.scaled('m', 1/60);
-export const hours = minutes.scaled('h', 1/60);
+export const minutes = seconds.scaled(1/60).withSymbol('m');
+export const hours = minutes.scaled(1/60).withSymbol('h');
