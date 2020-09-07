@@ -49,7 +49,7 @@ export interface Unit<D extends Dimensions> {
    *
    * Example:
    * ```
-   *   const velocity = meters.per('m/s', seconds);
+   *   const speed = meters.per('m/s', seconds);
    * ```
    *
    * @param symbol The symbol for the new unit.

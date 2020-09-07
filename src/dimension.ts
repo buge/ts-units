@@ -6,7 +6,7 @@ import * as exp from './exponent';
  *
  * For example, the dimensions of a length (`[L]`) will be represented as
  * `{length: 1}` and those of an area (`[L]²`) as `{length: 2}`. The
- * dimensions of velocity (`[L][T]^-1`) as `{length: 1, time: -1}`.
+ * dimensions of speed (`[L][T]^-1`) as `{length: 1, time: -1}`.
  *
  * Note that the dimensions of a quantity can also be the empty set. We do not
  * represent exponents as 0 but as undefined so a ratio `[L]/[L] = [1]` or
@@ -37,7 +37,7 @@ export const One: One = {};
  * ```
  *   type Length = {length: 1};
  *   type Frequency = {time: -1};
- *   type Velocity = Times<Length, Frequency>;
+ *   type Speed = Times<Length, Frequency>;
  *   //   ^ {length: 1, time: -1}
  * ```
  *
@@ -45,7 +45,7 @@ export const One: One = {};
  * ```
  *   const length = {length: 1};
  *   const frequency = {time: -1};
- *   const velocity = Times(length, frequency);
+ *   const speed = Times(length, frequency);
  *   //   ^ {length: 1, time: -1}
  * ```
  */
@@ -85,7 +85,7 @@ export type Multiplicand<A extends Dimensions> = Partial<{
  * ```
  *   type Length = {length: 1};
  *   type Time = {time: 1};
- *   type Velocity = Over<Length, Time>;
+ *   type Speed = Over<Length, Time>;
  *   //   ^ {length: 1, time: -1}
  * ```
  *
@@ -93,7 +93,7 @@ export type Multiplicand<A extends Dimensions> = Partial<{
  * ```
  *   const length = {length: 1};
  *   const time = {time: 1};
- *   const velocity = Over(length, frequency);
+ *   const speed = Over(length, frequency);
  *   //   ^ {length: 1, time: -1}
  * ```
  */
@@ -132,10 +132,10 @@ export type Divisor<A extends Dimensions> = Partial<{
  *
  * For example:
  * ```
- *   type Velocity = {length: 1, time: -1};
- *   type TimeExp = Get<Velocity, 'time'>;
+ *   type Speed = {length: 1, time: -1};
+ *   type TimeExp = Get<Speed, 'time'>;
  *   //   ^ -1
- *   type MassExp = Get<Velocity, 'mass'>;
+ *   type MassExp = Get<Speed, 'mass'>;
  *   //   ^ undefined
  * ```
  */

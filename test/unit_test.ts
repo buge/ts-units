@@ -13,8 +13,8 @@ const Time: Time = {time: 1};
 type Frequency = {time: -1};
 const Frequency: Frequency = {time: -1};
 
-type Velocity = {length: 1, time: -1};
-const Velocity: Velocity = {length: 1, time: -1};
+type Speed = {length: 1, time: -1};
+const Speed: Speed = {length: 1, time: -1};
 
 describe('unit', () => {
  
@@ -59,16 +59,16 @@ describe('unit', () => {
         const meters = makeUnit('m', Length);
         const hertz = makeUnit('Hz', Frequency);
 
-        const velocity: Unit<Velocity> = meters.times('m/s', hertz);
-        expect(velocity.dimension).to.deep.equal({length: 1, time: -1});
+        const speed: Unit<Speed> = meters.times('m/s', hertz);
+        expect(speed.dimension).to.deep.equal({length: 1, time: -1});
       });
 
       it ('scales from the base unit if derived from scaled units', () => {
         const feet = makeUnit('m', Length).scaled('ft', 3.281);
         const bpm = makeUnit('Hz', Frequency).scaled('bpm', 60);
 
-        const velocity: Unit<Velocity> = feet.times('ft/min', bpm);
-        expect(velocity.scale).to.be.closeTo(196.86, 0.01);
+        const speed: Unit<Speed> = feet.times('ft/min', bpm);
+        expect(speed.scale).to.be.closeTo(196.86, 0.01);
       });
     });
   });
@@ -78,16 +78,16 @@ describe('unit', () => {
       const meters = makeUnit('m', Length);
       const seconds = makeUnit('s', Time);
 
-      const velocity: Unit<Velocity> = meters.per('m/s', seconds);
-      expect(velocity.dimension).to.deep.equal({length: 1, time: -1});
+      const speed: Unit<Speed> = meters.per('m/s', seconds);
+      expect(speed.dimension).to.deep.equal({length: 1, time: -1});
     });
 
     it ('scales from the base unit if derived from scaled units', () => {
       const feet = makeUnit('m', Length).scaled('ft', 3.281);
       const minutes = makeUnit('s', Time).scaled('min', 1/60);
 
-      const velocity: Unit<Velocity> = feet.per('ft/min', minutes);
-      expect(velocity.scale).to.be.closeTo(196.86, 0.01);
+      const speed: Unit<Speed> = feet.per('ft/min', minutes);
+      expect(speed.scale).to.be.closeTo(196.86, 0.01);
     });
   });
 });

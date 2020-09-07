@@ -20,11 +20,11 @@ describe('dimension', () => {
       type Time = {time: 1};
       const time: Time = {time: 1};
 
-      type Velocity = {length: 1, time: -1};
-      const velocity: Velocity = {length: 1, time: -1};
+      type Speed = {length: 1, time: -1};
+      const speed: Speed = {length: 1, time: -1};
 
       type Length = {length: 1};
-      const length: Length = Times(time, velocity);
+      const length: Length = Times(time, speed);
 
       expect(length).to.deep.equal({length: 1});
     });
