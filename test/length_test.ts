@@ -1,4 +1,18 @@
-import {cm, m, km, inches, feet, yards, chains, furlongs, miles, angstrom, nanometers} from '../src/length';
+import {
+  cm,
+  m,
+  km,
+  inches,
+  feet,
+  yards,
+  chains,
+  furlongs,
+  miles,
+  angstrom,
+  nanometers,
+  fathoms,
+  nauticalMiles,
+} from '../src/length';
 import {expect} from 'chai';
 
 describe('length smoke tests', () => {
@@ -12,6 +26,9 @@ describe('length smoke tests', () => {
     {a: m(1234), b: chains(61.34176)},
     {a: m(1234), b: furlongs(6.134164)},
     {a: m(1234), b: miles(0.7667721)},
+    {a: m(1234), b: fathoms(674.7594)},
+    {a: m(1234), b: fathoms(674.7594)},
+    {a: miles(1234), b: nauticalMiles(1072.317)},
   ]
 
   equalUnits.forEach(({a, b}) => {
