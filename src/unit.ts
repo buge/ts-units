@@ -123,7 +123,7 @@ export function makeUnit<D extends Dimensions>(
       symbol,
       dimension,
       unit.scale * scale,
-      (unit.offset * scale) + (offset || 0))
+      (unit.offset / scale) + (offset || 0))
   }
 
   /**
@@ -147,7 +147,7 @@ export function makeUnit<D extends Dimensions>(
         Array.isArray(prefix) ? prefix : [prefix];
 
     const units: Unit<D>[] = prefixes.map(prefix => this
-      .scaled(1 / SI_PREFIX[prefix])
+      .scaled(1 * SI_PREFIX[prefix])
       .withSymbol(`${prefix}${this.symbol}`));
 
     return Array.isArray(prefix) ? units : units[0];
@@ -199,8 +199,8 @@ export function makeQuantity<D extends Dimensions>(amount: number, unit: Unit<D>
       }
 
       return makeQuantity(
-        (amount - this.unit.offset) / this.unit.scale
-          * other.scale + other.offset,
+        (amount - this.unit.offset) * this.unit.scale
+          / other.scale + other.offset,
         other);
     },
 

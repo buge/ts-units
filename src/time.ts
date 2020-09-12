@@ -32,5 +32,5 @@ export const [s, msec, usec] = [
   nanoseconds,
 ];
 
-export const minutes = seconds.scaled(1/60).withSymbol('m');
-export const hours = minutes.scaled(1/60).withSymbol('h');
+export const minutes = seconds.scaled(60).withSymbol('m');
+export const hours = minutes.scaled(60).withSymbol('h');

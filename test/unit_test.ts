@@ -24,28 +24,28 @@ describe('unit', () => {
         const meters = makeUnit('m', Length);
         const centimeters = meters.withSiPrefix('c');
 
-        expect(centimeters.scale).to.equal(100);
+        expect(centimeters.scale).to.equal(0.01);
       });
 
       it('returns an array of units when multiple arguments', () => {
         const meters = makeUnit('m', Length);
         const [cm, mm] = meters.withSiPrefix(['c', 'm']);
 
-        expect(cm.scale).to.equal(1e2);
-        expect(mm.scale).to.equal(1e3);
+        expect(cm.scale).to.equal(1e-2);
+        expect(mm.scale).to.equal(1e-3);
       });
     });
 
     describe('scaled', () => {
-      it('set correct scale', () => {
+      it('sets correct scale', () => {
         const kelvin = makeUnit('K', Temperature);
-        const rankine = kelvin.scaled(1.8);
+        const rankine = kelvin.scaled(1 / 1.8);
 
-        expect(rankine.scale).to.equal(1.8);
+        expect(rankine.scale).to.equal(1 / 1.8);
         expect(rankine.offset).to.equal(0);
       });
 
-      it('set correct offset', () => {
+      it('sets correct offset', () => {
         const kelvin = makeUnit('K', Temperature);
         const celsius = kelvin.scaled(1, -272.15);
 
@@ -53,7 +53,7 @@ describe('unit', () => {
         expect(celsius.offset).to.equal(-272.15);
       });
 
-      it('secondary scaled set correct scale', () => {
+      it('secondary scaled sets correct scale', () => {
         const inches = makeUnit('in', Length);
         const feet = inches.scaled(12);
         const yards = feet.scaled(3);
@@ -64,9 +64,9 @@ describe('unit', () => {
       it('secondary scaled set correct offset', () => {
         const kelvin = makeUnit('K', Temperature);
         const celsius = kelvin.scaled(1, -273.15);
-        const fahrenheit = celsius.scaled(9/5, 32);
+        const fahrenheit = celsius.scaled(5 / 9, 32);
 
-        expect(fahrenheit.scale).to.equal(9/5);
+        expect(fahrenheit.scale).to.equal(5 / 9);
         expect(fahrenheit.offset).to.be.closeTo(-459.67, 0.001);
       });
     });
@@ -81,11 +81,11 @@ describe('unit', () => {
       });
 
       it ('scales from the base unit if derived from scaled units', () => {
-        const feet = makeUnit('m', Length).scaled(3.281);
+        const feet = makeUnit('m', Length).scaled(0.3048);
         const bpm = makeUnit('Hz', Frequency).scaled(60);
 
         const speed: Unit<Speed> = feet.times(bpm);
-        expect(speed.scale).to.be.closeTo(196.86, 0.01);
+        expect(speed.scale).to.be.closeTo(18.29, 0.01);
       });
     });
   });
@@ -100,11 +100,11 @@ describe('unit', () => {
     });
 
     it ('scales from the base unit if derived from scaled units', () => {
-      const feet = makeUnit('m', Length).scaled(3.281);
-      const minutes = makeUnit('s', Time).scaled(1/60);
+      const feet = makeUnit('m', Length).scaled(0.3048);
+      const minutes = makeUnit('s', Time).scaled(60);
 
       const speed: Unit<Speed> = feet.per(minutes);
-      expect(speed.scale).to.be.closeTo(196.86, 0.01);
+      expect(speed.scale).to.be.closeTo(0.00508, 0.01);
     });
   });
 });
