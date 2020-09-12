@@ -40,8 +40,17 @@ export interface Unit<D extends Dimensions> {
    */
   scaled(scale: number, offset?: number): Unit<D>;
 
+  /**
+   * Returns this unit scaled by the given SI prefix.
+   *
+   * Example:
+   * ```
+   *   const mm = meters.withSiPrefix('c');
+   * ```
+   *
+   * @param prefix An SI prefix
+   */
   withSiPrefix(prefix: SI_PREFIX): Unit<D>;
-  withSiPrefix(prefixes: ReadonlyArray<SI_PREFIX>): Unit<D>[];
 
   /**
    * Multiplies a given unit with this one.
@@ -80,6 +89,30 @@ export interface Quantity<D extends Dimensions> {
   in(unit: Unit<D>): Quantity<D>;
   toString(): string
 }
+
+export type SI_PREFIX = keyof typeof SI_PREFIX;
+const SI_PREFIX = {
+  'Y': 1e24,
+  'Z': 1e21,
+  'E': 1e18,
+  'P': 1e15,
+  'T': 1e12,
+  'G': 1e9,
+  'M': 1e6,
+  'k': 1e3,
+  'h': 1e2,
+  'da': 1e1,
+  'd': 1e-1,
+  'c': 1e-2,
+  'm': 1e-3,
+  'μ': 1e-6,
+  'n': 1e-9,
+  'p': 1e-12,
+  'f': 1e-15,
+  'a': 1e-18,
+  'z': 1e-21,
+  'y': 1e-24,
+};
 
 export function makeUnit<D extends Dimensions>(
   symbol: string,
@@ -126,33 +159,11 @@ export function makeUnit<D extends Dimensions>(
       (unit.offset / scale) + (offset || 0))
   }
 
-  /**
-   * Returns this unit scaled by the given SI prefix.
-   *
-   * If an array is given, returns an array of units, each with the given SI
-   * prefix.
-   *
-   * Example:
-   * ```
-   *   const mm = meters.withSiPrefix('c');
-   *   const [km, mm] = meters.withSiPrefix(['km', 'mm']);
-   * ```
-   *
-   * @param prefix Either a single SI prefix or an array of SI prefixes.
-   */
-  function withSiPrefix(prefix: SI_PREFIX): Unit<D>;
-  function withSiPrefix(prefixes: Array<SI_PREFIX>): Unit<D>[];
-  function withSiPrefix(this: Unit<D>, prefix: any) {
-    const prefixes: ReadonlyArray<SI_PREFIX> =
-        Array.isArray(prefix) ? prefix : [prefix];
-
-    const units: Unit<D>[] = prefixes.map(prefix => this
+  unit.withSiPrefix = function(this: Unit<D>, prefix: SI_PREFIX): Unit<D> {
+    return this
       .scaled(1 * SI_PREFIX[prefix])
-      .withSymbol(`${prefix}${this.symbol}`));
-
-    return Array.isArray(prefix) ? units : units[0];
-  }
-  unit.withSiPrefix = withSiPrefix;
+      .withSymbol(`${prefix}${this.symbol}`);
+  };
 
   unit.times = function<D2 extends Multiplicand<D>>(
       this: Unit<D>,
@@ -209,27 +220,3 @@ export function makeQuantity<D extends Dimensions>(amount: number, unit: Unit<D>
     },
   };
 }
-
-export type SI_PREFIX = keyof typeof SI_PREFIX;
-export const SI_PREFIX = {
-  'Y': 1e24,
-  'Z': 1e21,
-  'E': 1e18,
-  'P': 1e15,
-  'T': 1e12,
-  'G': 1e9,
-  'M': 1e6,
-  'k': 1e3,
-  'h': 1e2,
-  'da': 1e1,
-  'd': 1e-1,
-  'c': 1e-2,
-  'm': 1e-3,
-  'μ': 1e-6,
-  'n': 1e-9,
-  'p': 1e-12,
-  'f': 1e-15,
-  'a': 1e-18,
-  'z': 1e-21,
-  'y': 1e-24,
-};

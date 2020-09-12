@@ -1,4 +1,4 @@
-import {Quantity, makeUnit} from './unit';
+import {Quantity, makeUnit, SI_PREFIX} from './unit';
 
 namespace dimension {
   /**
@@ -23,7 +23,7 @@ export const [
   milliseconds,
   microseconds,
   nanoseconds,
-] = seconds.withSiPrefix(['m', 'μ', 'n']);
+] = (['m', 'μ', 'n'] as SI_PREFIX[]).map(x => seconds.withSiPrefix(x));
 
 export const [s, msec, usec] = [
   seconds,

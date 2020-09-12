@@ -20,19 +20,11 @@ describe('unit', () => {
  
   describe('Unit', () => {
     describe('withSiPrefix', () => {
-      it('returns scaled unit when one argument', () => {
+      it('returns a scaled unit', () => {
         const meters = makeUnit('m', Length);
         const centimeters = meters.withSiPrefix('c');
 
         expect(centimeters.scale).to.equal(0.01);
-      });
-
-      it('returns an array of units when multiple arguments', () => {
-        const meters = makeUnit('m', Length);
-        const [cm, mm] = meters.withSiPrefix(['c', 'm']);
-
-        expect(cm.scale).to.equal(1e-2);
-        expect(mm.scale).to.equal(1e-3);
       });
     });
 
@@ -88,23 +80,23 @@ describe('unit', () => {
         expect(speed.scale).to.be.closeTo(18.29, 0.01);
       });
     });
-  });
 
-  describe('per', () => {
-    it ('subtracts dimensions', () => {
-      const meters = makeUnit('m', Length);
-      const seconds = makeUnit('s', Time);
+    describe('per', () => {
+      it ('subtracts dimensions', () => {
+        const meters = makeUnit('m', Length);
+        const seconds = makeUnit('s', Time);
 
-      const speed: Unit<Speed> = meters.per(seconds);
-      expect(speed.dimension).to.deep.equal({length: 1, time: -1});
-    });
+        const speed: Unit<Speed> = meters.per(seconds);
+        expect(speed.dimension).to.deep.equal({length: 1, time: -1});
+      });
 
-    it ('scales from the base unit if derived from scaled units', () => {
-      const feet = makeUnit('m', Length).scaled(0.3048);
-      const minutes = makeUnit('s', Time).scaled(60);
+      it ('scales from the base unit if derived from scaled units', () => {
+        const feet = makeUnit('m', Length).scaled(0.3048);
+        const minutes = makeUnit('s', Time).scaled(60);
 
-      const speed: Unit<Speed> = feet.per(minutes);
-      expect(speed.scale).to.be.closeTo(0.00508, 0.01);
+        const speed: Unit<Speed> = feet.per(minutes);
+        expect(speed.scale).to.be.closeTo(0.00508, 0.01);
+      });
     });
   });
 });

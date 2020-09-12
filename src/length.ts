@@ -1,4 +1,4 @@
-import {Quantity, makeUnit} from './unit';
+import {Quantity, makeUnit, SI_PREFIX} from './unit';
 
 namespace dimension {
   /**
@@ -27,7 +27,9 @@ export const [
   nanometers,
   picometers,
   femtometers
-] = meters.withSiPrefix(['k', 'c', 'm', 'μ', 'n', 'p', 'f']);
+] = ([
+  'k', 'c', 'm', 'μ', 'n', 'p', 'f'
+] as SI_PREFIX[]).map(x => meters.withSiPrefix(x));
 
 export const [km, m, cm, mm, nm] = [
   kilometers,
