@@ -22,14 +22,6 @@ export const [
   meters.withSiPrefix(x)
 );
 
-export const [km, m, cm, mm, nm] = [
-  kilometers,
-  meters,
-  centimeters,
-  millimeters,
-  nanometers
-];
-
 export const fermi = femtometers;
 export const angstrom = meters.scaled(1e-10).withSymbol('Å');
 export const micron = micrometers;
