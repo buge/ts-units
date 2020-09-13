@@ -1,5 +1,5 @@
-import {Exponent} from './exponent';
 import * as exp from './exponent';
+import {Exponent} from './exponent';
 
 /**
  * The dimensions of a quantity.
@@ -27,7 +27,7 @@ export type Dimensions = Readonly<Record<string, Exponent>>;
  *
  * Denoted as `[1]`.
  */
-export type One = {};
+export type One = Dimensions;
 export const One: One = {};
 
 /**
@@ -50,12 +50,13 @@ export const One: One = {};
  * ```
  */
 export type Times<A extends Dimensions, B extends Multiplicand<A>> = {
-  [K in keyof A | keyof B]: exp.Add<Get<A, K>, Get<B, K>>
-}
+  [K in keyof A | keyof B]: exp.Add<Get<A, K>, Get<B, K>>;
+};
 
-export function Times<
-    A extends Dimensions,
-    B extends Multiplicand<A>>(a: A, b: B): Times<A, B> {
+export function Times<A extends Dimensions, B extends Multiplicand<A>>(
+  a: A,
+  b: B
+): Times<A, B> {
   return combineExponents(a, b, (a, b) => a + b) as Times<A, B>;
 }
 
@@ -74,9 +75,12 @@ export function Times<
  * an exponent `[-4, 1]` as we will otherwise overflow the maximum permissible
  * exponent of 4.
  */
-export type Multiplicand<A extends Dimensions> = Partial<{
-  [K in keyof A]: exp.Addable<Get<A, K>>
-}> & Dimensions;
+export type Multiplicand<A extends Dimensions> = Partial<
+  {
+    [K in keyof A]: exp.Addable<Get<A, K>>;
+  }
+> &
+  Dimensions;
 
 /**
  * Divides two dimensions, subtracting the exponents.
@@ -98,12 +102,13 @@ export type Multiplicand<A extends Dimensions> = Partial<{
  * ```
  */
 export type Over<A extends Dimensions, B extends Divisor<A>> = {
-  [K in keyof A | keyof B]: exp.Subtract<Get<A, K>, Get<B, K>>
-}
+  [K in keyof A | keyof B]: exp.Subtract<Get<A, K>, Get<B, K>>;
+};
 
-export function Over<
-    A extends Dimensions,
-    B extends Divisor<A>>(a: A, b: B): Over<A, B> {
+export function Over<A extends Dimensions, B extends Divisor<A>>(
+  a: A,
+  b: B
+): Over<A, B> {
   return combineExponents(a, b, (a, b) => a - b) as Over<A, B>;
 }
 
@@ -122,9 +127,12 @@ export function Over<
  * exponent `[-3, 4]` as `-4` would overflow the maximum permissible exponent
  * of `4`.
  */
-export type Divisor<A extends Dimensions> = Partial<{
-  [K in keyof A]: exp.Subtractable<Get<A, K>>
-}> & Dimensions;
+export type Divisor<A extends Dimensions> = Partial<
+  {
+    [K in keyof A]: exp.Subtractable<Get<A, K>>;
+  }
+> &
+  Dimensions;
 
 /**
  * Retrieves the exponent of a given dimension in set of dimensions. Returns
@@ -142,9 +150,10 @@ export type Divisor<A extends Dimensions> = Partial<{
 type Get<D extends Dimensions, K> = K extends keyof D ? D[K] : undefined;
 
 function combineExponents(
-    d1: Dimensions,
-    d2: Dimensions,
-    f: (e1: number, e2: number) => number): Dimensions {
+  d1: Dimensions,
+  d2: Dimensions,
+  f: (e1: number, e2: number) => number
+): Dimensions {
   const keys = new Set<string>();
   Object.keys(d1).forEach(x => keys.add(x));
   Object.keys(d2).forEach(x => keys.add(x));
@@ -154,7 +163,8 @@ function combineExponents(
     const val = f(d1[key] || 0, d2[key] || 0);
     if (!exp.isExponent(val)) {
       throw new Error(
-        `Overflow in ${key} when combining ${d1[key]} and ${d2[key]}`);
+        `Overflow in ${key} when combining ${d1[key]} and ${d2[key]}`
+      );
     }
 
     if (val) {

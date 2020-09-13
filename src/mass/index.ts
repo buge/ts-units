@@ -1,14 +1,5 @@
-import {Quantity, makeUnit} from './unit';
-
-namespace dimension {
-  /**
-   * The dimensions of the SI base quantity of mass.
-   *
-   * Denoted by `[M]`.
-   */
-  export type Mass = {mass: 1};
-  export const Mass: Mass = {mass: 1};
-}
+import * as dimension from './dimension';
+import {Quantity, makeUnit} from '../unit';
 
 /** A quantity of mass. */
 export type Mass = Quantity<dimension.Mass>;

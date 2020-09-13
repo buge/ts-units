@@ -1,14 +1,5 @@
-import {Quantity, makeUnit, SI_PREFIX} from './unit';
-
-namespace dimension {
-  /**
-   * The dimensions of the SI base quantity of length.
-   *
-   * Denoted by `[L]`.
-   */
-  export type Length = {length: 1};
-  export const Length: Length = {length: 1};
-}
+import * as dimension from './dimension';
+import {Quantity, SiPrefix, makeUnit} from '../unit';
 
 /** A quantity of length. */
 export type Length = Quantity<dimension.Length>;
@@ -27,16 +18,16 @@ export const [
   nanometers,
   picometers,
   femtometers
-] = ([
-  'k', 'c', 'm', 'μ', 'n', 'p', 'f'
-] as SI_PREFIX[]).map(x => meters.withSiPrefix(x));
+] = (['k', 'c', 'm', 'μ', 'n', 'p', 'f'] as SiPrefix[]).map(x =>
+  meters.withSiPrefix(x)
+);
 
 export const [km, m, cm, mm, nm] = [
   kilometers,
   meters,
   centimeters,
   millimeters,
-  nanometers,
+  nanometers
 ];
 
 export const fermi = femtometers;
@@ -48,7 +39,7 @@ export const yards = meters.scaled(0.9144).withSymbol('yd');
 export const feet = yards.scaled(1 / 3).withSymbol('ft');
 export const inches = feet.scaled(1 / 12).withSymbol('in');
 export const chains = yards.scaled(22).withSymbol('ch');
-export const furlongs = chains.scaled(10).withSymbol('fur')
+export const furlongs = chains.scaled(10).withSymbol('fur');
 export const miles = furlongs.scaled(8).withSymbol('mi');
 
 // Marine units

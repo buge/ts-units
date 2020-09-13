@@ -6,10 +6,10 @@ describe('dimension', () => {
     it('adds exponents', () => {
       type Length = {length: 1};
       const length: Length = {length: 1};
-      
+
       type Area = {length: 2};
       const area: Area = {length: 2};
-      
+
       type Volume = {length: 3};
       const volume: Volume = Times(length, area);
 
@@ -20,7 +20,7 @@ describe('dimension', () => {
       type Time = {time: 1};
       const time: Time = {time: 1};
 
-      type Speed = {length: 1, time: -1};
+      type Speed = {length: 1; time: -1};
       const speed: Speed = {length: 1, time: -1};
 
       type Length = {length: 1};
@@ -38,8 +38,9 @@ describe('dimension', () => {
 
       // You have to try pretty hard to circumvent the type safety.
       const pretendVolumeIsArea = (volume as unknown) as Area;
-      expect(() => Times(area, pretendVolumeIsArea))
-          .to.throw('Overflow in length');
+      expect(() => Times(area, pretendVolumeIsArea)).to.throw(
+        'Overflow in length'
+      );
     });
   });
 });

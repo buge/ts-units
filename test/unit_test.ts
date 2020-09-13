@@ -1,4 +1,4 @@
-import {makeUnit, Unit} from '../src/unit';
+import {Unit, makeUnit} from '../src/unit';
 import {expect} from 'chai';
 
 type Temperature = {temperature: 1};
@@ -13,11 +13,10 @@ const Time: Time = {time: 1};
 type Frequency = {time: -1};
 const Frequency: Frequency = {time: -1};
 
-type Speed = {length: 1, time: -1};
+type Speed = {length: 1; time: -1};
 const Speed: Speed = {length: 1, time: -1};
 
 describe('unit', () => {
- 
   describe('Unit', () => {
     describe('withSiPrefix', () => {
       it('returns a scaled unit', () => {
@@ -64,7 +63,7 @@ describe('unit', () => {
     });
 
     describe('times', () => {
-      it ('adds dimensions', () => {
+      it('adds dimensions', () => {
         const meters = makeUnit('m', Length);
         const hertz = makeUnit('Hz', Frequency);
 
@@ -72,7 +71,7 @@ describe('unit', () => {
         expect(speed.dimension).to.deep.equal({length: 1, time: -1});
       });
 
-      it ('scales from the base unit if derived from scaled units', () => {
+      it('scales from the base unit if derived from scaled units', () => {
         const feet = makeUnit('m', Length).scaled(0.3048);
         const bpm = makeUnit('Hz', Frequency).scaled(60);
 
@@ -82,7 +81,7 @@ describe('unit', () => {
     });
 
     describe('per', () => {
-      it ('subtracts dimensions', () => {
+      it('subtracts dimensions', () => {
         const meters = makeUnit('m', Length);
         const seconds = makeUnit('s', Time);
 
@@ -90,7 +89,7 @@ describe('unit', () => {
         expect(speed.dimension).to.deep.equal({length: 1, time: -1});
       });
 
-      it ('scales from the base unit if derived from scaled units', () => {
+      it('scales from the base unit if derived from scaled units', () => {
         const feet = makeUnit('m', Length).scaled(0.3048);
         const minutes = makeUnit('s', Time).scaled(60);
 

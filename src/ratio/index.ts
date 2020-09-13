@@ -1,5 +1,5 @@
-import {Quantity, Unit, makeUnit} from './unit';
-import * as dimension from './dimension';
+import * as dimension from '../dimension';
+import {Quantity, makeUnit} from '../unit';
 
 export type Scalar = Quantity<dimension.One>;
 export const value = makeUnit('', dimension.One);

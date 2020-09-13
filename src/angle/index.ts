@@ -1,9 +1,9 @@
-import {Quantity, makeUnit} from './unit';
-import {One} from './dimension';
+import {Quantity, makeUnit} from '../unit';
+import {One} from '../dimension';
 
 export type Angle = Quantity<One>;
 export const radians = makeUnit('rad', One);
-export const degrees = radians.scaled('º', 180 / Math.PI);
+export const degrees = radians.scaled(180 / Math.PI).withSymbol('º');
 
 /**
  * Returns the sine of an angle.
@@ -42,9 +42,9 @@ export const acos = liftRet(Math.acos);
 export const atan = liftRet(Math.atan);
 
 function liftRet(f: (x: number) => number): (x: number) => Angle {
-  return x => radians(f(x))
+  return x => radians(f(x));
 }
 
 function liftUnary(f: (x: number) => number): (x: Angle) => number {
-  return x => f(x.in(radians).amount)
+  return x => f(x.in(radians).amount);
 }
