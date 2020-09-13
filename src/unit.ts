@@ -31,8 +31,8 @@ export interface Unit<D extends Dimensions> {
    *
    * Examples:
    * ```
-   *   const feet = yards.scaled(3).withSymbol('ft');
-   *   const fahrenheit = kelvin.scaled(9/5, -459.67).withSymbol('ºF');
+   * const feet = yards.scaled(3).withSymbol('ft');
+   * const fahrenheit = kelvin.scaled(9/5, -459.67).withSymbol('ºF');
    * ```
    *
    * @param scale The number of new units in the current one.
@@ -45,7 +45,7 @@ export interface Unit<D extends Dimensions> {
    *
    * Example:
    * ```
-   *   const mm = meters.withSiPrefix('c');
+   * const mm = meters.withSiPrefix('c');
    * ```
    *
    * @param prefix An SI prefix
@@ -57,8 +57,8 @@ export interface Unit<D extends Dimensions> {
    *
    * Examples:
    * ```
-   *   const newtons = metersPerSecond.times(kilograms);
-   *   const joules = newtons.times(meters);
+   * const newtons = metersPerSecond.times(kilograms);
+   * const joules = newtons.times(meters);
    * ```
    *
    * @param unit The unit to multiply this one with.
@@ -70,7 +70,7 @@ export interface Unit<D extends Dimensions> {
    *
    * Example:
    * ```
-   *   const speed = meters.per(seconds);
+   * const speed = meters.per(seconds);
    * ```
    *
    * @param unit The unit to divide this one with.
@@ -85,6 +85,43 @@ export interface Quantity<D extends Dimensions> {
   readonly unit: Unit<D>;
 
   in(unit: Unit<D>): Quantity<D>;
+
+  /**
+   * Multiplies this quantity with another.
+   *
+   * Examples:
+   * ```
+   * const newtons = metersPerSecond(9.8).times(kilograms(3));
+   * const joules = newtons(13).times(meters(5));
+   * ```
+   *
+   * @param quantity The quantity to multiply this one with.
+   */
+  times<D2 extends Multiplicand<D>>(
+    quantity: Quantity<D2>
+  ): Quantity<Times<D, D2>>;
+
+  /**
+   * Divides this quantity by another.
+   *
+   * Example:
+   * ```
+   * const speed = meters(5).per(seconds(3));
+   * ```
+   *
+   * @param quantity The quantity to divide this one with.
+   */
+  per<D2 extends Divisor<D>>(quantity: Quantity<D2>): Quantity<Over<D, D2>>;
+
+  /**
+   * Returns a string representation of the quantity.
+   *
+   * Example:
+   * ```
+   * const length: Length = meters(5);
+   * console.log(length.toString());  // 5m
+   * ```
+   */
   toString(): string;
 }
 
@@ -212,6 +249,24 @@ export function makeQuantity<D extends Dimensions>(
         ((amount - this.unit.offset) * this.unit.scale) / other.scale +
           other.offset,
         other
+      );
+    },
+
+    times: function <D2 extends Multiplicand<D>>(
+      other: Quantity<D2>
+    ): Quantity<Times<D, D2>> {
+      return makeQuantity(
+        this.amount * other.amount,
+        this.unit.times(other.unit)
+      );
+    },
+
+    per: function <D2 extends Divisor<D>>(
+      other: Quantity<D2>
+    ): Quantity<Over<D, D2>> {
+      return makeQuantity(
+        this.amount / other.amount,
+        this.unit.per(other.unit)
       );
     },
 

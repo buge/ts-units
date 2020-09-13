@@ -1,4 +1,4 @@
-import {Unit, makeUnit} from '../src/unit';
+import {Quantity, Unit, makeUnit} from '../src/unit';
 import {expect} from 'chai';
 
 type Temperature = {temperature: 1};
@@ -95,6 +95,54 @@ describe('unit', () => {
 
         const speed: Unit<Speed> = feet.per(minutes);
         expect(speed.scale).to.be.closeTo(0.00508, 0.01);
+      });
+    });
+  });
+
+  describe('Quantity', () => {
+    describe('times', () => {
+      it('multiplies the amounts', () => {
+        const meters = makeUnit('m', Length);
+        const hertz = makeUnit('hz', Frequency);
+
+        const speed = meters(5).times(hertz(3));
+        expect(speed.amount).equal(15);
+      });
+
+      it('multiplies the unit scales', () => {
+        const feet = makeUnit('m', Length).scaled(0.3048);
+        const bpm = makeUnit('Hz', Frequency).scaled(60);
+
+        const speed = feet(5).times(bpm(3));
+        expect(speed.amount).equal(15);
+        expect(speed.unit.scale).to.be.closeTo(18.29, 0.01);
+      });
+    });
+
+    describe('per', () => {
+      it('divides the amounts', () => {
+        const meters = makeUnit('m', Length);
+        const seconds = makeUnit('s', Time);
+
+        const speed: Quantity<Speed> = meters(5).per(seconds(3));
+        expect(speed.amount).to.be.closeTo(1.666, 0.001);
+      });
+
+      it('divides the unit scales', () => {
+        const feet = makeUnit('m', Length).scaled(0.3048);
+        const minutes = makeUnit('s', Time).scaled(60);
+
+        const speed: Quantity<Speed> = feet(5).per(minutes(3));
+        expect(speed.amount).to.be.closeTo(1.666, 0.001);
+        expect(speed.unit.scale).to.be.closeTo(0.00508, 0.01);
+      });
+
+      it('sets the amount to infinity when dividing by zero', () => {
+        const meters = makeUnit('m', Length);
+        const seconds = makeUnit('s', Time);
+
+        const speed: Quantity<Speed> = meters(5).per(seconds(0));
+        expect(speed.amount).to.equal(Infinity);
       });
     });
   });
