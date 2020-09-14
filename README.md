@@ -6,16 +6,16 @@ Basic examples:
 
 ```typescript
 import {Length, kilometers, meters, yards} from 'ts-units/length';
-import {Length, seconds, hours} from 'ts-units/time';
+import {Time, seconds, hours} from 'ts-units/time';
 import {Speed} from 'ts-units/speed';
 
 const length: Length = yards(120);
-console.log(length.toString());  // 120yd
-console.log(length.in(meters).toString());  // 109.7m
+console.log(length.toString()); // 120yd
+console.log(length.in(meters).toString()); // 109.7m
 
 const time: Time = seconds(4);
 const speed: Speed = length.per(time);
-console.log(speed.in(kilometers.per(hour)));  // 98.8km/h
+console.log(speed.in(kilometers.per(hour))); // 98.8km/h
 ```
 
 ## Installation
