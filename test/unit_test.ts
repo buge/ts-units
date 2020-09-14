@@ -18,12 +18,38 @@ const Speed: Speed = {length: 1, time: -1};
 
 describe('unit', () => {
   describe('Unit', () => {
-    describe('withSiPrefix', () => {
-      it('returns a scaled unit', () => {
+    describe('call', () => {
+      it('generates a quantity with the given amount', () => {
         const meters = makeUnit('m', Length);
-        const centimeters = meters.withSiPrefix('c');
+        const length = meters(3.8);
 
-        expect(centimeters.scale).to.equal(0.01);
+        expect(length.amount).to.equal(3.8);
+        expect(length.unit).to.equal(meters);
+        expect(length.dimension).to.deep.equal(Length);
+      });
+
+      it('generates a quantity with the given amount for scaled units', () => {
+        const feet = makeUnit('m', Length).scaled(0.3048);
+        const length = feet(3.8);
+
+        expect(length.amount).to.equal(3.8);
+        expect(length.unit).to.equal(feet);
+        expect(length.dimension).to.deep.equal(Length);
+      });
+    });
+
+    describe('withSymbol', () => {
+      it('sets the correct symbol', () => {
+        const unit = makeUnit('a', Length).withSymbol('b');
+        expect(unit.symbol).to.equal('b');
+      });
+
+      it('preserves other properties', () => {
+        const fahrenheit = makeUnit('K', Temperature)
+          .scaled(5 / 9, -459.67)
+          .withSymbol('ºF');
+        expect(fahrenheit.scale).to.be.closeTo(5 / 9, 0.0001);
+        expect(fahrenheit.offset).to.be.closeTo(-459.67, 0.001);
       });
     });
 
@@ -38,10 +64,10 @@ describe('unit', () => {
 
       it('sets correct offset', () => {
         const kelvin = makeUnit('K', Temperature);
-        const celsius = kelvin.scaled(1, -272.15);
+        const celsius = kelvin.scaled(1, -273.15);
 
         expect(celsius.scale).to.equal(1);
-        expect(celsius.offset).to.equal(-272.15);
+        expect(celsius.offset).to.equal(-273.15);
       });
 
       it('secondary scaled sets correct scale', () => {
@@ -59,6 +85,15 @@ describe('unit', () => {
 
         expect(fahrenheit.scale).to.equal(5 / 9);
         expect(fahrenheit.offset).to.be.closeTo(-459.67, 0.001);
+      });
+    });
+
+    describe('withSiPrefix', () => {
+      it('returns a scaled unit', () => {
+        const meters = makeUnit('m', Length);
+        const centimeters = meters.withSiPrefix('c');
+
+        expect(centimeters.scale).to.equal(0.01);
       });
     });
 
@@ -100,6 +135,40 @@ describe('unit', () => {
   });
 
   describe('Quantity', () => {
+    describe('in', () => {
+      it('scales the amount', () => {
+        const meters = makeUnit('m', Length);
+        const feet = meters.scaled(0.3048);
+
+        const length = meters(3).in(feet);
+        expect(length.amount).to.be.closeTo(9.84252, 0.00001);
+      });
+
+      it('shifts by the right offset', () => {
+        const kelvin = makeUnit('K', Temperature);
+        const celsius = kelvin.scaled(1, -273.15);
+
+        const temperature = kelvin(305.15).in(celsius);
+        expect(temperature.amount).to.be.closeTo(32, 0.00001);
+      });
+
+      it('shifts by the right scale and offset', () => {
+        const kelvin = makeUnit('K', Temperature);
+        const fahrenheit = kelvin.scaled(5 / 9, -459.67);
+
+        const temperature = kelvin(305.15).in(fahrenheit);
+        expect(temperature.amount).to.be.closeTo(89.6, 0.00001);
+      });
+
+      it('sets the right unit', () => {
+        const meters = makeUnit('m', Length);
+        const feet = meters.scaled(0.3048);
+
+        const length = meters(3).in(feet);
+        expect(length.unit).to.equal(feet);
+      });
+    });
+
     describe('times', () => {
       it('multiplies the amounts', () => {
         const meters = makeUnit('m', Length);
@@ -143,6 +212,23 @@ describe('unit', () => {
 
         const speed: Quantity<Speed> = meters(5).per(seconds(0));
         expect(speed.amount).to.equal(Infinity);
+      });
+    });
+
+    describe('toString', () => {
+      it('appends the unit', () => {
+        const meters = makeUnit('m', Length);
+        expect(meters(5).toString()).to.equal('5m');
+      });
+
+      it('simplifies the amount', () => {
+        const meters = makeUnit('m', Length);
+        expect(meters(1 / 3).toString()).to.equal('0.333m');
+      });
+
+      it('uses thousand separators', () => {
+        const meters = makeUnit('m', Length);
+        expect(meters(1000).toString()).to.equal('1,000m');
       });
     });
   });

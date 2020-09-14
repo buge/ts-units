@@ -1,18 +1,79 @@
 import {Dimensions, Divisor, Multiplicand, Over, Times} from './dimension';
 
 /**
- * Default locale to use when generating symbols or when printing a quantity
- * with toString. We hardcode a locale to ensure consistency of these
- * convenience functions across plattforms. Users wishing a particular
- * locale-specific formatting are encouraged to implement their own formatter.
+ * A measurement unit of a particular dimension. For example, the meter, the
+ * foot and many other units are measurements of the dimension of length. Units
+ * with the same dimensions can be compared to and converted to one another.
+ * All units of the same dimension are defined as a ratio (`scale`) of some
+ * base unit. We generally use the SI base units (`scale = 1`) as the base of
+ * all our unit definitions.
+ *
+ * Quantities of a particular unit can be defined by simply calling the unit.
+ * For example:
+ * ```
+ * const cupboardHeight = centimeters(95);
+ * ```
+ * Returns a quantity of 95cm in length.
+ *
+ * Units store a preferred (text) symbol that they can use, for example, when
+ * printed a quantity using `toString()`:
+ * ```
+ * // Prints "95cm", using the symbol from the centimeters unit that it was
+ * // defined with.
+ * console.log(cupboardHeight.toString());
+ * ```
+ *
+ * New units can be defined as derived units from existing ones using the
+ * `times` and `per` operators. For example, this is how the `meterPerSecond`
+ * is defined:
+ * ```
+ * const metersPerSecond = meters.per(seconds).withSymbol('m/s');
+ * ```
+ *
+ * Note that you will usually also want to explicitly define the type for such
+ * derived dimensions to help IDEs display legible types. In the example above,
+ * the type of speed is `Unit<Over<Length, Time>>`. By explicitly creating a
+ * dimension type and using it in the Unit we can get a more legible
+ * `Unit<Speed>`:
+ * ```
+ * type Speed = {length: 1, time: -1};  // [L]/[T]
+ * const metersPerSecond: Unit<Speed> =
+ *   meters.per(seconds).withSymbol('m/s');
+ * ```
  */
-const DEFAULT_LOCALE = 'en-us';
-
 export interface Unit<D extends Dimensions> {
-  readonly symbol: string;
+  /**
+   * The dimensions of this unit.
+   *
+   * For example:
+   * ```
+   * const length = {length: 1};  // [L]
+   * const speed = {length: 1, time: -1};  // [L][T]^-1
+   * const acceleration = {length: 1, time: -2};  // [L][T]^-2
+   * ```
+   */
   readonly dimension: D;
 
+  /**
+   * A symbol for the unit such as `m` for meters or `ºC` for degrees celsius.
+   * Used primarily when printing quantities with `toString()`.
+   */
+  readonly symbol: string;
+
+  /**
+   * The ratio of this unit over the base unit.
+   *
+   * For example, the kilometer as scale 1000 and the foot has a scale of
+   * 0.3048 since the base unit for length is the meter.
+   */
   readonly scale: number;
+
+  /**
+   * An optional datum offset for the unit.
+   *
+   * This is used for things like temperatures where degrees celsius has the
+   * same scale as the base unit Kelvin but is offset by -273.15.
+   */
   readonly offset: number;
 
   /** Generate a new amount of this unit. */
@@ -78,12 +139,55 @@ export interface Unit<D extends Dimensions> {
   per<D2 extends Divisor<D>>(unit: Unit<D2>): Unit<Over<D, D2>>;
 }
 
+/**
+ * An amount of something as defined by a number (`amount`) and a referencing
+ * `unit`. Examples of amounts are 43m, 32ºC or 3.5m/s.
+ *
+ * New quantities can be created by calling a unit such as:
+ * ```
+ * const cupboardHeight = centimeters(95);
+ * ```
+ *
+ * Quantities can be converted to other units of the same dimension using the `in` function:
+ * ```
+ * const cupboardHeightInFeet = cupboardHeight.in(feet);
+ * ```
+ *
+ * You can also compute new quantities by using the `times` and `per`
+ * arithmetic operators:
+ * ```
+ * const area: Area = centimeters(1.5).times(meters(2));
+ * ```
+ */
 export interface Quantity<D extends Dimensions> {
+  /**
+   * The dimensions of this quantity.
+   *
+   * For example:
+   * ```
+   * const length = {length: 1};  // [L]
+   * const speed = {length: 1, time: -1};  // [L][T]^-1
+   * const acceleration = {length: 1, time: -2};  // [L][T]^-2
+   * ```
+   */
   readonly dimension: D;
 
+  /** The amount of “stuff” of the unit below. */
   readonly amount: number;
+
+  /** The unit that this quantity is being measured in. */
   readonly unit: Unit<D>;
 
+  /**
+   * Convert this quantity to another unit of the same dimensions.
+   *
+   * For example:
+   * ```
+   * meters(3).in(feet);
+   * ```
+   *
+   * @param unit The unit to convert this quantity to.
+   */
   in(unit: Unit<D>): Quantity<D>;
 
   /**
@@ -125,6 +229,10 @@ export interface Quantity<D extends Dimensions> {
   toString(): string;
 }
 
+/**
+ * An SI prefix such as 'k' for kilo or 'μ' for micro. Used, for example,
+ * for creating derived units using `Unit.withSiPrefix`.
+ */
 export type SiPrefix = keyof typeof SI_PREFIX;
 const SI_PREFIX = {
   Y: 1e24,
@@ -149,6 +257,26 @@ const SI_PREFIX = {
   y: 1e-24
 };
 
+/**
+ * Default locale to use when generating symbols or when printing a quantity
+ * with toString. We hardcode a locale to ensure consistency of these
+ * convenience functions across plattforms. Users wishing a particular
+ * locale-specific formatting are encouraged to implement their own formatter.
+ */
+const DEFAULT_LOCALE = 'en-us';
+
+/**
+ * Creates a new unit.
+ *
+ * @param symbol The symbol to use for the unit (e.g. "m" or "m/s")
+ * @param dimension The dimensions that this unit are defined over. For
+ *   example, `{length: 1}` if unit of length
+ * @param scale The ratio to the base unit. For example, the kilometer has a
+ *   scale of 1000, the foot has a scale of 0.3048 given that the base unit of
+ *   length is the meter.
+ * @param offset An optional datum offset. For example, degrees celsius have a
+ *   datum offset over the Kelvin of -273.15.
+ */
 export function makeUnit<D extends Dimensions>(
   symbol: string,
   dimension: D,
@@ -229,6 +357,11 @@ export function makeUnit<D extends Dimensions>(
   return unit;
 }
 
+/**
+ * Creates a new quantity.
+ * @param amount The amount of quantity in the given unit.
+ * @param unit The unit of the quantity measurement.
+ */
 export function makeQuantity<D extends Dimensions>(
   amount: number,
   unit: Unit<D>
@@ -271,7 +404,7 @@ export function makeQuantity<D extends Dimensions>(
     },
 
     toString: function () {
-      return `${amount}${unit.symbol}`;
+      return `${amount.toLocaleString(DEFAULT_LOCALE)}${unit.symbol}`;
     }
   };
 }
