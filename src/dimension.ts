@@ -157,15 +157,17 @@ function combineExponents(
   const ret: Record<string, Exponent> = {};
   for (const key of keys) {
     const val = f(d1[key] || 0, d2[key] || 0);
+    if (!val) {
+      continue;
+    }
+
     if (!exp.isExponent(val)) {
       throw new Error(
         `Overflow in ${key} when combining ${d1[key]} and ${d2[key]}`
       );
     }
 
-    if (val) {
-      ret[key] = val;
-    }
+    ret[key] = val;
   }
 
   return ret;

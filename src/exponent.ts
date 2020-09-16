@@ -35,9 +35,15 @@ export type Exponent = -4 | -3 | -2 | -1 | undefined | 1 | 2 | 3 | 4;
  * @param x Any value.
  */
 export function isExponent(x: unknown): x is Exponent {
-  return (
-    typeof x === 'undefined' || (typeof x === 'number' && x >= -4 && x <= 4)
-  );
+  if (typeof x === 'undefined') {
+    return true;
+  }
+
+  if (typeof x !== 'number') {
+    return false;
+  }
+
+  return [-4, -3, -2, -1, 1, 2, 3, 4].indexOf(x) >= 0;
 }
 
 /**
