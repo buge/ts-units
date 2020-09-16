@@ -75,12 +75,10 @@ export function Times<A extends Dimensions, B extends Multiplicand<A>>(
  * an exponent `[-4, 1]` as we will otherwise overflow the maximum permissible
  * exponent of 4.
  */
-export type Multiplicand<A extends Dimensions> = Partial<
-  {
-    [K in keyof A]: exp.Addable<Get<A, K>>;
-  }
-> &
-  Dimensions;
+// prettier-ignore
+export type Multiplicand<A extends Dimensions> = Partial<{
+  [K in keyof A]: exp.Addable<Get<A, K>>;
+}> & Dimensions;
 
 /**
  * Divides two dimensions, subtracting the exponents.
@@ -127,12 +125,10 @@ export function Over<A extends Dimensions, B extends Divisor<A>>(
  * exponent `[-3, 4]` as `-4` would overflow the maximum permissible exponent
  * of `4`.
  */
-export type Divisor<A extends Dimensions> = Partial<
-  {
-    [K in keyof A]: exp.Subtractable<Get<A, K>>;
-  }
-> &
-  Dimensions;
+// prettier-ignore
+export type Divisor<A extends Dimensions> = Partial<{
+  [K in keyof A]: exp.Subtractable<Get<A, K>>;
+}> & Dimensions;
 
 /**
  * Retrieves the exponent of a given dimension in set of dimensions. Returns

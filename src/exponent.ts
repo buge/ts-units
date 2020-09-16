@@ -60,9 +60,9 @@ export function isExponent(x: unknown): x is Exponent {
  *   //   ^ 'never'
  * ```
  */
-export type Add<A extends Exponent, B extends Exponent> = _Add[UndefinedToZero<
-  A
->][UndefinedToZero<B>];
+// prettier-ignore
+export type Add<A extends Exponent, B extends Exponent> =
+  _Add[UndefinedToZero<A>][UndefinedToZero<B>];
 
 interface _Add extends BinaryTable {
   [-4]: {
