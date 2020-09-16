@@ -135,6 +135,28 @@ describe('unit', () => {
   });
 
   describe('Quantity', () => {
+    describe('isCloseTo', () => {
+      const meters = makeUnit('m', Length);
+      const feet = meters.scaled(0.3048).withSymbol('ft');
+
+      const length = meters(3);
+      const tests = [
+        {other: meters(3), epsilon: 1e-10, want: true},
+        {other: meters(3.01), epsilon: 0.011, want: true},
+        {other: meters(3.01), epsilon: 0.009, want: false},
+        {other: meters(2.99), epsilon: 0.011, want: true},
+        {other: meters(2.99), epsilon: 0.009, want: false},
+        {other: feet(9.84), epsilon: 0.01, want: true},
+        {other: feet(9.84), epsilon: 0.001, want: false}
+      ];
+
+      tests.forEach(({other, epsilon, want}) => {
+        it(`${length.toString()}.isCloseTo(${other.toString()}, ${epsilon}) = ${want}`, () => {
+          expect(length.isCloseTo(other, epsilon)).to.equal(want);
+        });
+      });
+    });
+
     describe('in', () => {
       it('scales the amount', () => {
         const meters = makeUnit('m', Length);
