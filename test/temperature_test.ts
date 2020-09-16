@@ -1,4 +1,4 @@
-import {kelvin, celsius, fahrenheit} from '../src/temperature';
+import {celsius, fahrenheit, kelvin} from '../src/temperature';
 import {expect} from 'chai';
 
 describe('temperature smoke tests', () => {
