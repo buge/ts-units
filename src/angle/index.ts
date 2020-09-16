@@ -1,9 +1,12 @@
+import * as dimension from './dimension';
 import {Quantity, makeUnit} from '../unit';
-import {One} from '../dimension';
 
-export type Angle = Quantity<One>;
-export const radians = makeUnit('rad', One);
-export const degrees = radians.scaled(180 / Math.PI).withSymbol('º');
+export type Angle = Quantity<dimension.Angle>;
+
+export const radians = makeUnit('rad', dimension.Angle);
+export const degrees = radians.scaled(Math.PI / 180).withSymbol('º');
+
+export const turns = radians.scaled(2 * Math.PI).withSymbol('τ');
 
 /**
  * Returns the sine of an angle.
