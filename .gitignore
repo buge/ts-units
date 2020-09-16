@@ -1,4 +1,4 @@
-.vscode
+.vscode/launch.json
 build
 node_modules
 package-lock.json
