@@ -195,6 +195,32 @@ export interface Quantity<D extends Dimensions> {
   isCloseTo(other: Quantity<D>, epsilon: number): boolean;
 
   /**
+   * Adds a quantity to this one, returning a new quantity in the units of the
+   * given one.
+   *
+   * Example:
+   * ```
+   * console.log(meters(3).plus(2cm).toString()); // 302cm
+   * ```
+   *
+   * @param quantity The quantity to add to this one.
+   */
+  plus(quantity: Quantity<D>): Quantity<D>;
+
+  /**
+   * Subtracts a quantity from this one, returning a new quantity in the units
+   * of the given one.
+   *
+   * Example:
+   * ```
+   * console.log(meters(3).minus(2cm).toString()); // 298cm
+   * ```
+   *
+   * @param quantity The quantity to subtract from this one.
+   */
+  minus(quantity: Quantity<D>): Quantity<D>;
+
+  /**
    * Convert this quantity to another unit of the same dimensions.
    *
    * For example:
@@ -406,6 +432,20 @@ export function makeQuantity<D extends Dimensions>(
         ((amount - this.unit.offset) * this.unit.scale) / other.scale +
           other.offset,
         other
+      );
+    },
+
+    plus: function (this: Quantity<D>, quantity: Quantity<D>) {
+      return makeQuantity(
+        this.in(quantity.unit).amount + quantity.amount,
+        quantity.unit
+      );
+    },
+
+    minus: function (this: Quantity<D>, quantity: Quantity<D>) {
+      return makeQuantity(
+        this.in(quantity.unit).amount - quantity.amount,
+        quantity.unit
       );
     },
 

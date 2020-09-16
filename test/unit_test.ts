@@ -191,6 +191,42 @@ describe('unit', () => {
       });
     });
 
+    describe('plus', () => {
+      it('adds the amount', () => {
+        const meters = makeUnit('m', Length);
+        const length = meters(3).plus(meters(4));
+        expect(length.amount).to.equal(7);
+        expect(length.unit).to.equal(meters);
+      });
+
+      it('converts to the given unit', () => {
+        const meters = makeUnit('m', Length);
+        const feet = meters.scaled(0.3048);
+
+        const length = meters(3).plus(feet(4));
+        expect(length.amount).to.be.closeTo(13.8425, 0.0001);
+        expect(length.unit).to.equal(feet);
+      });
+
+      describe('minus', () => {
+        it('subtracts the amount', () => {
+          const meters = makeUnit('m', Length);
+          const length = meters(3).minus(meters(4));
+          expect(length.amount).to.equal(-1);
+          expect(length.unit).to.equal(meters);
+        });
+
+        it('converts to the given unit', () => {
+          const meters = makeUnit('m', Length);
+          const feet = meters.scaled(0.3048);
+
+          const length = meters(3).minus(feet(4));
+          expect(length.amount).to.be.closeTo(5.8425, 0.0001);
+          expect(length.unit).to.equal(feet);
+        });
+      });
+    });
+
     describe('times', () => {
       it('multiplies the amounts', () => {
         const meters = makeUnit('m', Length);
