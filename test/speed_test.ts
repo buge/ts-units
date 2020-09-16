@@ -18,7 +18,11 @@ describe('speed smoke tests', () => {
 
   equalUnits.forEach(({a, b}) => {
     it(`${a.toString()} equals ${b.toString()}`, () => {
-      expect(a.in(b.unit).amount).to.be.closeTo(b.amount, 0.001);
+      expect(a.in(b.unit).amount).to.be.closeTo(b.amount, 1e-6);
+    });
+
+    it(`${b.toString()} equals ${a.toString()}`, () => {
+      expect(b.in(a.unit).amount).to.be.closeTo(a.amount, 1e-6);
     });
   });
 });
