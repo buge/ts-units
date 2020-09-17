@@ -244,6 +244,33 @@ describe('unit', () => {
         expect(speed.amount).equal(15);
         expect(speed.unit.scale).to.be.closeTo(18.29, 0.01);
       });
+
+      it('retains the unit when right side is dimensionless', () => {
+        const feet = makeUnit('m', Length).scaled(0.3048);
+        const percent = makeUnit('', {}).scaled(1e-2);
+
+        const length = feet(50).times(percent(10));
+        expect(length.amount).to.be.closeTo(5, 1e-10);
+        expect(length.unit).to.equal(feet);
+      });
+
+      it('adopts the unit when left side is dimensionless', () => {
+        const feet = makeUnit('m', Length).scaled(0.3048);
+        const percent = makeUnit('', {}).scaled(1e-2);
+
+        const length = percent(10).times(feet(50));
+        expect(length.amount).to.be.closeTo(5, 1e-10);
+        expect(length.unit).to.equal(feet);
+      });
+
+      it('adopts the unit on the right when both are dimensionless', () => {
+        const percent = makeUnit('', {}).scaled(1e-2);
+        const permille = makeUnit('', {}).scaled(1e-3);
+
+        const quantity = percent(30).times(permille(50));
+        expect(quantity.amount).to.be.closeTo(15, 1e-10);
+        expect(quantity.unit).to.equal(permille);
+      });
     });
 
     describe('per', () => {
@@ -270,6 +297,31 @@ describe('unit', () => {
 
         const speed: Quantity<Speed> = meters(5).per(seconds(0));
         expect(speed.amount).to.equal(Infinity);
+      });
+
+      it('retains the unit when denominator is dimensionless', () => {
+        const feet = makeUnit('m', Length).scaled(0.3048);
+        const percent = makeUnit('', {}).scaled(1e-2);
+
+        const length = feet(50).per(percent(10));
+        expect(length.amount).to.be.closeTo(500, 1e-10);
+        expect(length.unit).to.equal(feet);
+      });
+    });
+
+    describe('isDimensionless', () => {
+      it('returns true for dimensionless quantities', () => {
+        const unit = makeUnit('', {});
+        const quantity = unit(5);
+
+        expect(quantity.isDimensionless()).to.be.true;
+      });
+
+      it('returns false for quantities with dimensions', () => {
+        const unit = makeUnit('m', Length);
+        const quantity = unit(5);
+
+        expect(quantity.isDimensionless()).to.be.false;
       });
     });
 

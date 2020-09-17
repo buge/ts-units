@@ -260,6 +260,12 @@ export interface Quantity<D extends Dimensions> {
   per<D2 extends Divisor<D>>(quantity: Quantity<D2>): Quantity<Over<D, D2>>;
 
   /**
+   * Returns whether this is a dimensionless quantity. Or, more accurately, a
+   * quantity of dimension `[1]`.
+   */
+  isDimensionless(): boolean;
+
+  /**
    * Returns a string representation of the quantity.
    *
    * Example:
@@ -452,6 +458,20 @@ export function makeQuantity<D extends Dimensions>(
     times: function <D2 extends Multiplicand<D>>(
       other: Quantity<D2>
     ): Quantity<Times<D, D2>> {
+      if (this.isDimensionless()) {
+        return makeQuantity(
+          other.amount * this.amount * this.unit.scale,
+          other.unit
+        ) as Quantity<Times<D, D2>>;
+      }
+
+      if (other.isDimensionless()) {
+        return makeQuantity(
+          this.amount * other.amount * other.unit.scale,
+          this.unit
+        ) as Quantity<Times<D, D2>>;
+      }
+
       return makeQuantity(
         this.amount * other.amount,
         this.unit.times(other.unit)
@@ -461,10 +481,21 @@ export function makeQuantity<D extends Dimensions>(
     per: function <D2 extends Divisor<D>>(
       other: Quantity<D2>
     ): Quantity<Over<D, D2>> {
+      if (other.isDimensionless()) {
+        return makeQuantity(
+          this.amount / other.amount / other.unit.scale,
+          this.unit
+        ) as Quantity<Over<D, D2>>;
+      }
+
       return makeQuantity(
         this.amount / other.amount,
         this.unit.per(other.unit)
       );
+    },
+
+    isDimensionless: function (this: Quantity<D>) {
+      return Object.keys(this.dimension).length === 0;
     },
 
     toString: function () {
