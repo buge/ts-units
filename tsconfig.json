@@ -1,13 +1,15 @@
 {
   "compilerOptions": {
-    "target": "es6",
+    "target": "es5",
     "strict": true,
     "esModuleInterop": true,
     "module": "CommonJS",
+    "lib": ["ES2015"],
     "declaration": true,
     "moduleResolution": "node",
     "sourceMap": true,
-    "outDir": "build"
+    "outDir": "build",
+    "downlevelIteration": true
   },
   "include": ["src"]
 }
