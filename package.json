@@ -2,22 +2,31 @@
   "name": "ts-units",
   "version": "0.0.0",
   "description": "Physical Units for TypeScript",
-  "main": "index.js",
-  "scripts": {
-    "fix": "prettier --config .prettierrc 'src/**/*.ts' 'test/**/*.ts' --write && eslint --fix src/ test/",
-    "lint": "eslint",
-    "test": "mocha -r ts-node/register 'test/**/*.ts'"
-  },
+  "author": "Philipp Bunge <buge@crimson.ch>",
+  "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/buge/ts-units.git"
   },
-  "author": "Philipp Bunge <buge@crimson.ch>",
-  "license": "MIT",
   "bugs": {
     "url": "https://github.com/buge/ts-units/issues"
   },
   "homepage": "https://github.com/buge/ts-units#readme",
+  "files": [
+    "build/**/*"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "clean": "rm -r ./build",
+    "fix": "prettier --config .prettierrc 'src/**/*.ts' 'test/**/*.ts' --write && eslint --fix src/ test/",
+    "lint": "eslint",
+    "test": "mocha -r ts-node/register 'test/**/*.ts'",
+    "prepare": "npm run build",
+    "prepublishOnly": "npm test && npm run lint",
+    "preversion": "npm run lint",
+    "version": "npm run fix && git add -A src",
+    "postversion": "git push && git push --tags"
+  },
   "devDependencies": {
     "@types/chai": "^4.2.12",
     "@types/mocha": "^8.0.3",
