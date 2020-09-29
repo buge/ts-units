@@ -13,10 +13,19 @@
   },
   "homepage": "https://github.com/buge/ts-units#readme",
   "files": [
-    "build/**/*"
+    "angle",
+    "length",
+    "mass",
+    "scalar",
+    "speed",
+    "temperature",
+    "time",
+    "*.d.ts",
+    "*.js",
+    "*.js.map"
   ],
-  "main": "build/index.js",
-  "typings": "build/index.d.ts",
+  "main": "index.js",
+  "typings": "index.d.ts",
   "scripts": {
     "build": "tsc",
     "clean": "rm -r ./build",
@@ -24,6 +33,8 @@
     "lint": "eslint",
     "test": "mocha -r ts-node/register 'test/**/*.ts'",
     "prepare": "npm run build",
+    "prepack": "mv build/* .",
+    "postpack": "git clean -fd",
     "prepublishOnly": "npm test && npm run lint",
     "preversion": "npm run lint",
     "version": "npm run fix && git add -A src",
