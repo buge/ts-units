@@ -243,6 +243,7 @@ export interface Quantity<D extends Dimensions> {
    *
    * @param quantity The quantity to multiply this one with.
    */
+  times(quantity: number): Quantity<D>;
   times<D2 extends Multiplicand<D>>(
     quantity: Quantity<D2>
   ): Quantity<Times<D, D2>>;
@@ -414,6 +415,38 @@ export function makeQuantity<D extends Dimensions>(
   amount: number,
   unit: Unit<D>
 ): Quantity<D> {
+  function times(other: number): Quantity<D>;
+  function times<D2 extends Multiplicand<D>>(
+    other: Quantity<D2>
+  ): Quantity<Times<D, D2>>;
+  function times<D2 extends Multiplicand<D>>(
+    this: Quantity<D>,
+    other: number | Quantity<D2>
+  ): Quantity<D> | Quantity<Times<D, D2>> {
+    if (typeof other === 'number') {
+      return makeQuantity(this.amount * other, this.unit) as Quantity<D>;
+    }
+
+    if (this.isDimensionless()) {
+      return makeQuantity(
+        other.amount * this.amount * this.unit.scale,
+        other.unit
+      ) as Quantity<Times<D, D2>>;
+    }
+
+    if (other.isDimensionless()) {
+      return makeQuantity(
+        this.amount * other.amount * other.unit.scale,
+        this.unit
+      ) as Quantity<Times<D, D2>>;
+    }
+
+    return makeQuantity(
+      this.amount * other.amount,
+      this.unit.times(other.unit)
+    );
+  }
+
   return {
     amount,
     unit,
@@ -455,28 +488,7 @@ export function makeQuantity<D extends Dimensions>(
       );
     },
 
-    times: function <D2 extends Multiplicand<D>>(
-      other: Quantity<D2>
-    ): Quantity<Times<D, D2>> {
-      if (this.isDimensionless()) {
-        return makeQuantity(
-          other.amount * this.amount * this.unit.scale,
-          other.unit
-        ) as Quantity<Times<D, D2>>;
-      }
-
-      if (other.isDimensionless()) {
-        return makeQuantity(
-          this.amount * other.amount * other.unit.scale,
-          this.unit
-        ) as Quantity<Times<D, D2>>;
-      }
-
-      return makeQuantity(
-        this.amount * other.amount,
-        this.unit.times(other.unit)
-      );
-    },
+    times: times,
 
     per: function <D2 extends Divisor<D>>(
       other: Quantity<D2>

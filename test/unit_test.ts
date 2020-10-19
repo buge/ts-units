@@ -273,6 +273,16 @@ describe('unit', () => {
       });
     });
 
+    describe('times number', () => {
+      it('multiplies the amounts', () => {
+        const meters = makeUnit('m', Length);
+
+        const distance = meters(5).times(3);
+        expect(distance.amount).equal(15);
+        expect(distance.unit).equal(meters);
+      });
+    });
+
     describe('per', () => {
       it('divides the amounts', () => {
         const meters = makeUnit('m', Length);
