@@ -1,5 +1,6 @@
 import {
   angstrom,
+  astronomicalUnits,
   centimeters,
   chains,
   fathoms,
@@ -27,7 +28,8 @@ describe('length smoke tests', () => {
     {a: meters(1234), b: furlongs(6.134176409766961)},
     {a: meters(1234), b: miles(0.7667720512208701)},
     {a: meters(1234), b: fathoms(674.7594050743658)},
-    {a: meters(1234), b: nauticalMiles(0.6663066954643628)}
+    {a: meters(1234), b: nauticalMiles(0.6663066954643628)},
+    {a: astronomicalUnits(1234), b: miles(114707466174.9135)}
   ];
 
   equalUnits.forEach(({a, b}) => {

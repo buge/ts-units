@@ -37,3 +37,6 @@ export const miles = furlongs.scaled(8).withSymbol('mi');
 // Marine units
 export const fathoms = yards.scaled(2).withSymbol('ftm');
 export const nauticalMiles = meters.scaled(1852).withSymbol('M');
+
+// Astronomical Units
+export const astronomicalUnits = meters.scaled(149597870700).withSymbol('au');
