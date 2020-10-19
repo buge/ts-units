@@ -44,6 +44,16 @@ export const acos = liftRet(Math.acos);
  */
 export const atan = liftRet(Math.atan);
 
+/**
+ * Returns the angle from the X axis to a point.
+ *
+ * @param x A numeric expression representing the cartesian x-coordinate.
+ * @param y A numeric expression representing the cartesian y-coordinate.
+ */
+export function atan2(x: number, y: number): Angle {
+  return radians(Math.atan2(x, y));
+}
+
 function liftRet(f: (x: number) => number): (x: number) => Angle {
   return x => radians(f(x));
 }

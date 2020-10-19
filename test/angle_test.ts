@@ -2,6 +2,7 @@ import {
   acos,
   asin,
   atan,
+  atan2,
   cos,
   degrees,
   radians,
@@ -9,6 +10,8 @@ import {
   tan,
   turns
 } from '../src/angle';
+import {Dimensions} from '../src/dimension';
+import {Quantity} from '../src/unit';
 import {expect} from 'chai';
 
 describe('angle', () => {
@@ -40,7 +43,7 @@ describe('angle', () => {
       });
 
       it(`asin(${test.sin}) = ${test.angle.toString()}`, () => {
-        expect(asin(test.sin).isCloseTo(test.angle, 0.0001));
+        expectCloseTo(asin(test.sin), test.angle);
       });
     });
   });
@@ -59,7 +62,7 @@ describe('angle', () => {
       });
 
       it(`acos(${test.cos}) = ${test.angle.toString()}`, () => {
-        expect(acos(test.cos).isCloseTo(test.angle, 0.0001));
+        expectCloseTo(acos(test.cos), test.angle);
       });
     });
   });
@@ -76,8 +79,34 @@ describe('angle', () => {
       });
 
       it(`atan(${test.tan}) = ${test.angle.toString()}`, () => {
-        expect(atan(test.tan).isCloseTo(test.angle, 0.0001));
+        expectCloseTo(atan(test.tan), test.angle);
+      });
+    });
+  });
+
+  describe.only('atan2', () => {
+    const tests = [
+      {x: 0, y: 0, want: degrees(0)},
+      {x: 0, y: 1, want: degrees(0)},
+      {x: 1, y: 0, want: degrees(90)},
+      {x: 1, y: 1, want: degrees(45)}
+    ];
+
+    tests.forEach(test => {
+      it(`atan2(${test.x}, ${test.y}) = ${test.want.toString()}`, () => {
+        expectCloseTo(atan2(test.x, test.y), test.want);
       });
     });
   });
 });
+
+// TODO(bunge): Move this to a Chai method instead.
+function expectCloseTo<D extends Dimensions>(
+  actual: Quantity<D>,
+  expected: Quantity<D>
+) {
+  return expect(
+    actual.isCloseTo(expected, 0.0001),
+    `Expected ${actual.in(expected.unit).toString()} to equal ${expected}`
+  ).to.be.true;
+}
