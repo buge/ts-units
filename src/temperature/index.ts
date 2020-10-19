@@ -10,6 +10,9 @@ export type Temperature = Quantity<dimension.Temperature>;
  */
 export const kelvin = makeUnit('K', dimension.Temperature);
 
-export const celsius = kelvin.scaled(1, -273.15).withSymbol('ºC');
-export const fahrenheit = kelvin.scaled(5 / 9, -459.67).withSymbol('ºF');
-export const rankine = kelvin.scaled(1 / 1.8).withSymbol('ºR');
+export const celsius = kelvin.withOffset(-273.15).withSymbol('ºC');
+export const fahrenheit = kelvin
+  .times(5 / 9)
+  .withOffset(-459.67)
+  .withSymbol('ºF');
+export const rankine = kelvin.times(1 / 1.8).withSymbol('ºR');

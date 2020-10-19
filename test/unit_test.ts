@@ -29,7 +29,7 @@ describe('unit', () => {
       });
 
       it('generates a quantity with the given amount for scaled units', () => {
-        const feet = makeUnit('m', Length).scaled(0.3048);
+        const feet = makeUnit('m', Length).times(0.3048);
         const length = feet(3.8);
 
         expect(length.amount).to.equal(3.8);
@@ -46,42 +46,45 @@ describe('unit', () => {
 
       it('preserves other properties', () => {
         const fahrenheit = makeUnit('K', Temperature)
-          .scaled(5 / 9, -459.67)
+          .times(5 / 9)
+          .withOffset(-459.67)
           .withSymbol('ºF');
         expect(fahrenheit.scale).to.be.closeTo(5 / 9, 0.0001);
         expect(fahrenheit.offset).to.be.closeTo(-459.67, 0.001);
       });
     });
 
-    describe('scaled', () => {
+    describe('times number', () => {
       it('sets correct scale', () => {
         const kelvin = makeUnit('K', Temperature);
-        const rankine = kelvin.scaled(1 / 1.8);
+        const rankine = kelvin.times(1 / 1.8);
 
         expect(rankine.scale).to.equal(1 / 1.8);
         expect(rankine.offset).to.equal(0);
       });
 
+      it('secondary scaled sets correct scale', () => {
+        const inches = makeUnit('in', Length);
+        const feet = inches.times(12);
+        const yards = feet.times(3);
+
+        expect(yards.scale).to.equal(36);
+      });
+    });
+
+    describe('withOffset', () => {
       it('sets correct offset', () => {
         const kelvin = makeUnit('K', Temperature);
-        const celsius = kelvin.scaled(1, -273.15);
+        const celsius = kelvin.withOffset(-273.15);
 
         expect(celsius.scale).to.equal(1);
         expect(celsius.offset).to.equal(-273.15);
       });
 
-      it('secondary scaled sets correct scale', () => {
-        const inches = makeUnit('in', Length);
-        const feet = inches.scaled(12);
-        const yards = feet.scaled(3);
-
-        expect(yards.scale).to.equal(36);
-      });
-
       it('secondary scaled set correct offset', () => {
         const kelvin = makeUnit('K', Temperature);
-        const celsius = kelvin.scaled(1, -273.15);
-        const fahrenheit = celsius.scaled(5 / 9, 32);
+        const celsius = kelvin.withOffset(-273.15);
+        const fahrenheit = celsius.times(5 / 9).withOffset(32);
 
         expect(fahrenheit.scale).to.equal(5 / 9);
         expect(fahrenheit.offset).to.be.closeTo(-459.67, 0.001);
@@ -107,8 +110,8 @@ describe('unit', () => {
       });
 
       it('scales from the base unit if derived from scaled units', () => {
-        const feet = makeUnit('m', Length).scaled(0.3048);
-        const bpm = makeUnit('Hz', Frequency).scaled(60);
+        const feet = makeUnit('m', Length).times(0.3048);
+        const bpm = makeUnit('Hz', Frequency).times(60);
 
         const speed: Unit<Speed> = feet.times(bpm);
         expect(speed.scale).to.be.closeTo(18.29, 0.01);
@@ -125,8 +128,8 @@ describe('unit', () => {
       });
 
       it('scales from the base unit if derived from scaled units', () => {
-        const feet = makeUnit('m', Length).scaled(0.3048);
-        const minutes = makeUnit('s', Time).scaled(60);
+        const feet = makeUnit('m', Length).times(0.3048);
+        const minutes = makeUnit('s', Time).times(60);
 
         const speed: Unit<Speed> = feet.per(minutes);
         expect(speed.scale).to.be.closeTo(0.00508, 0.01);
@@ -137,7 +140,7 @@ describe('unit', () => {
   describe('Quantity', () => {
     describe('isCloseTo', () => {
       const meters = makeUnit('m', Length);
-      const feet = meters.scaled(0.3048).withSymbol('ft');
+      const feet = meters.times(0.3048).withSymbol('ft');
 
       const length = meters(3);
       const tests = [
@@ -160,7 +163,7 @@ describe('unit', () => {
     describe('in', () => {
       it('scales the amount', () => {
         const meters = makeUnit('m', Length);
-        const feet = meters.scaled(0.3048);
+        const feet = meters.times(0.3048);
 
         const length = meters(3).in(feet);
         expect(length.amount).to.be.closeTo(9.84252, 0.00001);
@@ -168,7 +171,7 @@ describe('unit', () => {
 
       it('shifts by the right offset', () => {
         const kelvin = makeUnit('K', Temperature);
-        const celsius = kelvin.scaled(1, -273.15);
+        const celsius = kelvin.withOffset(-273.15);
 
         const temperature = kelvin(305.15).in(celsius);
         expect(temperature.amount).to.be.closeTo(32, 0.00001);
@@ -176,7 +179,7 @@ describe('unit', () => {
 
       it('shifts by the right scale and offset', () => {
         const kelvin = makeUnit('K', Temperature);
-        const fahrenheit = kelvin.scaled(5 / 9, -459.67);
+        const fahrenheit = kelvin.times(5 / 9).withOffset(-459.67);
 
         const temperature = kelvin(305.15).in(fahrenheit);
         expect(temperature.amount).to.be.closeTo(89.6, 0.00001);
@@ -184,7 +187,7 @@ describe('unit', () => {
 
       it('sets the right unit', () => {
         const meters = makeUnit('m', Length);
-        const feet = meters.scaled(0.3048);
+        const feet = meters.times(0.3048);
 
         const length = meters(3).in(feet);
         expect(length.unit).to.equal(feet);
@@ -201,7 +204,7 @@ describe('unit', () => {
 
       it('converts to the given unit', () => {
         const meters = makeUnit('m', Length);
-        const feet = meters.scaled(0.3048);
+        const feet = meters.times(0.3048);
 
         const length = meters(3).plus(feet(4));
         expect(length.amount).to.be.closeTo(13.8425, 0.0001);
@@ -218,7 +221,7 @@ describe('unit', () => {
 
         it('converts to the given unit', () => {
           const meters = makeUnit('m', Length);
-          const feet = meters.scaled(0.3048);
+          const feet = meters.times(0.3048);
 
           const length = meters(3).minus(feet(4));
           expect(length.amount).to.be.closeTo(5.8425, 0.0001);
@@ -237,8 +240,8 @@ describe('unit', () => {
       });
 
       it('multiplies the unit scales', () => {
-        const feet = makeUnit('m', Length).scaled(0.3048);
-        const bpm = makeUnit('Hz', Frequency).scaled(60);
+        const feet = makeUnit('m', Length).times(0.3048);
+        const bpm = makeUnit('Hz', Frequency).times(60);
 
         const speed = feet(5).times(bpm(3));
         expect(speed.amount).equal(15);
@@ -246,8 +249,8 @@ describe('unit', () => {
       });
 
       it('retains the unit when right side is dimensionless', () => {
-        const feet = makeUnit('m', Length).scaled(0.3048);
-        const percent = makeUnit('', {}).scaled(1e-2);
+        const feet = makeUnit('m', Length).times(0.3048);
+        const percent = makeUnit('', {}).times(1e-2);
 
         const length = feet(50).times(percent(10));
         expect(length.amount).to.be.closeTo(5, 1e-10);
@@ -255,8 +258,8 @@ describe('unit', () => {
       });
 
       it('adopts the unit when left side is dimensionless', () => {
-        const feet = makeUnit('m', Length).scaled(0.3048);
-        const percent = makeUnit('', {}).scaled(1e-2);
+        const feet = makeUnit('m', Length).times(0.3048);
+        const percent = makeUnit('', {}).times(1e-2);
 
         const length = percent(10).times(feet(50));
         expect(length.amount).to.be.closeTo(5, 1e-10);
@@ -264,8 +267,8 @@ describe('unit', () => {
       });
 
       it('adopts the unit on the right when both are dimensionless', () => {
-        const percent = makeUnit('', {}).scaled(1e-2);
-        const permille = makeUnit('', {}).scaled(1e-3);
+        const percent = makeUnit('', {}).times(1e-2);
+        const permille = makeUnit('', {}).times(1e-3);
 
         const quantity = percent(30).times(permille(50));
         expect(quantity.amount).to.be.closeTo(15, 1e-10);
@@ -293,8 +296,8 @@ describe('unit', () => {
       });
 
       it('divides the unit scales', () => {
-        const feet = makeUnit('m', Length).scaled(0.3048);
-        const minutes = makeUnit('s', Time).scaled(60);
+        const feet = makeUnit('m', Length).times(0.3048);
+        const minutes = makeUnit('s', Time).times(60);
 
         const speed: Quantity<Speed> = feet(5).per(minutes(3));
         expect(speed.amount).to.be.closeTo(1.666, 0.001);
@@ -310,8 +313,8 @@ describe('unit', () => {
       });
 
       it('retains the unit when denominator is dimensionless', () => {
-        const feet = makeUnit('m', Length).scaled(0.3048);
-        const percent = makeUnit('', {}).scaled(1e-2);
+        const feet = makeUnit('m', Length).times(0.3048);
+        const percent = makeUnit('', {}).times(1e-2);
 
         const length = feet(50).per(percent(10));
         expect(length.amount).to.be.closeTo(500, 1e-10);

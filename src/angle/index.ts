@@ -4,9 +4,9 @@ import {Quantity, makeUnit} from '../unit';
 export type Angle = Quantity<dimension.Angle>;
 
 export const radians = makeUnit('rad', dimension.Angle);
-export const degrees = radians.scaled(Math.PI / 180).withSymbol('º');
+export const degrees = radians.times(Math.PI / 180).withSymbol('º');
 
-export const turns = radians.scaled(2 * Math.PI).withSymbol('τ');
+export const turns = radians.times(2 * Math.PI).withSymbol('τ');
 
 /**
  * Returns the sine of an angle.

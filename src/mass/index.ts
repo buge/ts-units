@@ -10,4 +10,4 @@ export type Mass = Quantity<dimension.Mass>;
  */
 export const kilogram = makeUnit('kg', dimension.Mass);
 
-export const gram = kilogram.scaled(1e-3).withSymbol('g');
+export const gram = kilogram.times(1e-3).withSymbol('g');

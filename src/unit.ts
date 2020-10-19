@@ -86,22 +86,6 @@ export interface Unit<D extends Dimensions> {
   withSymbol(symbol: string): Unit<D>;
 
   /**
-   * Derive a scaled unit from this one.
-   *
-   * The new unit will have the same dimensionality and as the receiver.
-   *
-   * Examples:
-   * ```
-   * const feet = yards.scaled(3).withSymbol('ft');
-   * const fahrenheit = kelvin.scaled(9/5, -459.67).withSymbol('ºF');
-   * ```
-   *
-   * @param scale The number of new units in the current one.
-   * @param offset An optional datum offset.
-   */
-  scaled(scale: number, offset?: number): Unit<D>;
-
-  /**
    * Returns this unit scaled by the given SI prefix.
    *
    * Example:
@@ -116,7 +100,12 @@ export interface Unit<D extends Dimensions> {
   /**
    * Multiplies a given unit with this one.
    *
-   * Examples:
+   * This can be used to create scaled units:
+   * ```
+   * const feet = yards.times(3).withSymbol('ft');
+   * ```
+   *
+   * As well as units with combined dimensions:
    * ```
    * const newtons = metersPerSecond.times(kilograms);
    * const joules = newtons.times(meters);
@@ -124,7 +113,18 @@ export interface Unit<D extends Dimensions> {
    *
    * @param unit The unit to multiply this one with.
    */
+  times(amount: number): Unit<D>;
   times<D2 extends Multiplicand<D>>(unit: Unit<D2>): Unit<Times<D, D2>>;
+
+  /**
+   * Derive a unit as a datum offset of this one.
+   *
+   * Example:
+   * ```
+   * const celsius = kelvin.withOffset(-273.15).withSymbol('ºC');
+   * ```
+   */
+  withOffset(offset: number): Unit<D>;
 
   /**
    * Divides this one by another.
@@ -346,34 +346,48 @@ export function makeUnit<D extends Dimensions>(
     return makeUnit(symbol, this.dimension, this.scale, this.offset);
   };
 
-  unit.scaled = function (this: Unit<D>, scale: number, offset?: number) {
-    // Generate a symbol.
-    let symbol = `${scale.toLocaleString(DEFAULT_LOCALE)} × ${this.symbol}`;
-    if (offset && offset > 0) {
-      symbol += ` + ${offset.toLocaleString(DEFAULT_LOCALE)}`;
+  unit.withOffset = function (this: Unit<D>, offset: number) {
+    if (offset === 0) {
+      return this;
     }
-    if (offset && offset < 0) {
-      symbol += ` - ${offset.toLocaleString(DEFAULT_LOCALE)}`;
-    }
+
+    const sign = offset > 0 ? '+' : '-';
+    const symbol = `${this.symbol} ${sign} ${offset.toLocaleString(
+      DEFAULT_LOCALE
+    )}`;
 
     return makeUnit(
       symbol,
       dimension,
-      unit.scale * scale,
-      unit.offset / scale + (offset || 0)
+      this.scale,
+      this.offset / this.scale + offset
     );
   };
 
   unit.withSiPrefix = function (this: Unit<D>, prefix: SiPrefix): Unit<D> {
-    return this.scaled(1 * SI_PREFIX[prefix]).withSymbol(
+    return this.times(1 * SI_PREFIX[prefix]).withSymbol(
       `${prefix}${this.symbol}`
     );
   };
 
-  unit.times = function <D2 extends Multiplicand<D>>(
-    this: Unit<D>,
+  function times<D2 extends Multiplicand<D>>(
     other: Unit<D2>
-  ) {
+  ): Unit<Times<D, D2>>;
+  function times(amount: number): Unit<D>;
+  function times<D2 extends Multiplicand<D>>(
+    this: Unit<D>,
+    amountOrUnit: number | Unit<D2>
+  ): Unit<D> | Unit<Times<D, D2>> {
+    if (typeof amountOrUnit === 'number') {
+      return makeUnit(
+        symbol,
+        dimension,
+        this.scale * amountOrUnit,
+        this.offset
+      );
+    }
+
+    const other = amountOrUnit;
     if (this.offset || other.offset) {
       throw new Error(
         `Cannot multiply units with offsets (unit ${this.symbol} has offset ` +
@@ -386,7 +400,8 @@ export function makeUnit<D extends Dimensions>(
       Times(unit.dimension, other.dimension),
       this.scale * other.scale
     );
-  };
+  }
+  unit.times = times;
 
   unit.per = function <D2 extends Divisor<D>>(this: Unit<D>, other: Unit<D2>) {
     if (this.offset || other.offset) {
