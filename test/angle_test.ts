@@ -34,7 +34,7 @@ describe('angle', () => {
       {angle: degrees(0), sin: 0},
       {angle: degrees(30), sin: 0.5},
       {angle: degrees(90), sin: 1},
-      {angle: radians(Math.PI), sin: 0}
+      {angle: radians(Math.PI / 2), sin: 1}
     ];
 
     tests.forEach(test => {
@@ -84,7 +84,7 @@ describe('angle', () => {
     });
   });
 
-  describe.only('atan2', () => {
+  describe('atan2', () => {
     const tests = [
       {x: 0, y: 0, want: degrees(0)},
       {x: 0, y: 1, want: degrees(0)},
