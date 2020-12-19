@@ -456,17 +456,17 @@ export function makeQuantity<D extends Dimensions>(
     }
 
     if (this.isDimensionless()) {
-      return makeQuantity(
+      return (makeQuantity(
         other.amount * this.amount * this.unit.scale,
         other.unit
-      ) as Quantity<Times<D, D2>>;
+      ) as unknown) as Quantity<Times<D, D2>>;
     }
 
     if (other.isDimensionless()) {
-      return makeQuantity(
+      return (makeQuantity(
         this.amount * other.amount * other.unit.scale,
         this.unit
-      ) as Quantity<Times<D, D2>>;
+      ) as unknown) as Quantity<Times<D, D2>>;
     }
 
     return makeQuantity(
