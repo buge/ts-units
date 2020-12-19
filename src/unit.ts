@@ -179,7 +179,7 @@ export interface Quantity<D extends Dimensions> {
   readonly unit: Unit<D>;
 
   /**
-   * Verifies whether this quantity is close to another.
+   * Returns whether this quantity is close to another.
    *
    * For example:
    * ```
@@ -193,6 +193,19 @@ export interface Quantity<D extends Dimensions> {
    *   (`|this - other| < epsilon` in the units of other).
    */
   isCloseTo(other: Quantity<D>, epsilon: number): boolean;
+
+  /**
+   * Returns whether this quantity is close to another.
+   *
+   * For example:
+   * ```
+   * meters(3).isLessThan(centimeters(301));  // true
+   * ```
+   * Checks whether `someLength` is less than 5m.
+   *
+   * @param other The quantity to compare this one to.
+   */
+  isLessThan(other: Quantity<D>): boolean;
 
   /**
    * Adds a quantity to this one, returning a new quantity in the units of the
@@ -474,6 +487,10 @@ export function makeQuantity<D extends Dimensions>(
       epsilon: number
     ) {
       return Math.abs(this.in(other.unit).amount - other.amount) < epsilon;
+    },
+
+    isLessThan(this: Quantity<D>, other: Quantity<D>) {
+      return this.in(other.unit).amount < other.amount;
     },
 
     in: function (this: Quantity<D>, other: Unit<D>) {

@@ -160,6 +160,26 @@ describe('unit', () => {
       });
     });
 
+    describe('isLessThan', () => {
+      const meters = makeUnit('m', Length);
+      const feet = meters.times(0.3048).withSymbol('ft');
+
+      const length = meters(3);
+      const tests = [
+        {other: meters(3), want: false},
+        {other: meters(3.01), want: true},
+        {other: meters(2.99), want: false},
+        {other: feet(9.83), want: false},
+        {other: feet(9.85), want: true}
+      ];
+
+      tests.forEach(({other, want}) => {
+        it(`${length.toString()}.isLessThan(${other.toString()}) = ${want}`, () => {
+          expect(length.isLessThan(other)).to.equal(want);
+        });
+      });
+    });
+
     describe('in', () => {
       it('scales the amount', () => {
         const meters = makeUnit('m', Length);
