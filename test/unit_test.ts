@@ -160,7 +160,7 @@ describe('unit', () => {
       });
     });
 
-    describe('isLessThan', () => {
+    describe('<', () => {
       const meters = makeUnit('m', Length);
       const feet = meters.times(0.3048).withSymbol('ft');
 
@@ -174,8 +174,8 @@ describe('unit', () => {
       ];
 
       tests.forEach(({other, want}) => {
-        it(`${length.toString()}.isLessThan(${other.toString()}) = ${want}`, () => {
-          expect(length.isLessThan(other)).to.equal(want);
+        it(`(${length.toString()} < ${other.toString()}) == ${want}`, () => {
+          expect(length < other).to.equal(want);
         });
       });
     });
@@ -372,6 +372,39 @@ describe('unit', () => {
       it('uses thousand separators', () => {
         const meters = makeUnit('m', Length);
         expect(meters(1000).toString()).to.equal('1,000m');
+      });
+    });
+
+    describe('valueOf', () => {
+      it('returns the amount if in the base unit', () => {
+        const meters = makeUnit('m', Length);
+
+        const length = meters(3.14);
+        expect(length.valueOf()).to.be.closeTo(3.14, 0.0000001);
+      });
+
+      it('converts to the base unit', () => {
+        const meters = makeUnit('m', Length);
+        const feet = meters.times(0.3048);
+
+        const length = feet(3.14);
+        expect(length.valueOf()).to.be.closeTo(0.957072, 0.0000001);
+      });
+
+      it('shifts by the offset', () => {
+        const kelvin = makeUnit('K', Temperature);
+        const celsius = kelvin.withOffset(-273.15);
+
+        const temperature = celsius(23.2);
+        expect(temperature.valueOf()).to.be.closeTo(296.35, 0.0000001);
+      });
+
+      it('shifts and converts by the offset', () => {
+        const kelvin = makeUnit('K', Temperature);
+        const fahrenheit = kelvin.times(5 / 9).withOffset(-459.67);
+
+        const temperature = fahrenheit(305.15);
+        expect(temperature.valueOf()).to.be.closeTo(424.9, 0.0000001);
       });
     });
   });

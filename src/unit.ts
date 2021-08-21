@@ -195,19 +195,6 @@ export interface Quantity<D extends Dimensions> {
   isCloseTo(other: Quantity<D>, epsilon: number): boolean;
 
   /**
-   * Returns whether this quantity is close to another.
-   *
-   * For example:
-   * ```
-   * meters(3).isLessThan(centimeters(301));  // true
-   * ```
-   * Checks whether `someLength` is less than 5m.
-   *
-   * @param other The quantity to compare this one to.
-   */
-  isLessThan(other: Quantity<D>): boolean;
-
-  /**
    * Adds a quantity to this one, returning a new quantity in the units of the
    * given one.
    *
@@ -289,6 +276,15 @@ export interface Quantity<D extends Dimensions> {
    * ```
    */
   toString(): string;
+
+  /**
+   * Returns the amount of this quantity in the base unit as a primitive
+   * Javascript value.
+   *
+   * This allows for correct comparison of the quantity using operators such
+   * as `<` or `>=`.
+   */
+  valueOf(): number;
 }
 
 /**
@@ -489,21 +485,13 @@ export function makeQuantity<D extends Dimensions>(
       return Math.abs(this.in(other.unit).amount - other.amount) < epsilon;
     },
 
-    isLessThan(this: Quantity<D>, other: Quantity<D>) {
-      return this.in(other.unit).amount < other.amount;
-    },
-
     in: function (this: Quantity<D>, other: Unit<D>) {
       // If the unit requested is our unit, don't do any work.
       if (this.unit === other) {
         return this;
       }
 
-      return makeQuantity(
-        ((amount - this.unit.offset) * this.unit.scale) / other.scale +
-          other.offset,
-        other
-      );
+      return makeQuantity(this.valueOf() / other.scale + other.offset, other);
     },
 
     plus: function (this: Quantity<D>, quantity: Quantity<D>) {
@@ -544,6 +532,10 @@ export function makeQuantity<D extends Dimensions>(
 
     toString: function () {
       return `${amount.toLocaleString(DEFAULT_LOCALE)}${unit.symbol}`;
+    },
+
+    valueOf: function () {
+      return (this.amount - this.unit.offset) * this.unit.scale;
     }
   };
 }
