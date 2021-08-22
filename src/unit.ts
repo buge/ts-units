@@ -452,17 +452,17 @@ export function makeQuantity<D extends Dimensions>(
     }
 
     if (this.isDimensionless()) {
-      return (makeQuantity(
+      return makeQuantity(
         other.amount * this.amount * this.unit.scale,
         other.unit
-      ) as unknown) as Quantity<Times<D, D2>>;
+      ) as unknown as Quantity<Times<D, D2>>;
     }
 
     if (other.isDimensionless()) {
-      return (makeQuantity(
+      return makeQuantity(
         this.amount * other.amount * other.unit.scale,
         this.unit
-      ) as unknown) as Quantity<Times<D, D2>>;
+      ) as unknown as Quantity<Times<D, D2>>;
     }
 
     return makeQuantity(
@@ -514,10 +514,10 @@ export function makeQuantity<D extends Dimensions>(
       other: Quantity<D2>
     ): Quantity<Over<D, D2>> {
       if (other.isDimensionless()) {
-        return (makeQuantity(
+        return makeQuantity(
           this.amount / other.amount / other.unit.scale,
           this.unit
-        ) as unknown) as Quantity<Over<D, D2>>;
+        ) as unknown as Quantity<Over<D, D2>>;
       }
 
       return makeQuantity(

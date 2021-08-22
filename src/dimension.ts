@@ -50,7 +50,9 @@ export const One: One = {};
  * ```
  */
 export type Times<A extends Dimensions, B extends Multiplicand<A>> = {
-  [K in keyof A | keyof B]: exp.Add<Get<A, K>, Get<B, K>>;
+  [K in keyof A | keyof B as exp.Add<Get<A, K>, Get<B, K>> extends undefined
+    ? never
+    : K]: exp.Add<Get<A, K>, Get<B, K>>;
 };
 
 export function Times<A extends Dimensions, B extends Multiplicand<A>>(
@@ -100,7 +102,12 @@ export type Multiplicand<A extends Dimensions> = Partial<{
  * ```
  */
 export type Over<A extends Dimensions, B extends Divisor<A>> = {
-  [K in keyof A | keyof B]: exp.Subtract<Get<A, K>, Get<B, K>>;
+  [K in keyof A | keyof B as exp.Subtract<
+    Get<A, K>,
+    Get<B, K>
+  > extends undefined
+    ? never
+    : K]: exp.Subtract<Get<A, K>, Get<B, K>>;
 };
 
 export function Over<A extends Dimensions, B extends Divisor<A>>(

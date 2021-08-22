@@ -1,5 +1,13 @@
-import {Times} from '../src/dimension';
+import {Over, Times} from '../src/dimension';
 import {expect} from 'chai';
+
+/* eslint-disable @typescript-eslint/no-unused-vars */
+const t1: Times<{length: 1}, {length: 1}> = {length: 2};
+const t2: Times<{length: 1}, {time: -1}> = {length: 1, time: -1};
+const t3: Times<{length: 1}, {length: -1}> = {};
+const o1: Over<{length: 1}, {time: 1}> = {length: 1, time: -1};
+const o2: Over<{length: 1}, {length: 1}> = {};
+/* eslint-enable @typescript-eslint/no-unused-vars */
 
 describe('dimension', () => {
   describe('Times', () => {
@@ -37,7 +45,7 @@ describe('dimension', () => {
       const area: Area = {length: 2};
 
       // You have to try pretty hard to circumvent the type safety.
-      const pretendVolumeIsArea = (volume as unknown) as Area;
+      const pretendVolumeIsArea = volume as unknown as Area;
       expect(() => Times(area, pretendVolumeIsArea)).to.throw(
         'Overflow in length'
       );

@@ -142,7 +142,7 @@ interface _Add extends BinaryTable {
     [-3]: -1;
     [-2]: undefined;
     [-1]: 1;
-    [0]: -2;
+    [0]: 2;
     [1]: 3;
     [2]: 4;
     [3]: never;
