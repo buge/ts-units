@@ -1,4 +1,11 @@
-import {Dimensions, Divisor, Multiplicand, Over, Times} from './dimension';
+import {
+  Dimensions,
+  Divisor,
+  Multiplicand,
+  Over,
+  Reciprocal,
+  Times
+} from './dimension';
 
 /**
  * A measurement unit of a particular dimension. For example, the meter, the
@@ -78,6 +85,16 @@ export interface Unit<D extends Dimensions> {
 
   /** Generate a new amount of this unit. */
   (amount: number): Quantity<D>;
+
+  /**
+   * Returns the reciprocal unit to this one.
+   *
+   * Example:
+   * ```
+   * const hertz = seconds.reciprocal()
+   * ```
+   */
+  reciprocal(): Unit<Reciprocal<D>>;
 
   /**
    * Returns a copy of this unit using the given symbol.
@@ -261,6 +278,16 @@ export interface Quantity<D extends Dimensions> {
   per<D2 extends Divisor<D>>(quantity: Quantity<D2>): Quantity<Over<D, D2>>;
 
   /**
+   * Returns the reciprocal to this quantity.
+   *
+   * Example:
+   * ```
+   * const frequency = seconds(5).reciprocal()
+   * ```
+   */
+  reciprocal(): Quantity<Reciprocal<D>>;
+
+  /**
    * Returns whether this is a dimensionless quantity. Or, more accurately, a
    * quantity of dimension `[1]`.
    */
@@ -427,6 +454,21 @@ export function makeUnit<D extends Dimensions>(
     );
   };
 
+  unit.reciprocal = function (this: Unit<D>) {
+    if (this.offset) {
+      throw new Error(
+        'Cannot take the reciprocal of a unit with offset (unit ' +
+          `${this.symbol} has offset ${this.offset})`
+      );
+    }
+
+    return makeUnit(
+      `1/${this.symbol}`,
+      Reciprocal(unit.dimension),
+      1 / this.scale
+    );
+  };
+
   return unit;
 }
 
@@ -524,6 +566,10 @@ export function makeQuantity<D extends Dimensions>(
         this.amount / other.amount,
         this.unit.per(other.unit)
       );
+    },
+
+    reciprocal: function () {
+      return makeQuantity(1 / this.amount, this.unit.reciprocal());
     },
 
     isDimensionless: function (this: Quantity<D>) {

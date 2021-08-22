@@ -135,6 +135,22 @@ describe('unit', () => {
         expect(speed.scale).to.be.closeTo(0.00508, 0.01);
       });
     });
+
+    describe('reciprocal', () => {
+      it('negates exponents', () => {
+        const seconds = makeUnit('s', Time);
+
+        const hertz: Unit<Frequency> = seconds.reciprocal();
+        expect(hertz.dimension).to.deep.equal({time: -1});
+      });
+
+      it('inverts the scale', () => {
+        const minutes = makeUnit('s', Time).times(60);
+
+        const bpm: Unit<Frequency> = minutes.reciprocal();
+        expect(bpm.scale).to.be.closeTo(0.01666, 0.00001);
+      });
+    });
   });
 
   describe('Quantity', () => {
@@ -339,6 +355,26 @@ describe('unit', () => {
         const length = feet(50).per(percent(10));
         expect(length.amount).to.be.closeTo(500, 1e-10);
         expect(length.unit).to.equal(feet);
+      });
+    });
+
+    describe('reciprocal', () => {
+      it('inverts the amount', () => {
+        const seconds = makeUnit('s', Time);
+        const frequency = seconds(5).reciprocal();
+        expect(frequency.amount).to.be.closeTo(0.2, 0.001);
+      });
+
+      it('inverts the scale', () => {
+        const minutes = makeUnit('s', Time).times(60);
+        const frequency = minutes(5).reciprocal();
+        expect(frequency.unit.scale).to.be.closeTo(0.01666, 0.00001);
+      });
+
+      it('sets the amount to infinity when zero', () => {
+        const seconds = makeUnit('s', Time);
+        const frequency = seconds(0).reciprocal();
+        expect(frequency.amount).to.equal(Infinity);
       });
     });
 

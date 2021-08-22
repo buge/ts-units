@@ -118,6 +118,31 @@ export function Over<A extends Dimensions, B extends Divisor<A>>(
 }
 
 /**
+ * Returns the reciprocal dimension, negating the exponents.
+ *
+ * `Reciprocal` is both a type:
+ * ```
+ *   type Time = {time: 1};
+ *   type Frequency = Reciprocal<Time>;
+ *   //   ^ {time: -1}
+ * ```
+ *
+ * And also a function:
+ * ```
+ *   const time = {time: 1};
+ *   const frequency = Reciprocal(time);
+ *   //   ^ {time: -1}
+ * ```
+ */
+export type Reciprocal<X extends Dimensions> = {
+  [K in keyof X]: exp.Negate<Get<X, K>>;
+};
+
+export function Reciprocal<X extends Dimensions>(x: X): Reciprocal<X> {
+  return combineExponents({}, x, (_, x) => -x) as Reciprocal<X>;
+}
+
+/**
  * Returns the types that can act as divisors of the given dimensions without
  * overflowing exponents.
  *

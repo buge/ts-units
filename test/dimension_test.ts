@@ -1,4 +1,4 @@
-import {Over, Times} from '../src/dimension';
+import {Dimensions, Over, Reciprocal, Times} from '../src/dimension';
 import {expect} from 'chai';
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -7,6 +7,9 @@ const t2: Times<{length: 1}, {time: -1}> = {length: 1, time: -1};
 const t3: Times<{length: 1}, {length: -1}> = {};
 const o1: Over<{length: 1}, {time: 1}> = {length: 1, time: -1};
 const o2: Over<{length: 1}, {length: 1}> = {};
+const r1: Reciprocal<{time: 1}> = {time: -1};
+const r2: Reciprocal<{length: 1; time: -2}> = {length: -1, time: 2};
+const r3: Reciprocal<Dimensions> = {};
 /* eslint-enable @typescript-eslint/no-unused-vars */
 
 describe('dimension', () => {
@@ -49,6 +52,18 @@ describe('dimension', () => {
       expect(() => Times(area, pretendVolumeIsArea)).to.throw(
         'Overflow in length'
       );
+    });
+  });
+
+  describe('Reciprocal', () => {
+    it('negates exponents', () => {
+      type Acceleration = {length: 1; time: -2};
+      const Acceleration: Acceleration = {length: 1, time: -2};
+
+      type Foo = {length: -1; time: 2};
+      const foo: Foo = Reciprocal(Acceleration);
+
+      expect(foo).to.deep.equal({length: -1, time: 2});
     });
   });
 });

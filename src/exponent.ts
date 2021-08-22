@@ -360,6 +360,32 @@ interface _Subtractable extends UnaryTable {
 }
 
 /**
+ * Returns the negative value of an exponent.
+ *
+ * For example:
+ *
+ * ```
+ *   type foo = Negate<3>;
+ *   //   ^ -3
+ *   type bar = Negate<undefined>;
+ *   //   ^ undefined
+ * ```
+ */
+export type Negate<X extends Exponent> = _Negate[UndefinedToZero<X>];
+
+interface _Negate extends UnaryTable {
+  [-4]: 4;
+  [-3]: 3;
+  [-2]: 2;
+  [-1]: 1;
+  [0]: undefined;
+  [1]: -1;
+  [2]: -2;
+  [3]: -3;
+  [4]: -4;
+}
+
+/**
  * Exponents as used in the arithmetic lookup tables in this file. This is the
  * same as `Exponent` but with `undefined` replaced by `0` since the first can
  * not be used as a property name of a JavaScript object.

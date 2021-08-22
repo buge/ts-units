@@ -1,4 +1,4 @@
-import {Add, Subtract, isExponent} from '../src/exponent';
+import {Add, Negate, Subtract, isExponent} from '../src/exponent';
 import {expect} from 'chai';
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -9,6 +9,9 @@ const s1: Subtract<4, 1> = 3;
 const s2: Subtract<2, 3> = -1;
 const s3: Subtract<2, undefined> = 2;
 const s4: Subtract<3, 3> = undefined;
+const n1: Negate<-2> = 2;
+const n2: Negate<3> = -3;
+const n3: Negate<undefined> = undefined;
 /* eslint-enable @typescript-eslint/no-unused-vars */
 
 describe('exponent', () => {
