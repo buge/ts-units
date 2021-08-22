@@ -244,7 +244,7 @@ const knots: Unit<Speed> = nauticalMiles.per(hours).withSymbol('kn');
 
 As shown above, you can configure the symbol for the unit using `withSymbol`
 that will be suffixed to the amount when printing a quantity using
-`toString()`. You can provide any arbitrary string. The symbol be retrieved
+`toString()`. You can provide any arbitrary string. The symbol can be retrieved
 from the unit using the `.symbol` property or from a quantity using
 `.unit.symbol`.
 
@@ -261,7 +261,7 @@ The supported SI prefixes are enumerated in `unit.SiPrefix`.
 ## Defining new Dimensions
 
 We provide units and dimensions for all SI base units and for many derived
-units and these can be used as building blocks for defining many other units.
+units. These can be used as building blocks for defining many other units.
 
 Sometimes, you’ll find yourself wanting to define units for a new substance or
 “thing” though.
