@@ -1,5 +1,7 @@
 # Physical Units for TypeScript
 
+![CI Build](https://github.com/buge/ts-units/actions/workflows/node.js.yml/badge.svg)
+
 `@buge/ts-units` is a package for modeling typed physical units in TypeScript.
 
 It allows you to tell users what you need in a typesafe manner
