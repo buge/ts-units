@@ -27,7 +27,7 @@ const t = celsius(21.3).in(fahrenheit);
 compared
 
 ```ts
-meters(1) < feet(4)
+meters(1) < feet(4);
 ```
 
 and used in mathematical expressions
@@ -61,7 +61,7 @@ Quantities provide a `toString()` method that allows them to be easily rendered
 to a string:
 
 ```ts
-celsius(23.1).toString()  // '23.1ºC'
+celsius(23.1).toString(); // '23.1ºC'
 ```
 
 For custom formatting, the amount and symbol can be easily extracted from the
@@ -70,8 +70,8 @@ quantity:
 ```ts
 const temp = celsius(23.1);
 const html =
-    `<span class="amount">${temp.amount.toFixed(1)}</span>` +
-    `<span class="symbol">${temp.unit.symbol}</span>`
+  `<span class="amount">${temp.amount.toFixed(1)}</span>` +
+  `<span class="symbol">${temp.unit.symbol}</span>`;
 ```
 
 ### Conversion
@@ -95,7 +95,7 @@ Quantities can be freely compared to one another using standard TypeScript
 operators (thanks to [`valueOf`](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/valueOf)):
 
 ```ts
-meters(1) < feet(4)
+meters(1) < feet(4);
 ```
 
 Because of the inprecision in floating point arithmetics, you should prefer to
@@ -103,7 +103,7 @@ use the `isCloseTo` method when checking a quantity for equality:
 
 ```ts
 // Returns whether 1m is within 0.01 feet of 3.28 feet.
-meters(1).isCloseTo(feet(3.28), 0.01)
+meters(1).isCloseTo(feet(3.28), 0.01);
 ```
 
 ### Addition and Subtracting
@@ -133,7 +133,14 @@ A special case are multiplications with dimensionless units which result in
 the same unit being returned:
 
 ```ts
-const length: Length = meters(5).times(percent(10));  // 0.5m
+const length: Length = meters(5).times(percent(10)); // 0.5m
+```
+
+You can square quantities and take their reciprocal:
+
+```ts
+const area: Area = meters(3).squared();
+const frequency: Frequency = seconds(3).reciprocal();
 ```
 
 ## Built-in Units
@@ -236,10 +243,14 @@ const yards: Unit<Length> = meters.times(0.9144).withSymbol('yd');
 ```
 
 Similar how quantities can be multiplied and divided you can create new derived
-units by multiplying them using `time` or dividing them using `per`:
+units by multiplying them using `time`, dividing them using `per`, squaring
+them using `squared` and taking their reciprocal using `reciprocal`.
 
 ```ts
 const knots: Unit<Speed> = nauticalMiles.per(hours).withSymbol('kn');
+const mps2: Unit<Acceleration> = meters
+  .per(seconds.squared())
+  .withSymbol('m/s²');
 ```
 
 As shown above, you can configure the symbol for the unit using `withSymbol`
@@ -253,7 +264,7 @@ scale the unit and prepend the prefix to the symbol.
 
 ```ts
 const microgram = gram.withSiPrefix('μ');
-microgram(2.13).toString();  // 2.13μg
+microgram(2.13).toString(); // 2.13μg
 ```
 
 The supported SI prefixes are enumerated in `unit.SiPrefix`.
@@ -266,11 +277,14 @@ units. These can be used as building blocks for defining many other units.
 Sometimes, you’ll find yourself wanting to define units for a new substance or
 “thing” though.
 
+<!-- prettier-ignore -->
 Measurable things are defined through “dimensions”. In scientific literature a
 dimension is often denoted with capital letters and square brackets. For
 example, the dimension of length is often denoted as <code>[L]</code>, that of
 area as <code>[L]<sup>2</sup></code> and that of speed as
 <code>[L][T]<sup>-1</sup></code>.
+
+<!-- prettier-ignore-end -->
 
 We ensure type safety by encoding the dimensions of units and quantities as
 [TypeScript Literal Types](https://www.typescriptlang.org/docs/handbook/2/everyday-types.html#literal-types).
@@ -279,7 +293,7 @@ For example, the dimension mentioned above are defined as:
 ```ts
 type Length = {length: 1};
 type Area = {length: 2};
-type Speed = {length: 1, time: -1};
+type Speed = {length: 1; time: -1};
 ```
 
 To define a new dimension, start by defining a literal type for it. You’ll
