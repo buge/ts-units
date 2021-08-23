@@ -412,6 +412,32 @@ interface _Double extends UnaryTable {
 }
 
 /**
+ * Returns the triple value of an exponent.
+ *
+ * For example:
+ *
+ * ```
+ *   type foo = Triple<1>;
+ *   //   ^ 3
+ *   type bar = Triple<-1>;
+ *   //   ^ -3
+ * ```
+ */
+export type Triple<X extends Exponent> = _Triple[UndefinedToZero<X>];
+
+interface _Triple extends UnaryTable {
+  [-4]: never;
+  [-3]: never;
+  [-2]: never;
+  [-1]: -3;
+  [0]: undefined;
+  [1]: 3;
+  [2]: never;
+  [3]: never;
+  [4]: never;
+}
+
+/**
  * Exponents as used in the arithmetic lookup tables in this file. This is the
  * same as `Exponent` but with `undefined` replaced by `0` since the first can
  * not be used as a property name of a JavaScript object.

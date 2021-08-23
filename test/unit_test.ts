@@ -10,6 +10,9 @@ const Length: Length = {length: 1};
 type Area = {length: 2};
 const Area: Area = {length: 2};
 
+type Volume = {length: 3};
+const Volume: Volume = {length: 3};
+
 type Time = {time: 1};
 const Time: Time = {time: 1};
 
@@ -168,6 +171,22 @@ describe('unit', () => {
 
         const squareFeet: Unit<Area> = feet.squared();
         expect(squareFeet.scale).to.be.closeTo(0.092903, 0.000001);
+      });
+    });
+
+    describe('cubed', () => {
+      it('triples exponents', () => {
+        const meters = makeUnit('m', Length);
+
+        const cubicMeter: Unit<Volume> = meters.cubed();
+        expect(cubicMeter.dimension).to.deep.equal({length: 3});
+      });
+
+      it('cubes the scale', () => {
+        const feet = makeUnit('m', Length).times(0.3048);
+
+        const cubicFeet: Unit<Volume> = feet.cubed();
+        expect(cubicFeet.scale).to.be.closeTo(0.028316, 0.000001);
       });
     });
   });
@@ -408,6 +427,20 @@ describe('unit', () => {
         const feet = makeUnit('m', Length).times(0.3048);
         const area = feet(3).squared();
         expect(area.unit.scale).to.be.closeTo(0.092903, 0.000001);
+      });
+    });
+
+    describe('cubed', () => {
+      it('cubes the amount', () => {
+        const meters = makeUnit('m', Length);
+        const volume = meters(3).cubed();
+        expect(volume.amount).to.be.closeTo(27, 0.001);
+      });
+
+      it('cubes the scale', () => {
+        const feet = makeUnit('m', Length).times(0.3048);
+        const volume = feet(3).cubed();
+        expect(volume.unit.scale).to.be.closeTo(0.028316, 0.000001);
       });
     });
 

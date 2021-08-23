@@ -118,6 +118,26 @@ export function Over<A extends Dimensions, B extends Divisor<A>>(
 }
 
 /**
+ * Returns the types that can act as divisors of the given dimensions without
+ * overflowing exponents.
+ *
+ * For example:
+ * ```
+ *   type Length = {length: 1};
+ *   type divisors = Divisors<Length>;
+ *   //   ^ {length?: -3 | -2 | -1 | 1 | 2 | 3 | 4}
+ * ```
+ *
+ * That is, if the divisor has a property `length` then it may only have an
+ * exponent `[-3, 4]` as `-4` would overflow the maximum permissible exponent
+ * of `4`.
+ */
+// prettier-ignore
+export type Divisor<A extends Dimensions> = Partial<{
+  [K in keyof A]: exp.Subtractable<Get<A, K>>;
+}> & Dimensions;
+
+/**
  * Returns the reciprocal dimension, negating the exponents.
  *
  * `Reciprocal` is both a type:
@@ -168,24 +188,29 @@ export function Squared<X extends Dimensions>(x: X): Squared<X> {
 }
 
 /**
- * Returns the types that can act as divisors of the given dimensions without
- * overflowing exponents.
+ * Returns the cubed dimension, tripling the exponents.
  *
- * For example:
+ * `Cubed` is both a type:
  * ```
  *   type Length = {length: 1};
- *   type divisors = Divisors<Length>;
- *   //   ^ {length?: -3 | -2 | -1 | 1 | 2 | 3 | 4}
+ *   type Volume = Cubed<Length>;
+ *   //   ^ {length: 3}
  * ```
  *
- * That is, if the divisor has a property `length` then it may only have an
- * exponent `[-3, 4]` as `-4` would overflow the maximum permissible exponent
- * of `4`.
+ * And also a function:
+ * ```
+ *   const length = {length: 1};
+ *   const volume = Cubed(length);
+ *   //   ^ {length: 3}
+ * ```
  */
-// prettier-ignore
-export type Divisor<A extends Dimensions> = Partial<{
-  [K in keyof A]: exp.Subtractable<Get<A, K>>;
-}> & Dimensions;
+export type Cubed<X extends Dimensions> = {
+  [K in keyof X]: exp.Triple<Get<X, K>>;
+};
+
+export function Cubed<X extends Dimensions>(x: X): Cubed<X> {
+  return combineExponents({}, x, (_, x) => 3 * x) as Cubed<X>;
+}
 
 /**
  * Retrieves the exponent of a given dimension in set of dimensions. Returns

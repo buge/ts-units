@@ -1,4 +1,5 @@
 import {
+  Cubed,
   Dimensions,
   Divisor,
   Multiplicand,
@@ -106,6 +107,16 @@ export interface Unit<D extends Dimensions> {
    * ```
    */
   squared(): Unit<Squared<D>>;
+
+  /**
+   * Returns the cubed unit of this one.
+   *
+   * Example:
+   * ```
+   * const cubicMeter = meters.cubed()
+   * ```
+   */
+  cubed(): Unit<Cubed<D>>;
 
   /**
    * Returns a copy of this unit using the given symbol.
@@ -309,6 +320,16 @@ export interface Quantity<D extends Dimensions> {
   squared(): Quantity<Squared<D>>;
 
   /**
+   * Returns the cubed quantity of this one.
+   *
+   * Example:
+   * ```
+   * const volume = meters(3).cubed();
+   * ```
+   */
+  cubed(): Quantity<Cubed<D>>;
+
+  /**
    * Returns whether this is a dimensionless quantity. Or, more accurately, a
    * quantity of dimension `[1]`.
    */
@@ -505,6 +526,17 @@ export function makeUnit<D extends Dimensions>(
     );
   };
 
+  unit.cubed = function (this: Unit<D>) {
+    if (this.offset) {
+      throw new Error(
+        `Cannot cube a unit with an offset (unit ${this.symbol} has ` +
+          `offset ${this.offset})`
+      );
+    }
+
+    return makeUnit(`${this.symbol}³`, Cubed(unit.dimension), this.scale ** 3);
+  };
+
   return unit;
 }
 
@@ -610,6 +642,10 @@ export function makeQuantity<D extends Dimensions>(
 
     squared: function () {
       return makeQuantity(this.amount ** 2, this.unit.squared());
+    },
+
+    cubed: function () {
+      return makeQuantity(this.amount ** 3, this.unit.cubed());
     },
 
     isDimensionless: function (this: Quantity<D>) {

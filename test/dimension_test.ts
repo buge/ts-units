@@ -1,4 +1,11 @@
-import {Dimensions, Over, Reciprocal, Squared, Times} from '../src/dimension';
+import {
+  Cubed,
+  Dimensions,
+  Over,
+  Reciprocal,
+  Squared,
+  Times
+} from '../src/dimension';
 import {expect} from 'chai';
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -79,6 +86,18 @@ describe('dimension', () => {
       const area: Area = Squared(Length);
 
       expect(area).to.deep.equal({length: 2});
+    });
+  });
+
+  describe('Cubed', () => {
+    it('triples exponents', () => {
+      type Length = {length: 1};
+      const Length: Length = {length: 1};
+
+      type Volume = {length: 3};
+      const volume: Volume = Cubed(Length);
+
+      expect(volume).to.deep.equal({length: 3});
     });
   });
 });
