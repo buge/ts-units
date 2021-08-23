@@ -386,6 +386,32 @@ interface _Negate extends UnaryTable {
 }
 
 /**
+ * Returns the double value of an exponent.
+ *
+ * For example:
+ *
+ * ```
+ *   type foo = Double<2>;
+ *   //   ^ 4
+ *   type bar = Double<-1>;
+ *   //   ^ -2
+ * ```
+ */
+export type Double<X extends Exponent> = _Double[UndefinedToZero<X>];
+
+interface _Double extends UnaryTable {
+  [-4]: never;
+  [-3]: never;
+  [-2]: -4;
+  [-1]: -2;
+  [0]: undefined;
+  [1]: 2;
+  [2]: 4;
+  [3]: never;
+  [4]: never;
+}
+
+/**
  * Exponents as used in the arithmetic lookup tables in this file. This is the
  * same as `Exponent` but with `undefined` replaced by `0` since the first can
  * not be used as a property name of a JavaScript object.

@@ -1,4 +1,4 @@
-import {Dimensions, Over, Reciprocal, Times} from '../src/dimension';
+import {Dimensions, Over, Reciprocal, Squared, Times} from '../src/dimension';
 import {expect} from 'chai';
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -10,6 +10,9 @@ const o2: Over<{length: 1}, {length: 1}> = {};
 const r1: Reciprocal<{time: 1}> = {time: -1};
 const r2: Reciprocal<{length: 1; time: -2}> = {length: -1, time: 2};
 const r3: Reciprocal<Dimensions> = {};
+const d1: Squared<{time: 1}> = {time: 2};
+const d2: Squared<{length: 1; time: -2}> = {length: 2, time: -4};
+const d3: Squared<Dimensions> = {};
 /* eslint-enable @typescript-eslint/no-unused-vars */
 
 describe('dimension', () => {
@@ -64,6 +67,18 @@ describe('dimension', () => {
       const foo: Foo = Reciprocal(Acceleration);
 
       expect(foo).to.deep.equal({length: -1, time: 2});
+    });
+  });
+
+  describe('Squared', () => {
+    it('doubles exponents', () => {
+      type Length = {length: 1};
+      const Length: Length = {length: 1};
+
+      type Area = {length: 2};
+      const area: Area = Squared(Length);
+
+      expect(area).to.deep.equal({length: 2});
     });
   });
 });

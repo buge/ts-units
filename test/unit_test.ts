@@ -7,6 +7,9 @@ const Temperature: Temperature = {temperature: 1};
 type Length = {length: 1};
 const Length: Length = {length: 1};
 
+type Area = {length: 2};
+const Area: Area = {length: 2};
+
 type Time = {time: 1};
 const Time: Time = {time: 1};
 
@@ -149,6 +152,22 @@ describe('unit', () => {
 
         const bpm: Unit<Frequency> = minutes.reciprocal();
         expect(bpm.scale).to.be.closeTo(0.01666, 0.00001);
+      });
+    });
+
+    describe('squared', () => {
+      it('doubles exponents', () => {
+        const meters = makeUnit('m', Length);
+
+        const squareMeter: Unit<Area> = meters.squared();
+        expect(squareMeter.dimension).to.deep.equal({length: 2});
+      });
+
+      it('squares the scale', () => {
+        const feet = makeUnit('m', Length).times(0.3048);
+
+        const squareFeet: Unit<Area> = feet.squared();
+        expect(squareFeet.scale).to.be.closeTo(0.092903, 0.000001);
       });
     });
   });
@@ -375,6 +394,20 @@ describe('unit', () => {
         const seconds = makeUnit('s', Time);
         const frequency = seconds(0).reciprocal();
         expect(frequency.amount).to.equal(Infinity);
+      });
+    });
+
+    describe('squared', () => {
+      it('squares the amount', () => {
+        const meters = makeUnit('m', Length);
+        const area = meters(3).squared();
+        expect(area.amount).to.be.closeTo(9, 0.001);
+      });
+
+      it('squares the scale', () => {
+        const feet = makeUnit('m', Length).times(0.3048);
+        const area = feet(3).squared();
+        expect(area.unit.scale).to.be.closeTo(0.092903, 0.000001);
       });
     });
 

@@ -4,6 +4,7 @@ import {
   Multiplicand,
   Over,
   Reciprocal,
+  Squared,
   Times
 } from './dimension';
 
@@ -95,6 +96,16 @@ export interface Unit<D extends Dimensions> {
    * ```
    */
   reciprocal(): Unit<Reciprocal<D>>;
+
+  /**
+   * Returns the squared unit of this one.
+   *
+   * Example:
+   * ```
+   * const squareMeter = meters.squared()
+   * ```
+   */
+  squared(): Unit<Squared<D>>;
 
   /**
    * Returns a copy of this unit using the given symbol.
@@ -288,6 +299,16 @@ export interface Quantity<D extends Dimensions> {
   reciprocal(): Quantity<Reciprocal<D>>;
 
   /**
+   * Returns the squared quantity of this one.
+   *
+   * Example:
+   * ```
+   * const area = meters(3).squared();
+   * ```
+   */
+  squared(): Quantity<Squared<D>>;
+
+  /**
    * Returns whether this is a dimensionless quantity. Or, more accurately, a
    * quantity of dimension `[1]`.
    */
@@ -469,6 +490,21 @@ export function makeUnit<D extends Dimensions>(
     );
   };
 
+  unit.squared = function (this: Unit<D>) {
+    if (this.offset) {
+      throw new Error(
+        `Cannot square a unit with an offset (unit ${this.symbol} has ` +
+          `offset ${this.offset})`
+      );
+    }
+
+    return makeUnit(
+      `${this.symbol}²`,
+      Squared(unit.dimension),
+      this.scale ** 2
+    );
+  };
+
   return unit;
 }
 
@@ -570,6 +606,10 @@ export function makeQuantity<D extends Dimensions>(
 
     reciprocal: function () {
       return makeQuantity(1 / this.amount, this.unit.reciprocal());
+    },
+
+    squared: function () {
+      return makeQuantity(this.amount ** 2, this.unit.squared());
     },
 
     isDimensionless: function (this: Quantity<D>) {

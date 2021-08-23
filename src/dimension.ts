@@ -143,6 +143,31 @@ export function Reciprocal<X extends Dimensions>(x: X): Reciprocal<X> {
 }
 
 /**
+ * Returns the squared dimension, doubling the exponents.
+ *
+ * `Squared` is both a type:
+ * ```
+ *   type Length = {length: 1};
+ *   type Area = Squared<Length>;
+ *   //   ^ {length: 2}
+ * ```
+ *
+ * And also a function:
+ * ```
+ *   const length = {length: 1};
+ *   const area = Squared(length);
+ *   //   ^ {length: 2}
+ * ```
+ */
+export type Squared<X extends Dimensions> = {
+  [K in keyof X]: exp.Double<Get<X, K>>;
+};
+
+export function Squared<X extends Dimensions>(x: X): Squared<X> {
+  return combineExponents({}, x, (_, x) => 2 * x) as Squared<X>;
+}
+
+/**
  * Returns the types that can act as divisors of the given dimensions without
  * overflowing exponents.
  *
