@@ -1,3 +1,7 @@
+// GENERATED FILE | DO NOT MODIFY
+//
+// Make changes instead to bin/generate_exponent.js and regenerate.
+
 /**
  * Defines valid dimensional exponents and arithmetic over them.
  *
@@ -62,7 +66,7 @@ export function isExponent(x: unknown): x is Exponent {
  * we return `never`:
  *
  * ```
- *   type foo = Add<3, 4>;
+ *   type foo = Add<4, 1>;
  *   //   ^ 'never'
  * ```
  */
@@ -218,7 +222,7 @@ interface _Addable extends UnaryTable {
  * we return `never`:
  *
  * ```
- *   type foo = Subtract<-2, 4>;
+ *   type foo = Subtract<-4, 1>;
  *   //   ^ 'never'
  * ```
  */
@@ -336,7 +340,7 @@ interface _Subtract extends BinaryTable {
  * For example:
  * ```
  *   type foo = Subtractable<3>;
- *   //   ^ -4 | -3 | -2 | -1 | undefined | 1
+ *   //   ^ -1 | undefined | 1 | 2 | 3 | 4
  */
 export type Subtractable<A extends Exponent> =
   // Note that this _could_ have been defined by:
