@@ -1,7 +1,7 @@
 import * as dimension from './dimension';
 import {Quantity, Unit} from '../../unit';
-import {ampere} from '../../electric/current';
-import {kilogram} from '../../mass';
+import {amperes} from '../../electric/current';
+import {kilograms} from '../../mass';
 import {meters} from '../../length';
 import {seconds} from '../../time';
 
@@ -9,8 +9,8 @@ import {seconds} from '../../time';
 export type Flux = Quantity<dimension.Flux>;
 
 /** The weber, symbol `Wb`, is the SI unit for magnetic flux. */
-export const weber: Unit<dimension.Flux> = kilogram
+export const webers: Unit<dimension.Flux> = kilograms
   .times(meters.squared())
   .per(seconds.squared())
-  .per(ampere)
+  .per(amperes)
   .withSymbol('Wb');

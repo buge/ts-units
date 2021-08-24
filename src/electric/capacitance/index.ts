@@ -1,7 +1,7 @@
 import * as dimension from './dimension';
 import {Quantity, SiPrefix, Unit} from '../../unit';
-import {ampere} from '../current';
-import {kilogram} from '../../mass';
+import {amperes} from '../current';
+import {kilograms} from '../../mass';
 import {meters} from '../../length';
 import {seconds} from '../../time';
 
@@ -9,14 +9,14 @@ import {seconds} from '../../time';
 export type Capacitance = Quantity<dimension.Capacitance>;
 
 /** The farad, symbol `F`, is the SI unit for electrical capacitance. */
-export const farad: Unit<dimension.Capacitance> = seconds
+export const farads: Unit<dimension.Capacitance> = seconds
   .squared()
   .squared()
-  .times(ampere.squared())
-  .per(kilogram)
+  .times(amperes.squared())
+  .per(kilograms)
   .per(meters.squared())
   .withSymbol('F');
 
-export const [microfarad, nanofarad, picofarad] = (
+export const [microfarads, nanofarads, picofarads] = (
   ['μ', 'n', 'p'] as SiPrefix[]
-).map(x => farad.withSiPrefix(x));
+).map(x => farads.withSiPrefix(x));

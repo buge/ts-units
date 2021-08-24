@@ -10,11 +10,9 @@ export type Time = Quantity<dimension.Time>;
  */
 export const seconds = makeUnit('s', dimension.Time);
 
-export const [milliseconds, microseconds, nanoseconds] = ([
-  'm',
-  'μ',
-  'n'
-] as SiPrefix[]).map(x => seconds.withSiPrefix(x));
+export const [milliseconds, microseconds, nanoseconds] = (
+  ['m', 'μ', 'n'] as SiPrefix[]
+).map(x => seconds.withSiPrefix(x));
 
 export const [s, msec, usec] = [
   seconds,

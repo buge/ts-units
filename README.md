@@ -181,22 +181,22 @@ steradians, squareDegrees
 ### Electrical Capacitance
 
 ```ts
-import {Capacitance, microfarad} from '@buge/ts-units/eletric/capacitance';
-const capacitance: Capacitance = microfarad(4700);
+import {Capacitance, microfarads} from '@buge/ts-units/eletric/capacitance';
+const capacitance: Capacitance = microfarads(4700);
 ```
 
 **Units:**\
-farad, microfarad, nanofarad, picofarad
+farads, microfarads, nanofarads, picofarads
 
 ### Electric Charge
 
 ```ts
-import {Charge, coulomb} from '@buge/ts-units/eletric/charge';
-const charge: Charge = coulomb(5000);
+import {Charge, coulombs} from '@buge/ts-units/eletric/charge';
+const charge: Charge = coulombs(5000);
 ```
 
 **Units:**\
-coulomb
+coulombs
 
 ### Electrical Conductance
 
@@ -211,62 +211,62 @@ siemens
 ### Electrical Current
 
 ```ts
-import {Current, ampere} from '@buge/ts-units/eletric/current';
-const current: Current = ampere(10);
+import {Current, amperes} from '@buge/ts-units/eletric/current';
+const current: Current = amperes(10);
 ```
 
 **Units:**\
-ampere
+amperes
 
 ### Electrical Inductance
 
 ```ts
-import {Inductance, henry} from '@buge/ts-units/eletric/inductance';
-const inductance: Inductance = henry(1);
+import {Inductance, henries} from '@buge/ts-units/eletric/inductance';
+const inductance: Inductance = henries(1);
 ```
 
 **Units:**\
-henry
+henries
 
 ### Electrical Resistance
 
 ```ts
-import {Resistance, ohm} from '@buge/ts-units/eletric/resistance';
-const resistance: Resistance = ohm(560);
+import {Resistance, ohms} from '@buge/ts-units/eletric/resistance';
+const resistance: Resistance = ohms(560);
 ```
 
 **Units:**\
-ohm
+ohms
 
 ### Electric Voltage
 
 ```ts
-import {Voltage, volt} from '@buge/ts-units/eletric/voltage';
-const voltage: Voltage = volt(220);
+import {Voltage, volts} from '@buge/ts-units/eletric/voltage';
+const voltage: Voltage = volts(220);
 ```
 
 **Units:**\
-volt
+volts
 
 ### Energy
 
 ```ts
-import {Energy, joule} from '@buge/ts-units/energy';
-const energy: Energy = joule(4.1868);
+import {Energy, joules} from '@buge/ts-units/energy';
+const energy: Energy = joules(4.1868);
 ```
 
 **Units:**\
-joule
+joules
 
 ### Force
 
 ```ts
-import {Force, newton} from '@buge/ts-units/force';
-const force: Force = newton(608);
+import {Force, newtons} from '@buge/ts-units/force';
+const force: Force = newtons(608);
 ```
 
 **Units:**\
-newton
+newtons
 
 ### Frequency
 
@@ -287,7 +287,7 @@ const length: Length = meters(5);
 
 **Metric Units:**\
 meters, kilometers, centimeters, millimeters, micrometers, nanometers,
-picometers, femtometers, fermi, angstrom, micron
+picometers, femtometers, fermi, angstroms, microns
 
 **Imperial Units:**\
 yards, feet, inches, chains, furlongs, miles
@@ -301,12 +301,12 @@ astronomicalUnits
 ### Luminous Flux
 
 ```ts
-import {Flux, lumen} from '@buge/ts-units/luminous/flux';
-const flux: Flux = lumen(800);
+import {Flux, lumes} from '@buge/ts-units/luminous/flux';
+const flux: Flux = lumens(800);
 ```
 
 **Units:**\
-lumen
+lumens
 
 ### Illuminance
 
@@ -321,32 +321,32 @@ lux
 ### Luminous Intensity
 
 ```ts
-import {Intensity, candela} from '@buge/ts-units/luminous/intensity';
-const intensity: Intensity = candela(135);
+import {Intensity, candelas} from '@buge/ts-units/luminous/intensity';
+const intensity: Intensity = candelas(135);
 ```
 
 **Units:**\
-candela
+candelas
 
 ### Magnetic Flux
 
 ```ts
-import {Flux, weber} from '@buge/ts-units/magnetic/flux';
-const flux: Flux = weber(800);
+import {Flux, webers} from '@buge/ts-units/magnetic/flux';
+const flux: Flux = webers(800);
 ```
 
 **Units:**\
-weber
+webers
 
 ### Mass
 
 ```ts
-import {Mass, kilogram} from '@buge/ts-units/mass';
-const mass: Mass = kilogram(5);
+import {Mass, kilograms} from '@buge/ts-units/mass';
+const mass: Mass = kilograms(5);
 ```
 
 **Units:**\
-kilogram, gram
+kilograms, grams
 
 ### Scalar
 
@@ -373,8 +373,8 @@ metersPerSecond, kilometersPerHour, milesPerHour, knots, feetPerSecond
 ### Power
 
 ```ts
-import {Power, watt} from '@buge/ts-units/power';
-const power: Power = watt(800);
+import {Power, watts} from '@buge/ts-units/power';
+const power: Power = watts(800);
 ```
 
 **Units:**\
@@ -383,33 +383,33 @@ watt
 ### Pressure
 
 ```ts
-import {Pressure, pascal} from '@buge/ts-units/pressure';
-const pressure: Pressure = pascal(101325);
+import {Pressure, pascals} from '@buge/ts-units/pressure';
+const pressure: Pressure = pascals(101325);
 ```
 
 **Units:**\
-pascal
+pascals
 
 ### Radioactivity
 
 ```ts
-import {Radioactivity, becquerel} from '@buge/ts-units/radioactive/decay';
-const radioactivity: Radioactivity = becquerel(20);
+import {Radioactivity, becquerels} from '@buge/ts-units/radioactive/decay';
+const radioactivity: Radioactivity = becquerels(20);
 ```
 
 **Units:**\
-becquerel
+becquerels
 
 ### Absorbed and Equivaelnt Doses of Ionizing Radiation
 
 ```ts
-import {Dose, gray, sievert} from '@buge/ts-units/radioactive/dose';
-const absorbed: Dose = gray(20e-6);
-const equivaelnt: Dose = sievert(1.5e-3);
+import {Dose, grays, sieverts} from '@buge/ts-units/radioactive/dose';
+const absorbed: Dose = grays(20e-6);
+const equivaelnt: Dose = sieverts(1.5e-3);
 ```
 
 **Units:**\
-gray, sievert
+grays, sieverts
 
 ### Temperature
 
@@ -461,8 +461,8 @@ We provide a dedicated method to create derived units with SI prefix that both
 scale the unit and prepend the prefix to the symbol.
 
 ```ts
-const microgram = gram.withSiPrefix('μ');
-microgram(2.13).toString(); // 2.13μg
+const micrograms = gram.withSiPrefix('μ');
+micrograms(2.13).toString(); // 2.13μg
 ```
 
 The supported SI prefixes are enumerated in `unit.SiPrefix`.
@@ -512,13 +512,13 @@ whether we are using the type or the value. We also store the dimension in a
 dimension vs. a `Length` as an amount of a quantity.
 
 Next, you will want to define a base unit for the dimension. Let’s take the
-USD as the base unit:
+US dollar as the base unit:
 
 ```ts
 // In money/units.ts
 import * as dimension from './dimension';
 export type Money = Quantity<dimension.Money>;
-export const usd: Unit<dimension.Money> = makeUnit('$', dimension.Money);
+export const dollars: Unit<dimension.Money> = makeUnit('$', dimension.Money);
 ```
 
 You can now use your new dimension and unit to define quantities:
@@ -537,10 +537,10 @@ may be compatible when the actually should not be:
 
 ```ts
 setFrequency(hertz(100));
-setFrequency(becquerel(100));
+setFrequency(becquerels(100));
 
-radiationAlarm(gray(2));
-radiationAlarm(sievert(2));
+radiationAlarm(grays(2));
+radiationAlarm(sieverts(2));
 ```
 
 _ISO 80000-1:2009(E)_ defines these as separate “kinds” but we currently

@@ -7,13 +7,13 @@ import {seconds} from '../../time';
 export type Dose = Quantity<dimension.Dose>;
 
 /** The gray, symbol `Gy`, is the SI unit for absorbed dose. */
-export const gray: Unit<dimension.Dose> = meters
+export const grays: Unit<dimension.Dose> = meters
   .squared()
   .per(seconds.squared())
   .withSymbol('Gy');
 
 /** The sievert, symbol `Sv`, is the SI unit for equivalent dose. */
-export const sievert: Unit<dimension.Dose> = meters
+export const sieverts: Unit<dimension.Dose> = meters
   .squared()
   .per(seconds.squared())
   .withSymbol('Sv');

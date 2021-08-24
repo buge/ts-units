@@ -1,7 +1,7 @@
 import * as dimension from './dimension';
 import {Quantity, Unit} from '../../unit';
-import {ampere} from '../current';
-import {kilogram} from '../../mass';
+import {amperes} from '../current';
+import {kilograms} from '../../mass';
 import {meters} from '../../length';
 import {seconds} from '../../time';
 
@@ -9,8 +9,8 @@ import {seconds} from '../../time';
 export type Resistance = Quantity<dimension.Resistance>;
 
 /** The ohm, symbol `Ω`, is the SI unit for electrical resistance. */
-export const ohms: Unit<dimension.Resistance> = kilogram
+export const ohms: Unit<dimension.Resistance> = kilograms
   .times(meters.squared())
   .per(seconds.cubed())
-  .per(ampere.squared())
+  .per(amperes.squared())
   .withSymbol('Ω');

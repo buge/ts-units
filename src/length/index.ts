@@ -23,8 +23,8 @@ export const [
 );
 
 export const fermi = femtometers;
-export const angstrom = meters.times(1e-10).withSymbol('Å');
-export const micron = micrometers;
+export const angstroms = meters.times(1e-10).withSymbol('Å');
+export const microns = micrometers;
 
 // Imperial units
 export const yards = meters.times(0.9144).withSymbol('yd');

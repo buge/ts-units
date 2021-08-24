@@ -1,6 +1,6 @@
 import * as dimension from './dimension';
 import {Quantity, Unit} from '../unit';
-import {kilogram} from '../mass';
+import {kilograms} from '../mass';
 import {meters} from '../length';
 import {seconds} from '../time';
 
@@ -8,7 +8,7 @@ import {seconds} from '../time';
 export type Energy = Quantity<dimension.Energy>;
 
 /** The joule, symbol `J`, is the SI unit for energy. */
-export const joule: Unit<dimension.Energy> = kilogram
+export const joules: Unit<dimension.Energy> = kilograms
   .times(meters.squared())
   .per(seconds.squared())
   .withSymbol('J');

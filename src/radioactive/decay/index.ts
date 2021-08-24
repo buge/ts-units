@@ -6,6 +6,6 @@ import {seconds} from '../../time';
 export type Radioactivity = Quantity<dimension.Radioactivity>;
 
 /** The becquerel, symbol `Bq`, is the SI unit for radioactivity. */
-export const becquerel: Unit<dimension.Radioactivity> = seconds
+export const becquerels: Unit<dimension.Radioactivity> = seconds
   .reciprocal()
   .withSymbol('Bq');

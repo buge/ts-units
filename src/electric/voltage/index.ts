@@ -1,7 +1,7 @@
 import * as dimension from './dimension';
 import {Quantity, Unit} from '../../unit';
-import {ampere} from '../current';
-import {kilogram} from '../../mass';
+import {amperes} from '../current';
+import {kilograms} from '../../mass';
 import {meters} from '../../length';
 import {seconds} from '../../time';
 
@@ -9,8 +9,8 @@ import {seconds} from '../../time';
 export type Voltage = Quantity<dimension.Voltage>;
 
 /** The volt, symbol `V`, is the SI unit for voltage. */
-export const volt: Unit<dimension.Voltage> = kilogram
+export const volts: Unit<dimension.Voltage> = kilograms
   .times(meters.squared())
   .per(seconds.cubed())
-  .per(ampere)
+  .per(amperes)
   .withSymbol('V');
