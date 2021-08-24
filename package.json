@@ -38,7 +38,8 @@
     "prepublishOnly": "npm test && npm run lint",
     "preversion": "npm run lint",
     "version": "npm run fix && git add -A src",
-    "postversion": "git push && git push --tags"
+    "postversion": "git push && git push --tags",
+    "release": "release-it"
   },
   "devDependencies": {
     "@types/chai": "^4.2.12",
@@ -51,6 +52,7 @@
     "eslint-plugin-prettier": "^3.1.4",
     "mocha": "^9.1.0",
     "prettier": "^2.1.1",
+    "release-it": "*",
     "ts-node": "^10.2.1",
     "typescript": "^4.1.6"
   }
