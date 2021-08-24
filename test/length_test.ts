@@ -1,5 +1,5 @@
 import {
-  angstrom,
+  angstroms,
   astronomicalUnits,
   centimeters,
   chains,
@@ -20,7 +20,7 @@ describe('length smoke tests', () => {
   const equalUnits = [
     {a: centimeters(123), b: meters(1.23)},
     {a: meters(1234), b: kilometers(1.234)},
-    {a: angstrom(123), b: nanometers(12.3)},
+    {a: angstroms(123), b: nanometers(12.3)},
     {a: centimeters(123), b: inches(48.4251968503937)},
     {a: centimeters(123), b: feet(4.035433070866142)},
     {a: meters(1234), b: yards(1349.5188101487315)},
