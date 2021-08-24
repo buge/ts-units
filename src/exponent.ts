@@ -32,7 +32,20 @@
  * arithmetic lookup tables a bit more complex since we need to convert between
  * `undefined` and `0` since `undefined` isn't a valid property name.
  */
-export type Exponent = -4 | -3 | -2 | -1 | undefined | 1 | 2 | 3 | 4;
+export type Exponent =
+  | -6
+  | -5
+  | -4
+  | -3
+  | -2
+  | -1
+  | undefined
+  | 1
+  | 2
+  | 3
+  | 4
+  | 5
+  | 6;
 
 /**
  * Type guard returning whether x is a valid Exponent.
@@ -47,7 +60,7 @@ export function isExponent(x: unknown): x is Exponent {
     return false;
   }
 
-  return [-4, -3, -2, -1, 1, 2, 3, 4].indexOf(x) >= 0;
+  return [-6, -5, -4, -3, -2, -1, 1, 2, 3, 4, 5, 6].indexOf(x) >= 0;
 }
 
 /**
@@ -66,7 +79,7 @@ export function isExponent(x: unknown): x is Exponent {
  * we return `never`:
  *
  * ```
- *   type foo = Add<4, 1>;
+ *   type foo = Add<6, 1>;
  *   //   ^ 'never'
  * ```
  */
@@ -75,31 +88,71 @@ export type Add<A extends Exponent, B extends Exponent> =
   _Add[UndefinedToZero<A>][UndefinedToZero<B>];
 
 interface _Add extends BinaryTable {
-  [-4]: {
+  [-6]: {
+    [-6]: never;
+    [-5]: never;
     [-4]: never;
     [-3]: never;
     [-2]: never;
     [-1]: never;
+    [0]: -6;
+    [1]: -5;
+    [2]: -4;
+    [3]: -3;
+    [4]: -2;
+    [5]: -1;
+    [6]: undefined;
+  };
+  [-5]: {
+    [-6]: never;
+    [-5]: never;
+    [-4]: never;
+    [-3]: never;
+    [-2]: never;
+    [-1]: -6;
+    [0]: -5;
+    [1]: -4;
+    [2]: -3;
+    [3]: -2;
+    [4]: -1;
+    [5]: undefined;
+    [6]: 1;
+  };
+  [-4]: {
+    [-6]: never;
+    [-5]: never;
+    [-4]: never;
+    [-3]: never;
+    [-2]: -6;
+    [-1]: -5;
     [0]: -4;
     [1]: -3;
     [2]: -2;
     [3]: -1;
     [4]: undefined;
+    [5]: 1;
+    [6]: 2;
   };
   [-3]: {
+    [-6]: never;
+    [-5]: never;
     [-4]: never;
-    [-3]: never;
-    [-2]: never;
+    [-3]: -6;
+    [-2]: -5;
     [-1]: -4;
     [0]: -3;
     [1]: -2;
     [2]: -1;
     [3]: undefined;
     [4]: 1;
+    [5]: 2;
+    [6]: 3;
   };
   [-2]: {
-    [-4]: never;
-    [-3]: never;
+    [-6]: never;
+    [-5]: never;
+    [-4]: -6;
+    [-3]: -5;
     [-2]: -4;
     [-1]: -3;
     [0]: -2;
@@ -107,9 +160,13 @@ interface _Add extends BinaryTable {
     [2]: undefined;
     [3]: 1;
     [4]: 2;
+    [5]: 3;
+    [6]: 4;
   };
   [-1]: {
-    [-4]: never;
+    [-6]: never;
+    [-5]: -6;
+    [-4]: -5;
     [-3]: -4;
     [-2]: -3;
     [-1]: -2;
@@ -118,8 +175,12 @@ interface _Add extends BinaryTable {
     [2]: 1;
     [3]: 2;
     [4]: 3;
+    [5]: 4;
+    [6]: 5;
   };
   [0]: {
+    [-6]: -6;
+    [-5]: -5;
     [-4]: -4;
     [-3]: -3;
     [-2]: -2;
@@ -129,8 +190,12 @@ interface _Add extends BinaryTable {
     [2]: 2;
     [3]: 3;
     [4]: 4;
+    [5]: 5;
+    [6]: 6;
   };
   [1]: {
+    [-6]: -5;
+    [-5]: -4;
     [-4]: -3;
     [-3]: -2;
     [-2]: -1;
@@ -139,9 +204,13 @@ interface _Add extends BinaryTable {
     [1]: 2;
     [2]: 3;
     [3]: 4;
-    [4]: never;
+    [4]: 5;
+    [5]: 6;
+    [6]: never;
   };
   [2]: {
+    [-6]: -4;
+    [-5]: -3;
     [-4]: -2;
     [-3]: -1;
     [-2]: undefined;
@@ -149,30 +218,70 @@ interface _Add extends BinaryTable {
     [0]: 2;
     [1]: 3;
     [2]: 4;
-    [3]: never;
-    [4]: never;
+    [3]: 5;
+    [4]: 6;
+    [5]: never;
+    [6]: never;
   };
   [3]: {
+    [-6]: -3;
+    [-5]: -2;
     [-4]: -1;
     [-3]: undefined;
     [-2]: 1;
     [-1]: 2;
     [0]: 3;
     [1]: 4;
-    [2]: never;
-    [3]: never;
+    [2]: 5;
+    [3]: 6;
     [4]: never;
+    [5]: never;
+    [6]: never;
   };
   [4]: {
+    [-6]: -2;
+    [-5]: -1;
     [-4]: undefined;
     [-3]: 1;
     [-2]: 2;
     [-1]: 3;
     [0]: 4;
+    [1]: 5;
+    [2]: 6;
+    [3]: never;
+    [4]: never;
+    [5]: never;
+    [6]: never;
+  };
+  [5]: {
+    [-6]: -1;
+    [-5]: undefined;
+    [-4]: 1;
+    [-3]: 2;
+    [-2]: 3;
+    [-1]: 4;
+    [0]: 5;
+    [1]: 6;
+    [2]: never;
+    [3]: never;
+    [4]: never;
+    [5]: never;
+    [6]: never;
+  };
+  [6]: {
+    [-6]: undefined;
+    [-5]: 1;
+    [-4]: 2;
+    [-3]: 3;
+    [-2]: 4;
+    [-1]: 5;
+    [0]: 6;
     [1]: never;
     [2]: never;
     [3]: never;
     [4]: never;
+    [5]: never;
+    [6]: never;
   };
 }
 
@@ -183,7 +292,7 @@ interface _Add extends BinaryTable {
  * For example:
  * ```
  *   type foo = Addable<3>;
- *   //   ^ -4 | -3 | -2 | -1 | undefined | 1
+ *   //   ^ -6 | -5 | -4 | -3 | -2 | -1 | undefined | 1 | 2 | 3
  */
 export type Addable<A extends Exponent> =
   // Note that this _could_ have been defined by:
@@ -195,15 +304,19 @@ export type Addable<A extends Exponent> =
   _Addable[UndefinedToZero<A>];
 
 interface _Addable extends UnaryTable {
-  [-4]: undefined | 1 | 2 | 3 | 4;
-  [-3]: -1 | undefined | 1 | 2 | 3 | 4;
-  [-2]: -2 | -1 | undefined | 1 | 2 | 3 | 4;
-  [-1]: -3 | -2 | -1 | undefined | 1 | 2 | 3 | 4;
-  [0]: -4 | -3 | -2 | -1 | undefined | 1 | 2 | 3 | 4;
-  [1]: -4 | -3 | -2 | -1 | undefined | 1 | 2 | 3;
-  [2]: -4 | -3 | -2 | -1 | undefined | 1 | 2;
-  [3]: -4 | -3 | -2 | -1 | undefined | 1;
-  [4]: -4 | -3 | -2 | -1 | undefined;
+  [-6]: undefined | 1 | 2 | 3 | 4 | 5 | 6;
+  [-5]: -1 | undefined | 1 | 2 | 3 | 4 | 5 | 6;
+  [-4]: -2 | -1 | undefined | 1 | 2 | 3 | 4 | 5 | 6;
+  [-3]: -3 | -2 | -1 | undefined | 1 | 2 | 3 | 4 | 5 | 6;
+  [-2]: -4 | -3 | -2 | -1 | undefined | 1 | 2 | 3 | 4 | 5 | 6;
+  [-1]: -5 | -4 | -3 | -2 | -1 | undefined | 1 | 2 | 3 | 4 | 5 | 6;
+  [0]: -6 | -5 | -4 | -3 | -2 | -1 | undefined | 1 | 2 | 3 | 4 | 5 | 6;
+  [1]: -6 | -5 | -4 | -3 | -2 | -1 | undefined | 1 | 2 | 3 | 4 | 5;
+  [2]: -6 | -5 | -4 | -3 | -2 | -1 | undefined | 1 | 2 | 3 | 4;
+  [3]: -6 | -5 | -4 | -3 | -2 | -1 | undefined | 1 | 2 | 3;
+  [4]: -6 | -5 | -4 | -3 | -2 | -1 | undefined | 1 | 2;
+  [5]: -6 | -5 | -4 | -3 | -2 | -1 | undefined | 1;
+  [6]: -6 | -5 | -4 | -3 | -2 | -1 | undefined;
 }
 
 /**
@@ -222,7 +335,7 @@ interface _Addable extends UnaryTable {
  * we return `never`:
  *
  * ```
- *   type foo = Subtract<-4, 1>;
+ *   type foo = Subtract<-6, 1>;
  *   //   ^ 'never'
  * ```
  */
@@ -232,29 +345,69 @@ export type Subtract<
 > = _Subtract[UndefinedToZero<A>][UndefinedToZero<B>];
 
 interface _Subtract extends BinaryTable {
+  [-6]: {
+    [-6]: undefined;
+    [-5]: -1;
+    [-4]: -2;
+    [-3]: -3;
+    [-2]: -4;
+    [-1]: -5;
+    [0]: -6;
+    [1]: never;
+    [2]: never;
+    [3]: never;
+    [4]: never;
+    [5]: never;
+    [6]: never;
+  };
+  [-5]: {
+    [-6]: 1;
+    [-5]: undefined;
+    [-4]: -1;
+    [-3]: -2;
+    [-2]: -3;
+    [-1]: -4;
+    [0]: -5;
+    [1]: -6;
+    [2]: never;
+    [3]: never;
+    [4]: never;
+    [5]: never;
+    [6]: never;
+  };
   [-4]: {
+    [-6]: 2;
+    [-5]: 1;
     [-4]: undefined;
     [-3]: -1;
     [-2]: -2;
     [-1]: -3;
     [0]: -4;
-    [1]: never;
-    [2]: never;
+    [1]: -5;
+    [2]: -6;
     [3]: never;
     [4]: never;
+    [5]: never;
+    [6]: never;
   };
   [-3]: {
+    [-6]: 3;
+    [-5]: 2;
     [-4]: 1;
     [-3]: undefined;
     [-2]: -1;
     [-1]: -2;
     [0]: -3;
     [1]: -4;
-    [2]: never;
-    [3]: never;
+    [2]: -5;
+    [3]: -6;
     [4]: never;
+    [5]: never;
+    [6]: never;
   };
   [-2]: {
+    [-6]: 4;
+    [-5]: 3;
     [-4]: 2;
     [-3]: 1;
     [-2]: undefined;
@@ -262,10 +415,14 @@ interface _Subtract extends BinaryTable {
     [0]: -2;
     [1]: -3;
     [2]: -4;
-    [3]: never;
-    [4]: never;
+    [3]: -5;
+    [4]: -6;
+    [5]: never;
+    [6]: never;
   };
   [-1]: {
+    [-6]: 5;
+    [-5]: 4;
     [-4]: 3;
     [-3]: 2;
     [-2]: 1;
@@ -274,9 +431,13 @@ interface _Subtract extends BinaryTable {
     [1]: -2;
     [2]: -3;
     [3]: -4;
-    [4]: never;
+    [4]: -5;
+    [5]: -6;
+    [6]: never;
   };
   [0]: {
+    [-6]: 6;
+    [-5]: 5;
     [-4]: 4;
     [-3]: 3;
     [-2]: 2;
@@ -286,9 +447,13 @@ interface _Subtract extends BinaryTable {
     [2]: -2;
     [3]: -3;
     [4]: -4;
+    [5]: -5;
+    [6]: -6;
   };
   [1]: {
-    [-4]: never;
+    [-6]: never;
+    [-5]: 6;
+    [-4]: 5;
     [-3]: 4;
     [-2]: 3;
     [-1]: 2;
@@ -297,10 +462,14 @@ interface _Subtract extends BinaryTable {
     [2]: -1;
     [3]: -2;
     [4]: -3;
+    [5]: -4;
+    [6]: -5;
   };
   [2]: {
-    [-4]: never;
-    [-3]: never;
+    [-6]: never;
+    [-5]: never;
+    [-4]: 6;
+    [-3]: 5;
     [-2]: 4;
     [-1]: 3;
     [0]: 2;
@@ -308,28 +477,68 @@ interface _Subtract extends BinaryTable {
     [2]: undefined;
     [3]: -1;
     [4]: -2;
+    [5]: -3;
+    [6]: -4;
   };
   [3]: {
+    [-6]: never;
+    [-5]: never;
     [-4]: never;
-    [-3]: never;
-    [-2]: never;
+    [-3]: 6;
+    [-2]: 5;
     [-1]: 4;
     [0]: 3;
     [1]: 2;
     [2]: 1;
     [3]: undefined;
     [4]: -1;
+    [5]: -2;
+    [6]: -3;
   };
   [4]: {
+    [-6]: never;
+    [-5]: never;
     [-4]: never;
     [-3]: never;
-    [-2]: never;
-    [-1]: never;
+    [-2]: 6;
+    [-1]: 5;
     [0]: 4;
     [1]: 3;
     [2]: 2;
     [3]: 1;
     [4]: undefined;
+    [5]: -1;
+    [6]: -2;
+  };
+  [5]: {
+    [-6]: never;
+    [-5]: never;
+    [-4]: never;
+    [-3]: never;
+    [-2]: never;
+    [-1]: 6;
+    [0]: 5;
+    [1]: 4;
+    [2]: 3;
+    [3]: 2;
+    [4]: 1;
+    [5]: undefined;
+    [6]: -1;
+  };
+  [6]: {
+    [-6]: never;
+    [-5]: never;
+    [-4]: never;
+    [-3]: never;
+    [-2]: never;
+    [-1]: never;
+    [0]: 6;
+    [1]: 5;
+    [2]: 4;
+    [3]: 3;
+    [4]: 2;
+    [5]: 1;
+    [6]: undefined;
   };
 }
 
@@ -340,7 +549,7 @@ interface _Subtract extends BinaryTable {
  * For example:
  * ```
  *   type foo = Subtractable<3>;
- *   //   ^ -1 | undefined | 1 | 2 | 3 | 4
+ *   //   ^ -3 | -2 | -1 | undefined | 1 | 2 | 3 | 4 | 5 | 6
  */
 export type Subtractable<A extends Exponent> =
   // Note that this _could_ have been defined by:
@@ -352,15 +561,19 @@ export type Subtractable<A extends Exponent> =
   _Subtractable[UndefinedToZero<A>];
 
 interface _Subtractable extends UnaryTable {
-  [-4]: -4 | -3 | -2 | -1 | undefined;
-  [-3]: -4 | -3 | -2 | -1 | undefined | 1;
-  [-2]: -4 | -3 | -2 | -1 | undefined | 1 | 2;
-  [-1]: -4 | -3 | -2 | -1 | undefined | 1 | 2 | 3;
-  [0]: -4 | -3 | -2 | -1 | undefined | 1 | 2 | 3 | 4;
-  [1]: -3 | -2 | -1 | undefined | 1 | 2 | 3 | 4;
-  [2]: -2 | -1 | undefined | 1 | 2 | 3 | 4;
-  [3]: -1 | undefined | 1 | 2 | 3 | 4;
-  [4]: undefined | 1 | 2 | 3 | 4;
+  [-6]: -6 | -5 | -4 | -3 | -2 | -1 | undefined;
+  [-5]: -6 | -5 | -4 | -3 | -2 | -1 | undefined | 1;
+  [-4]: -6 | -5 | -4 | -3 | -2 | -1 | undefined | 1 | 2;
+  [-3]: -6 | -5 | -4 | -3 | -2 | -1 | undefined | 1 | 2 | 3;
+  [-2]: -6 | -5 | -4 | -3 | -2 | -1 | undefined | 1 | 2 | 3 | 4;
+  [-1]: -6 | -5 | -4 | -3 | -2 | -1 | undefined | 1 | 2 | 3 | 4 | 5;
+  [0]: -6 | -5 | -4 | -3 | -2 | -1 | undefined | 1 | 2 | 3 | 4 | 5 | 6;
+  [1]: -5 | -4 | -3 | -2 | -1 | undefined | 1 | 2 | 3 | 4 | 5 | 6;
+  [2]: -4 | -3 | -2 | -1 | undefined | 1 | 2 | 3 | 4 | 5 | 6;
+  [3]: -3 | -2 | -1 | undefined | 1 | 2 | 3 | 4 | 5 | 6;
+  [4]: -2 | -1 | undefined | 1 | 2 | 3 | 4 | 5 | 6;
+  [5]: -1 | undefined | 1 | 2 | 3 | 4 | 5 | 6;
+  [6]: undefined | 1 | 2 | 3 | 4 | 5 | 6;
 }
 
 /**
@@ -378,6 +591,8 @@ interface _Subtractable extends UnaryTable {
 export type Negate<X extends Exponent> = _Negate[UndefinedToZero<X>];
 
 interface _Negate extends UnaryTable {
+  [-6]: 6;
+  [-5]: 5;
   [-4]: 4;
   [-3]: 3;
   [-2]: 2;
@@ -387,6 +602,8 @@ interface _Negate extends UnaryTable {
   [2]: -2;
   [3]: -3;
   [4]: -4;
+  [5]: -5;
+  [6]: -6;
 }
 
 /**
@@ -404,15 +621,19 @@ interface _Negate extends UnaryTable {
 export type Double<X extends Exponent> = _Double[UndefinedToZero<X>];
 
 interface _Double extends UnaryTable {
+  [-6]: never;
+  [-5]: never;
   [-4]: never;
-  [-3]: never;
+  [-3]: -6;
   [-2]: -4;
   [-1]: -2;
   [0]: undefined;
   [1]: 2;
   [2]: 4;
-  [3]: never;
+  [3]: 6;
   [4]: never;
+  [5]: never;
+  [6]: never;
 }
 
 /**
@@ -430,15 +651,19 @@ interface _Double extends UnaryTable {
 export type Triple<X extends Exponent> = _Triple[UndefinedToZero<X>];
 
 interface _Triple extends UnaryTable {
+  [-6]: never;
+  [-5]: never;
   [-4]: never;
   [-3]: never;
-  [-2]: never;
+  [-2]: -6;
   [-1]: -3;
   [0]: undefined;
   [1]: 3;
-  [2]: never;
+  [2]: 6;
   [3]: never;
   [4]: never;
+  [5]: never;
+  [6]: never;
 }
 
 /**

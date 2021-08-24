@@ -2,7 +2,7 @@
 /** Generates the exponent.ts file. */
 
 /** The maximum exponent to support. */
-const MAX_EXPONENT = 4;
+const MAX_EXPONENT = 6;
 
 function formatExp(num) {
   if (num < -MAX_EXPONENT || num > MAX_EXPONENT) {
@@ -93,7 +93,8 @@ const TEMPLATE = `// GENERATED FILE | DO NOT MODIFY
  * arithmetic lookup tables a bit more complex since we need to convert between
  * \`undefined\` and \`0\` since \`undefined\` isn't a valid property name.
  */
-export type Exponent = ${EXPONENTS.map(x => formatExp(x)).join(' | ')};
+export type Exponent =
+${EXPONENTS.map(x => '  | ' + formatExp(x)).join('\n')};
 
 /**
  * Type guard returning whether x is a valid Exponent.
