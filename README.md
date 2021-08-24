@@ -143,14 +143,21 @@ const area: Area = meters(3).squared();
 const frequency: Frequency = seconds(3).reciprocal();
 ```
 
+You can use the relationship between quantities to define unit conversions:
+
+```ts
+const riceDensity = grams(220).per(cup);
+const iNeed = grams(500).per(riceDensity).in(ounce);
+```
+
 ## Built-in Units
 
 Here’s a reference of all units that we currently have built-in to the library.
 
-### Angle
+### Planar Angles
 
 ```ts
-import {Angle, degrees, sin} from '@buge/ts-units/length';
+import {Angle, degrees, sin} from '@buge/ts-units/angle';
 const angle: Angle = degrees(30);
 const s = sin(angle);
 ```
@@ -160,6 +167,116 @@ radians, degrees, turns
 
 **Trigonometric Functions:**\
 sin, cos, tan, asin, acos, atan, atan2
+
+### Solid Angles
+
+```ts
+import {SolidAngle, steradians} from '@buge/ts-units/angle/solid';
+const angle: SolidAngle = steradians(1);
+```
+
+**Units:**\
+steradians, squareDegrees
+
+### Electrical Capacitance
+
+```ts
+import {Capacitance, microfarad} from '@buge/ts-units/eletric/capacitance';
+const capacitance: Capacitance = microfarad(4700);
+```
+
+**Units:**\
+farad, microfarad, nanofarad, picofarad
+
+### Electric Charge
+
+```ts
+import {Charge, coulomb} from '@buge/ts-units/eletric/charge';
+const charge: Charge = coulomb(5000);
+```
+
+**Units:**\
+coulomb
+
+### Electrical Conductance
+
+```ts
+import {Conductance, siemens} from '@buge/ts-units/eletric/conductance';
+const conductance: Conductance = siemens(0.2);
+```
+
+**Units:**\
+siemens
+
+### Electrical Current
+
+```ts
+import {Current, ampere} from '@buge/ts-units/eletric/current';
+const current: Current = ampere(10);
+```
+
+**Units:**\
+ampere
+
+### Electrical Inductance
+
+```ts
+import {Inductance, henry} from '@buge/ts-units/eletric/inductance';
+const inductance: Inductance = henry(1);
+```
+
+**Units:**\
+henry
+
+### Electrical Resistance
+
+```ts
+import {Resistance, ohm} from '@buge/ts-units/eletric/resistance';
+const resistance: Resistance = ohm(560);
+```
+
+**Units:**\
+ohm
+
+### Electric Voltage
+
+```ts
+import {Voltage, volt} from '@buge/ts-units/eletric/voltage';
+const voltage: Voltage = volt(220);
+```
+
+**Units:**\
+volt
+
+### Energy
+
+```ts
+import {Energy, joule} from '@buge/ts-units/energy';
+const energy: Energy = joule(4.1868);
+```
+
+**Units:**\
+joule
+
+### Force
+
+```ts
+import {Force, newton} from '@buge/ts-units/force';
+const force: Force = newton(608);
+```
+
+**Units:**\
+newton
+
+### Frequency
+
+```ts
+import {Frequency, hertz} from '@buge/ts-units/force';
+const frequency: Frequency = hertz(608);
+```
+
+**Units:**\
+hertz
 
 ### Length
 
@@ -180,6 +297,46 @@ fathoms, nauticalMiles
 
 **Astronomical Units:**\
 astronomicalUnits
+
+### Luminous Flux
+
+```ts
+import {Flux, lumen} from '@buge/ts-units/luminous/flux';
+const flux: Flux = lumen(800);
+```
+
+**Units:**\
+lumen
+
+### Illuminance
+
+```ts
+import {Illuminance, lux} from '@buge/ts-units/luminous/illuminance';
+const illuminance: Illuminance = lux(35000);
+```
+
+**Units:**\
+lux
+
+### Luminous Intensity
+
+```ts
+import {Intensity, candela} from '@buge/ts-units/luminous/intensity';
+const intensity: Intensity = candela(135);
+```
+
+**Units:**\
+candela
+
+### Magnetic Flux
+
+```ts
+import {Flux, weber} from '@buge/ts-units/magnetic/flux';
+const flux: Flux = weber(800);
+```
+
+**Units:**\
+weber
 
 ### Mass
 
@@ -212,6 +369,47 @@ const speed: Speed = metersPerSecond(343);
 
 **Units:**\
 metersPerSecond, kilometersPerHour, milesPerHour, knots, feetPerSecond
+
+### Power
+
+```ts
+import {Power, watt} from '@buge/ts-units/power';
+const power: Power = watt(800);
+```
+
+**Units:**\
+watt
+
+### Pressure
+
+```ts
+import {Pressure, pascal} from '@buge/ts-units/pressure';
+const pressure: Pressure = pascal(101325);
+```
+
+**Units:**\
+pascal
+
+### Radioactivity
+
+```ts
+import {Radioactivity, becquerel} from '@buge/ts-units/radioactive/decay';
+const radioactivity: Radioactivity = becquerel(20);
+```
+
+**Units:**\
+becquerel
+
+### Absorbed and Equivaelnt Doses of Ionizing Radiation
+
+```ts
+import {Dose, gray, sievert} from '@buge/ts-units/radioactive/dose';
+const absorbed: Dose = gray(20e-6);
+const equivaelnt: Dose = sievert(1.5e-3);
+```
+
+**Units:**\
+gray, sievert
 
 ### Temperature
 
@@ -327,4 +525,34 @@ You can now use your new dimension and unit to define quantities:
 
 ```ts
 const pleaseDonateToACharityOfYourChoice: Money = usd(10);
+```
+
+## Limitations
+
+### Lack of Kinds
+
+Two types are compatible if they share the same dimensions. That is, they can
+be reduced to the same base unit equivalents. This can mean that some things
+may be compatible when the actually should not be:
+
+```ts
+setFrequency(hertz(100));
+setFrequency(becquerel(100));
+
+radiationAlarm(gray(2));
+radiationAlarm(sievert(2));
+```
+
+_ISO 80000-1:2009(E)_ defines these as separate “kinds” but we currently
+provide no way to check for the kind of a quantity at compile time or
+runtime.
+
+In some cases we have taken the liberty to model the kind of a quantity as a
+different unit, specifically with planar angles and solid angles. While these
+are strictly a dimensionless quantity of `[L]/[L]` and `[L]^2/[L]^2`
+respectively, we model these as:
+
+```ts
+type Angle = {angle: 1};
+type SolidAngle = {angle: 2};
 ```
