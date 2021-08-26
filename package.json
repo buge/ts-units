@@ -4,6 +4,22 @@
   "description": "Physical Units for TypeScript",
   "author": "Philipp Bunge <buge@crimson.ch>",
   "license": "Apache-2.0",
+  "keywords": [
+    "physical",
+    "units",
+    "units",
+    "measure",
+    "measures",
+    "measurement",
+    "measurements",
+    "quantity",
+    "quantities",
+    "amount",
+    "amounts",
+    "SI",
+    "ISQ",
+    "metrology"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/buge/ts-units.git"
