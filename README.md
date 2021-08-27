@@ -137,23 +137,24 @@ the same unit being returned:
 const length: Length = meters(5).times(percent(10)); // 0.5m
 ```
 
-You can square quantities and take their reciprocal:
+You can square and cube quantities and take their reciprocal:
 
 ```ts
 const area: Area = meters(3).squared();
+const volume: Volume = meters(2).cubed();
 const frequency: Frequency = seconds(3).reciprocal();
 ```
 
 You can use the relationship between quantities to define unit conversions:
 
 ```ts
-const riceDensity = grams(220).per(cup);
-const iNeed = grams(500).per(riceDensity).in(ounce);
+const riceDensity = grams(220).per(cups);
+const iNeed = grams(500).per(riceDensity).in(ounces);
 ```
 
 ## Built-in Units
 
-Here’s a reference of all units that we currently have built-in to the library.
+Here’s a reference of all units that we currently have built in to the library.
 
 ### Planar Angles
 
@@ -443,7 +444,8 @@ const yards: Unit<Length> = meters.times(0.9144).withSymbol('yd');
 
 Similar how quantities can be multiplied and divided you can create new derived
 units by multiplying them using `time`, dividing them using `per`, squaring
-them using `squared` and taking their reciprocal using `reciprocal`.
+them using `squared`, cubing using `cubed` and taking their reciprocal using
+`reciprocal`.
 
 ```ts
 const knots: Unit<Speed> = nauticalMiles.per(hours).withSymbol('kn');
