@@ -180,6 +180,16 @@ const angle: SolidAngle = steradians(1);
 **Units:**\
 steradians, squareDegrees
 
+### Area
+
+```ts
+import {Area, squareMeters} from '@buge/ts-units/area';
+const area: Area = squareMeters(15);
+```
+
+**Units:**\
+squareMeters
+
 ### Electrical Capacitance
 
 ```ts
@@ -432,6 +442,16 @@ const time: Time = minutes(5);
 
 **Units:**\
 seconds, milliseconds (msec), microseconds (usec), nanoseconds, minutes, hours
+
+### Volume
+
+```ts
+import {Volume, cubicMeters} from '@buge/ts-units/volume';
+const volume: Volume = cubicMeters(3);
+```
+
+**Units:**\
+cubicMeters
 
 ## Defining new Units
 
