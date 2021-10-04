@@ -411,7 +411,7 @@ export function makeUnit<D extends Dimensions>(
   offset = 0
 ): Unit<D> {
   function unit(amount: number): Quantity<D> {
-    return makeQuantity<D>(amount, unit);
+    return new QuantityImpl<D>(amount, unit);
   }
 
   unit.symbol = symbol;
@@ -549,115 +549,110 @@ export function makeQuantity<D extends Dimensions>(
   amount: number,
   unit: Unit<D>
 ): Quantity<D> {
-  function times(other: number): Quantity<D>;
-  function times<D2 extends Multiplicand<D>>(
+  return new QuantityImpl(amount, unit);
+}
+
+class QuantityImpl<D extends Dimensions> implements Quantity<D> {
+  readonly dimension: D;
+
+  constructor(readonly amount: number, readonly unit: Unit<D>) {
+    this.dimension = unit.dimension;
+  }
+
+  isCloseTo(other: Quantity<D>, epsilon: number) {
+    return Math.abs(this.in(other.unit).amount - other.amount) < epsilon;
+  }
+
+  in(other: Unit<D>): Quantity<D> {
+    // If the unit requested is our unit, don't do any work.
+    if (this.unit === other) {
+      return this;
+    }
+
+    return new QuantityImpl(this.valueOf() / other.scale + other.offset, other);
+  }
+
+  plus(quantity: Quantity<D>) {
+    return new QuantityImpl(
+      this.in(quantity.unit).amount + quantity.amount,
+      quantity.unit
+    );
+  }
+
+  minus(quantity: Quantity<D>) {
+    return new QuantityImpl(
+      this.in(quantity.unit).amount - quantity.amount,
+      quantity.unit
+    );
+  }
+
+  times(other: number): Quantity<D>;
+  times<D2 extends Multiplicand<D>>(
     other: Quantity<D2>
   ): Quantity<Times<D, D2>>;
-  function times<D2 extends Multiplicand<D>>(
+  times<D2 extends Multiplicand<D>>(
     this: Quantity<D>,
     other: number | Quantity<D2>
   ): Quantity<D> | Quantity<Times<D, D2>> {
     if (typeof other === 'number') {
-      return makeQuantity(this.amount * other, this.unit);
+      return new QuantityImpl(this.amount * other, this.unit);
     }
 
     if (this.isDimensionless()) {
-      return makeQuantity(
+      return new QuantityImpl(
         other.amount * this.amount * this.unit.scale,
         other.unit
       ) as unknown as Quantity<Times<D, D2>>;
     }
 
     if (other.isDimensionless()) {
-      return makeQuantity(
+      return new QuantityImpl(
         this.amount * other.amount * other.unit.scale,
         this.unit
       ) as unknown as Quantity<Times<D, D2>>;
     }
 
-    return makeQuantity(
+    return new QuantityImpl(
       this.amount * other.amount,
       this.unit.times(other.unit)
     );
   }
 
-  return {
-    amount,
-    unit,
-
-    dimension: unit.dimension,
-
-    isCloseTo: function (
-      this: Quantity<D>,
-      other: Quantity<D>,
-      epsilon: number
-    ) {
-      return Math.abs(this.in(other.unit).amount - other.amount) < epsilon;
-    },
-
-    in: function (this: Quantity<D>, other: Unit<D>) {
-      // If the unit requested is our unit, don't do any work.
-      if (this.unit === other) {
-        return this;
-      }
-
-      return makeQuantity(this.valueOf() / other.scale + other.offset, other);
-    },
-
-    plus: function (this: Quantity<D>, quantity: Quantity<D>) {
-      return makeQuantity(
-        this.in(quantity.unit).amount + quantity.amount,
-        quantity.unit
-      );
-    },
-
-    minus: function (this: Quantity<D>, quantity: Quantity<D>) {
-      return makeQuantity(
-        this.in(quantity.unit).amount - quantity.amount,
-        quantity.unit
-      );
-    },
-
-    times: times,
-
-    per: function <D2 extends Divisor<D>>(
-      other: Quantity<D2>
-    ): Quantity<Over<D, D2>> {
-      if (other.isDimensionless()) {
-        return makeQuantity(
-          this.amount / other.amount / other.unit.scale,
-          this.unit
-        ) as unknown as Quantity<Over<D, D2>>;
-      }
-
-      return makeQuantity(
-        this.amount / other.amount,
-        this.unit.per(other.unit)
-      );
-    },
-
-    reciprocal: function () {
-      return makeQuantity(1 / this.amount, this.unit.reciprocal());
-    },
-
-    squared: function () {
-      return makeQuantity(this.amount ** 2, this.unit.squared());
-    },
-
-    cubed: function () {
-      return makeQuantity(this.amount ** 3, this.unit.cubed());
-    },
-
-    isDimensionless: function (this: Quantity<D>) {
-      return Object.keys(this.dimension).length === 0;
-    },
-
-    toString: function () {
-      return `${amount.toLocaleString(DEFAULT_LOCALE)}${unit.symbol}`;
-    },
-
-    valueOf: function () {
-      return (this.amount - this.unit.offset) * this.unit.scale;
+  per<D2 extends Divisor<D>>(other: Quantity<D2>): Quantity<Over<D, D2>> {
+    if (other.isDimensionless()) {
+      return new QuantityImpl(
+        this.amount / other.amount / other.unit.scale,
+        this.unit
+      ) as unknown as Quantity<Over<D, D2>>;
     }
-  };
+
+    return new QuantityImpl(
+      this.amount / other.amount,
+      this.unit.per(other.unit)
+    );
+  }
+
+  reciprocal() {
+    return new QuantityImpl(1 / this.amount, this.unit.reciprocal());
+  }
+
+  squared() {
+    return new QuantityImpl(this.amount ** 2, this.unit.squared());
+  }
+
+  cubed() {
+    return new QuantityImpl(this.amount ** 3, this.unit.cubed());
+  }
+
+  isDimensionless() {
+    return Object.keys(this.dimension).length === 0;
+  }
+
+  toString() {
+    return `${this.amount.toLocaleString(DEFAULT_LOCALE)}${this.unit.symbol}`;
+  }
+
+  valueOf() {
+    return (this.amount - this.unit.offset) * this.unit.scale;
+  }
 }
