@@ -1,0 +1,10 @@
+{
+  "spec": "-",
+  "kelonio/out/plugin/mochaReporter": {
+    "stdout": "-",
+    "options": {
+      "inferDescriptions": true,
+      "printReportAtEnd": true
+    }
+  }
+}
