@@ -410,23 +410,53 @@ export function makeUnit<D extends Dimensions>(
   scale = 1,
   offset = 0
 ): Unit<D> {
-  function unit(amount: number): Quantity<D> {
-    return new QuantityImpl<D>(amount, unit);
+  // Return a callable object that constructs a quantity of the given unit.
+  // See class comment for more details.
+  function makeQuantity(amount: number): Quantity<D> {
+    return new QuantityImpl<D>(amount, makeQuantity as Unit<D>);
   }
 
-  unit.symbol = symbol;
-  unit.dimension = dimension;
+  makeQuantity.symbol = symbol;
+  makeQuantity.dimension = dimension;
+  makeQuantity.scale = scale;
+  makeQuantity.offset = offset;
 
-  unit.scale = scale;
-  unit.offset = offset;
+  Object.setPrototypeOf(makeQuantity, UnitImpl.prototype);
+  return makeQuantity as unknown as Unit<D>;
+}
 
-  unit.withSymbol = function (this: Unit<D>, symbol: string): Unit<D> {
+/**
+ * Prototype for `Unit`s so that methods (e.g. `withSymbol`, `withOffset`, etc.)
+ * are only implemented once and passed to concrete units via prototype
+ * inheritance.
+ *
+ * Because units are callable for concise syntax (e.g. `meters(5)`) we need to
+ * employ a bit of a hack where this implementation extends `Function` and we
+ * set the prototype in `makeQuantity`. We _could_ have also returned a
+ * function with the prototype set from the constructor, but this makes it a
+ * bit clearer that this class is used only for its prototype.
+ */
+class UnitImpl<D extends Dimensions> extends Function implements UnitProps<D> {
+  readonly symbol: string;
+  readonly dimension: D;
+  readonly scale: number;
+  readonly offset: number;
+
+  constructor() {
+    super();
+    throw new Error(
+      'UnitImpl should never be instantiated but be used for its prototype ' +
+        'definition only.'
+    );
+  }
+
+  withSymbol(symbol: string): Unit<D> {
     return makeUnit(symbol, this.dimension, this.scale, this.offset);
-  };
+  }
 
-  unit.withOffset = function (this: Unit<D>, offset: number) {
+  withOffset(offset: number): Unit<D> {
     if (offset === 0) {
-      return this;
+      return this as unknown as Unit<D>;
     }
 
     const sign = offset > 0 ? '+' : '-';
@@ -436,30 +466,27 @@ export function makeUnit<D extends Dimensions>(
 
     return makeUnit(
       symbol,
-      dimension,
+      this.dimension,
       this.scale,
       this.offset / this.scale + offset
     );
-  };
+  }
 
-  unit.withSiPrefix = function (this: Unit<D>, prefix: SiPrefix): Unit<D> {
+  withSiPrefix(prefix: SiPrefix): Unit<D> {
     return this.times(1 * SI_PREFIX[prefix]).withSymbol(
       `${prefix}${this.symbol}`
     );
-  };
+  }
 
-  function times<D2 extends Multiplicand<D>>(
-    other: Unit<D2>
-  ): Unit<Times<D, D2>>;
-  function times(amount: number): Unit<D>;
-  function times<D2 extends Multiplicand<D>>(
-    this: Unit<D>,
+  times<D2 extends Multiplicand<D>>(other: Unit<D2>): Unit<Times<D, D2>>;
+  times(amount: number): Unit<D>;
+  times<D2 extends Multiplicand<D>>(
     amountOrUnit: number | Unit<D2>
   ): Unit<D> | Unit<Times<D, D2>> {
     if (typeof amountOrUnit === 'number') {
       return makeUnit(
-        symbol,
-        dimension,
+        this.symbol,
+        this.dimension,
         this.scale * amountOrUnit,
         this.offset
       );
@@ -475,13 +502,12 @@ export function makeUnit<D extends Dimensions>(
 
     return makeUnit(
       `${this.symbol}⋅${other.symbol}`,
-      Times(unit.dimension, other.dimension),
+      Times(this.dimension, other.dimension),
       this.scale * other.scale
     );
   }
-  unit.times = times;
 
-  unit.per = function <D2 extends Divisor<D>>(this: Unit<D>, other: Unit<D2>) {
+  per<D2 extends Divisor<D>>(this: Unit<D>, other: Unit<D2>) {
     if (this.offset || other.offset) {
       throw new Error(
         `Cannot divide units with offsets (unit ${this.symbol} has offset ` +
@@ -491,12 +517,12 @@ export function makeUnit<D extends Dimensions>(
 
     return makeUnit(
       `${this.symbol}/${other.symbol}`,
-      Over(unit.dimension, other.dimension),
+      Over(this.dimension, other.dimension),
       this.scale / other.scale
     );
-  };
+  }
 
-  unit.reciprocal = function (this: Unit<D>) {
+  reciprocal() {
     if (this.offset) {
       throw new Error(
         'Cannot take the reciprocal of a unit with offset (unit ' +
@@ -506,12 +532,12 @@ export function makeUnit<D extends Dimensions>(
 
     return makeUnit(
       `1/${this.symbol}`,
-      Reciprocal(unit.dimension),
+      Reciprocal(this.dimension),
       1 / this.scale
     );
-  };
+  }
 
-  unit.squared = function (this: Unit<D>) {
+  squared(this: Unit<D>) {
     if (this.offset) {
       throw new Error(
         `Cannot square a unit with an offset (unit ${this.symbol} has ` +
@@ -521,12 +547,12 @@ export function makeUnit<D extends Dimensions>(
 
     return makeUnit(
       `${this.symbol}²`,
-      Squared(unit.dimension),
+      Squared(this.dimension),
       this.scale ** 2
     );
-  };
+  }
 
-  unit.cubed = function (this: Unit<D>) {
+  cubed() {
     if (this.offset) {
       throw new Error(
         `Cannot cube a unit with an offset (unit ${this.symbol} has ` +
@@ -534,11 +560,20 @@ export function makeUnit<D extends Dimensions>(
       );
     }
 
-    return makeUnit(`${this.symbol}³`, Cubed(unit.dimension), this.scale ** 3);
-  };
-
-  return unit;
+    return makeUnit(`${this.symbol}³`, Cubed(this.dimension), this.scale ** 3);
+  }
 }
+
+/**
+ * Utility type that lists all properties of Unit<D> minus the callable one to
+ * ensure (at compile time) that `UnitImpl` implements all members that we want
+ * in the prototype.
+ *
+ * This works because `keyof Unit<D>` does not list the callable.
+ */
+type UnitProps<D extends Dimensions> = {
+  [P in keyof Unit<D>]: Unit<D>[P];
+};
 
 /**
  * Creates a new quantity.
