@@ -45,6 +45,7 @@
     "speed",
     "temperature",
     "time",
+    "volume",
     "*.d.ts",
     "*.js",
     "*.js.map"
