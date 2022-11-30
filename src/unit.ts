@@ -670,7 +670,9 @@ class QuantityImpl<D extends Dimensions> implements Quantity<D> {
 
   per(amount: number): Quantity<D>;
   per<D2 extends Divisor<D>>(quantity: Quantity<D2>): Quantity<Over<D, D2>>;
-  per<D2 extends Divisor<D>>(other: number | Quantity<D2>): Quantity<D> | Quantity<Over<D, D2>> {
+  per<D2 extends Divisor<D>>(
+    other: number | Quantity<D2>
+  ): Quantity<D> | Quantity<Over<D, D2>> {
     if (typeof other === 'number') {
       return new QuantityImpl(this.amount / other, this.unit);
     }
