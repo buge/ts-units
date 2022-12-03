@@ -244,6 +244,7 @@ export interface Quantity<D extends Dimensions> {
    *
    * @param quantity The quantity to add to this one.
    */
+  plus(quantity: number): Quantity<D>;
   plus(quantity: Quantity<D>): Quantity<D>;
 
   /**
@@ -257,6 +258,7 @@ export interface Quantity<D extends Dimensions> {
    *
    * @param quantity The quantity to subtract from this one.
    */
+  minus(quantity: number): Quantity<D>;
   minus(quantity: Quantity<D>): Quantity<D>;
 
   /**
@@ -297,6 +299,7 @@ export interface Quantity<D extends Dimensions> {
    *
    * @param quantity The quantity to divide this one with.
    */
+  per(quantity: number): Quantity<D>;
   per<D2 extends Divisor<D>>(quantity: Quantity<D2>): Quantity<Over<D, D2>>;
 
   /**
@@ -607,14 +610,26 @@ class QuantityImpl<D extends Dimensions> implements Quantity<D> {
     return new QuantityImpl(this.valueOf() / other.scale + other.offset, other);
   }
 
-  plus(quantity: Quantity<D>) {
+  plus(quantity: number): Quantity<D>;
+  plus(quantity: Quantity<D>): Quantity<D>;
+  plus(quantity: number | Quantity<D>) {
+    if (typeof quantity === 'number') {
+      return new QuantityImpl(this.amount + quantity, this.unit);
+    }
+
     return new QuantityImpl(
       this.in(quantity.unit).amount + quantity.amount,
       quantity.unit
     );
   }
 
-  minus(quantity: Quantity<D>) {
+  minus(quantity: number): Quantity<D>;
+  minus(quantity: Quantity<D>): Quantity<D>;
+  minus(quantity: number | Quantity<D>) {
+    if (typeof quantity === 'number') {
+      return new QuantityImpl(this.amount - quantity, this.unit);
+    }
+
     return new QuantityImpl(
       this.in(quantity.unit).amount - quantity.amount,
       quantity.unit
@@ -653,7 +668,15 @@ class QuantityImpl<D extends Dimensions> implements Quantity<D> {
     );
   }
 
-  per<D2 extends Divisor<D>>(other: Quantity<D2>): Quantity<Over<D, D2>> {
+  per(amount: number): Quantity<D>;
+  per<D2 extends Divisor<D>>(quantity: Quantity<D2>): Quantity<Over<D, D2>>;
+  per<D2 extends Divisor<D>>(
+    other: number | Quantity<D2>
+  ): Quantity<D> | Quantity<Over<D, D2>> {
+    if (typeof other === 'number') {
+      return new QuantityImpl(this.amount / other, this.unit);
+    }
+
     if (other.isDimensionless()) {
       return new QuantityImpl(
         this.amount / other.amount / other.unit.scale,

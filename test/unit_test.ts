@@ -284,23 +284,41 @@ describe('unit', () => {
         expect(length.amount).to.be.closeTo(13.8425, 0.0001);
         expect(length.unit).to.equal(feet);
       });
+    });
 
-      describe('minus', () => {
-        it('subtracts the amount', () => {
-          const meters = makeUnit('m', Length);
-          const length = meters(3).minus(meters(4));
-          expect(length.amount).to.equal(-1);
-          expect(length.unit).to.equal(meters);
-        });
+    describe('plus number', () => {
+      it('adds the amounts', () => {
+        const meters = makeUnit('m', Length);
+        const length = meters(5).plus(10);
+        expect(length.amount).to.equal(15);
+        expect(length.unit).to.equal(meters);
+      });
+    });
 
-        it('converts to the given unit', () => {
-          const meters = makeUnit('m', Length);
-          const feet = meters.times(0.3048);
+    describe('minus', () => {
+      it('subtracts the amount', () => {
+        const meters = makeUnit('m', Length);
+        const length = meters(3).minus(meters(4));
+        expect(length.amount).to.equal(-1);
+        expect(length.unit).to.equal(meters);
+      });
 
-          const length = meters(3).minus(feet(4));
-          expect(length.amount).to.be.closeTo(5.8425, 0.0001);
-          expect(length.unit).to.equal(feet);
-        });
+      it('converts to the given unit', () => {
+        const meters = makeUnit('m', Length);
+        const feet = meters.times(0.3048);
+
+        const length = meters(3).minus(feet(4));
+        expect(length.amount).to.be.closeTo(5.8425, 0.0001);
+        expect(length.unit).to.equal(feet);
+      });
+    });
+
+    describe('minus number', () => {
+      it('subtracts the amounts', () => {
+        const meters = makeUnit('m', Length);
+        const length = meters(15).minus(5);
+        expect(length.amount).to.equal(10);
+        expect(length.unit).to.equal(meters);
       });
     });
 
@@ -393,6 +411,15 @@ describe('unit', () => {
         const length = feet(50).per(percent(10));
         expect(length.amount).to.be.closeTo(500, 1e-10);
         expect(length.unit).to.equal(feet);
+      });
+    });
+
+    describe('per number', () => {
+      it('divides the amount', () => {
+        const meters = makeUnit('m', Length);
+        const length = meters(10).per(2);
+        expect(length.amount).to.equal(5);
+        expect(length.unit).to.equal(meters);
       });
     });
 
