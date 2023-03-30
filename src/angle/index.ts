@@ -1,63 +1,90 @@
 import * as dimension from './dimension';
-import {Quantity, makeUnit} from '../unit';
+import {Arithmetic, NativeArithmetic} from '../arithmetic';
+import {Quantity, makeUnitFactory} from '../unit';
 
 export type Angle<NumberType = number> = Quantity<NumberType, dimension.Angle>;
 
-export const radians = makeUnit('rad', dimension.Angle);
-export const degrees = radians.times(Math.PI / 180).withSymbol('º');
+export function withValueType<NumberType>(arithmetic: Arithmetic<NumberType>) {
+  const {makeUnit} = makeUnitFactory(arithmetic);
+  const {toNative, sin, cos, tan, asin, acos, atan, atan2} = arithmetic;
 
-export const turns = radians.times(2 * Math.PI).withSymbol('τ');
+  class WithValueType {
+    private constructor() {}
 
-/**
- * Returns the sine of an angle.
- * @param x An Angle
- */
-export const sin = liftUnary(Math.sin);
+    static radians = makeUnit('rad', dimension.Angle);
+    static degrees = WithValueType.radians
+      .times(Math.PI)
+      .per(180)
+      .withSymbol('º');
 
-/**
- * Returns the cosine of an angle.
- * @param x An Angle
- */
-export const cos = liftUnary(Math.cos);
+    static turns = WithValueType.radians
+      .times(2)
+      .times(Math.PI)
+      .withSymbol('τ');
 
-/**
- * Returns the tangent of an angle.
- * @param x An Angle
- */
-export const tan = liftUnary(Math.tan);
+    /**
+     * Returns the sine of an angle.
+     * @param x An Angle
+     */
+    static sin = liftUnary(sin);
 
-/**
- * Returns the arcsine of a number.
- * @param x A numeric expression.
- */
-export const asin = liftRet(Math.asin);
+    /**
+     * Returns the cosine of an angle.
+     * @param x An Angle
+     */
+    static cos = liftUnary(cos);
 
-/**
- * Returns the arc cosine (or inverse cosine) of a number.
- * @param x A numeric expression.
- */
-export const acos = liftRet(Math.acos);
+    /**
+     * Returns the tangent of an angle.
+     * @param x An Angle
+     */
+    static tan = liftUnary(tan);
 
-/**
- * Returns the arctangent of a number.
- * @param x A numeric expression.
- */
-export const atan = liftRet(Math.atan);
+    /**
+     * Returns the arcsine of a number.
+     * @param x A numeric expression.
+     */
+    static asin = liftRet(asin);
 
-/**
- * Returns the angle from the X axis to a point.
- *
- * @param x A numeric expression representing the cartesian x-coordinate.
- * @param y A numeric expression representing the cartesian y-coordinate.
- */
-export function atan2(x: number, y: number): Angle {
-  return radians(Math.atan2(x, y));
+    /**
+     * Returns the arc cosine (or inverse cosine) of a number.
+     * @param x A numeric expression.
+     */
+    static acos = liftRet(acos);
+
+    /**
+     * Returns the arctangent of a number.
+     * @param x A numeric expression.
+     */
+    static atan = liftRet(atan);
+
+    /**
+     * Returns the angle from the X axis to a point.
+     *
+     * @param x A numeric expression representing the cartesian x-coordinate.
+     * @param y A numeric expression representing the cartesian y-coordinate.
+     */
+    static atan2(x: NumberType, y: NumberType): Angle<NumberType> {
+      // TODO: Ideally, we should not use toNative here
+      return WithValueType.radians(toNative(atan2(x, y)));
+    }
+  }
+
+  function liftRet(
+    f: (x: NumberType) => NumberType
+  ): (x: NumberType) => Angle<NumberType> {
+    // TODO: Ideally, we should not use toNative here
+    return x => WithValueType.radians(toNative(f(x)));
+  }
+
+  function liftUnary(
+    f: (x: NumberType) => NumberType
+  ): (x: Angle<NumberType>) => NumberType {
+    return x => f(x.in(WithValueType.radians).amount);
+  }
+
+  return WithValueType;
 }
 
-function liftRet(f: (x: number) => number): (x: number) => Angle {
-  return x => radians(f(x));
-}
-
-function liftUnary(f: (x: number) => number): (x: Angle) => number {
-  return x => f(x.in(radians).amount);
-}
+export const {radians, degrees, turns, sin, cos, tan, asin, acos, atan, atan2} =
+  withValueType(NativeArithmetic);

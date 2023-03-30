@@ -50,6 +50,27 @@ export const StringArithmetic: Arithmetic<string> = {
   },
   compare: function (left: string, right: string): number {
     return Number(left) - Number(right);
+  },
+  sin: function (value: string): string {
+    return Math.sin(Number(value)).toString();
+  },
+  cos: function (value: string): string {
+    return Math.cos(Number(value)).toString();
+  },
+  tan: function (value: string): string {
+    return Math.tan(Number(value)).toString();
+  },
+  asin: function (value: string): string {
+    return Math.asin(Number(value)).toString();
+  },
+  acos: function (value: string): string {
+    return Math.acos(Number(value)).toString();
+  },
+  atan: function (value: string): string {
+    return Math.atan(Number(value)).toString();
+  },
+  atan2: function (left: string, right: string): string {
+    return Math.atan2(Number(left), Number(right)).toString();
   }
 };
 

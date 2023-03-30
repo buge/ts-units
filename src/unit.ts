@@ -442,7 +442,6 @@ export const makeUnitFactory = <NumberType>(
   ): Unit<NumberType, D> {
     // Return a callable object that constructs a quantity of the given unit.
     // See class comment for more details.
-    // TODO: Check type of Amount
     function makeQuantity(amount: number): Quantity<NumberType, D> {
       return new QuantityImpl<D>(
         fromNative(amount),

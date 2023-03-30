@@ -1,25 +1,47 @@
 import * as dimension from './dimension';
-import {Quantity, SiPrefix, makeUnit} from '../unit';
+import {Arithmetic, NativeArithmetic} from '../arithmetic';
+import {Quantity, makeUnitFactory} from '../unit';
 
 /** A quantity of time. */
 export type Time<NumberType = number> = Quantity<NumberType, dimension.Time>;
 
-/**
- * The second, symbol `s`, is the SI base unit of time. All other units in
- * this module are defined as scaled values of the second.
- */
-export const seconds = makeUnit('s', dimension.Time);
+export function withValueType<NumberType>(arithmetic: Arithmetic<NumberType>) {
+  const {makeUnit} = makeUnitFactory(arithmetic);
 
-export const [milliseconds, microseconds, nanoseconds] = (
-  ['m', 'μ', 'n'] as SiPrefix[]
-).map(x => seconds.withSiPrefix(x));
+  class WithValueType {
+    private constructor() {}
 
-export const [s, msec, usec] = [
+    /**
+     * The second, symbol `s`, is the SI base unit of time. All other units in
+     * this module are defined as scaled values of the second.
+     */
+    static seconds = makeUnit('s', dimension.Time);
+
+    static milliseconds = WithValueType.seconds.withSiPrefix('m');
+    static microseconds = WithValueType.seconds.withSiPrefix('μ');
+    static nanoseconds = WithValueType.seconds.withSiPrefix('n');
+
+    static s = WithValueType.seconds;
+    static msec = WithValueType.milliseconds;
+    static usec = WithValueType.microseconds;
+    static nsec = WithValueType.nanoseconds;
+
+    static minutes = WithValueType.seconds.times(60).withSymbol('m');
+    static hours = WithValueType.minutes.times(60).withSymbol('h');
+  }
+
+  return WithValueType;
+}
+
+export const {
   seconds,
   milliseconds,
   microseconds,
-  nanoseconds
-];
-
-export const minutes = seconds.times(60).withSymbol('m');
-export const hours = minutes.times(60).withSymbol('h');
+  nanoseconds,
+  s,
+  msec,
+  usec,
+  nsec,
+  minutes,
+  hours
+} = withValueType(NativeArithmetic);

@@ -16,7 +16,7 @@
     "@typescript-eslint/explicit-module-boundary-types": [
       "warn",
       {
-        "allowedNames": ["makeUnitFactory"]
+        "allowedNames": ["makeUnitFactory", "withValueType"]
       }
     ],
     "@typescript-eslint/no-empty-function": [

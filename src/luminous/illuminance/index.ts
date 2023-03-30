@@ -1,7 +1,8 @@
 import * as dimension from './dimension';
+import {Arithmetic, NativeArithmetic} from '../../arithmetic';
 import {Quantity, Unit} from '../../unit';
-import {candelas} from '../intensity';
-import {meters} from '../../length';
+import {withValueType as intensityWithValueType} from '../intensity';
+import {withValueType as lengthWithValueType} from '../../length';
 
 /** A quantity of illuminance. */
 export type Illuminance<NumberType = number> = Quantity<
@@ -9,7 +10,20 @@ export type Illuminance<NumberType = number> = Quantity<
   dimension.Illuminance
 >;
 
-/** The lux, symbol `lx`, is the SI unit for illuminance. */
-export const lux: Unit<number, dimension.Illuminance> = candelas
-  .per(meters.squared())
-  .withSymbol('lx');
+export function withValueType<NumberType>(arithmetic: Arithmetic<NumberType>) {
+  const {candelas} = intensityWithValueType(arithmetic);
+  const {meters} = lengthWithValueType(arithmetic);
+
+  class WithValueType {
+    private constructor() {}
+
+    /** The lux, symbol `lx`, is the SI unit for illuminance. */
+    static lux: Unit<NumberType, dimension.Illuminance> = candelas
+      .per(meters.squared())
+      .withSymbol('lx');
+  }
+
+  return WithValueType;
+}
+
+export const {lux} = withValueType(NativeArithmetic);

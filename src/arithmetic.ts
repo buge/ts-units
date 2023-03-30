@@ -11,6 +11,15 @@ export interface Arithmetic<NumberType> {
   // 0 => left === 0
   // -1 => left < right
   compare(left: NumberType, right: NumberType): number;
+
+  // Needed for the calculation of angles
+  sin(value: NumberType): NumberType;
+  cos(value: NumberType): NumberType;
+  tan(value: NumberType): NumberType;
+  asin(value: NumberType): NumberType;
+  acos(value: NumberType): NumberType;
+  atan(value: NumberType): NumberType;
+  atan2(left: NumberType, right: NumberType): NumberType;
 }
 
 export const NativeArithmetic: Arithmetic<number> = {
@@ -40,5 +49,26 @@ export const NativeArithmetic: Arithmetic<number> = {
   },
   compare: function (left: number, right: number): number {
     return left - right;
+  },
+  sin: function (value: number): number {
+    return Math.sin(value);
+  },
+  cos: function (value: number): number {
+    return Math.cos(value);
+  },
+  tan: function (value: number): number {
+    return Math.tan(value);
+  },
+  asin: function (value: number): number {
+    return Math.asin(value);
+  },
+  acos: function (value: number): number {
+    return Math.acos(value);
+  },
+  atan: function (value: number): number {
+    return Math.atan(value);
+  },
+  atan2: function (left: number, right: number): number {
+    return Math.atan2(left, right);
   }
 };
