@@ -5,10 +5,10 @@ import {meters} from '../length';
 import {seconds} from '../time';
 
 /** A quantity of force. */
-export type Force = Quantity<dimension.Force>;
+export type Force<NumberType = number> = Quantity<NumberType, dimension.Force>;
 
 /** The newton, symbol `N`, is the SI unit for force. */
-export const newtons: Unit<dimension.Force> = kilograms
+export const newtons: Unit<number, dimension.Force> = kilograms
   .times(meters)
   .per(seconds.squared())
   .withSymbol('N');

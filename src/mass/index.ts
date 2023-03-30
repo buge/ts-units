@@ -2,7 +2,7 @@ import * as dimension from './dimension';
 import {Quantity, makeUnit} from '../unit';
 
 /** A quantity of mass. */
-export type Mass = Quantity<dimension.Mass>;
+export type Mass<NumberType = number> = Quantity<NumberType, dimension.Mass>;
 
 /**
  * The kilogram, symbol `kg` is the SI base unit of mass. All other units in

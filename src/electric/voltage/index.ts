@@ -6,10 +6,13 @@ import {meters} from '../../length';
 import {seconds} from '../../time';
 
 /** A quantity of voltage. */
-export type Voltage = Quantity<dimension.Voltage>;
+export type Voltage<NumberType = number> = Quantity<
+  NumberType,
+  dimension.Voltage
+>;
 
 /** The volt, symbol `V`, is the SI unit for voltage. */
-export const volts: Unit<dimension.Voltage> = kilograms
+export const volts: Unit<number, dimension.Voltage> = kilograms
   .times(meters.squared())
   .per(seconds.cubed())
   .per(amperes)

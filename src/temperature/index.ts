@@ -2,7 +2,10 @@ import * as dimension from './dimension';
 import {Quantity, makeUnit} from '../unit';
 
 /** A quantity of thermodynamic temperature. */
-export type Temperature = Quantity<dimension.Temperature>;
+export type Temperature<NumberType = number> = Quantity<
+  NumberType,
+  dimension.Temperature
+>;
 
 /**
  * The kelvin, symbol `K`, is the SI unit of thermodynamic temperature. All

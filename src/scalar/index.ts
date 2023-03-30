@@ -1,7 +1,7 @@
 import * as dimension from '../dimension';
 import {Quantity, makeUnit} from '../unit';
 
-export type Scalar = Quantity<dimension.One>;
+export type Scalar<NumberType = number> = Quantity<NumberType, dimension.One>;
 export const scalar = makeUnit('', dimension.One);
 
 export const percent = scalar.times(1e-2).withSymbol('%');

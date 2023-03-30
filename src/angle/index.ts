@@ -1,7 +1,7 @@
 import * as dimension from './dimension';
 import {Quantity, makeUnit} from '../unit';
 
-export type Angle = Quantity<dimension.Angle>;
+export type Angle<NumberType = number> = Quantity<NumberType, dimension.Angle>;
 
 export const radians = makeUnit('rad', dimension.Angle);
 export const degrees = radians.times(Math.PI / 180).withSymbol('º');

@@ -5,10 +5,10 @@ import {meters} from '../length';
 import {seconds} from '../time';
 
 /** A quantity of power. */
-export type Power = Quantity<dimension.Power>;
+export type Power<NumberType = number> = Quantity<NumberType, dimension.Power>;
 
 /** The watt, symbol `W`, is the SI unit for power. */
-export const watts: Unit<dimension.Power> = kilograms
+export const watts: Unit<number, dimension.Power> = kilograms
   .times(meters.squared())
   .per(seconds.cubed())
   .withSymbol('W');

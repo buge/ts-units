@@ -12,7 +12,19 @@
   ],
   "rules": {
     "prettier/prettier": ["error"],
-    "sort-imports": ["error"]
+    "sort-imports": ["error"],
+    "@typescript-eslint/explicit-module-boundary-types": [
+      "warn",
+      {
+        "allowedNames": ["makeUnitFactory"]
+      }
+    ],
+    "@typescript-eslint/no-empty-function": [
+      "error",
+      {
+        "allow": ["private-constructors"]
+      }
+    ]
   },
   "overrides": [
     {

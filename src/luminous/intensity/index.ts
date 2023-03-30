@@ -2,7 +2,10 @@ import * as dimension from './dimension';
 import {Quantity, makeUnit} from '../../unit';
 
 /** A quantity of luminous intensity. */
-export type Intensity = Quantity<dimension.Intensity>;
+export type Intensity<NumberType = number> = Quantity<
+  NumberType,
+  dimension.Intensity
+>;
 
 /**
  * The candela, symbol `cd`, is the SI base unit of luminous intensity. All

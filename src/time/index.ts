@@ -2,7 +2,7 @@ import * as dimension from './dimension';
 import {Quantity, SiPrefix, makeUnit} from '../unit';
 
 /** A quantity of time. */
-export type Time = Quantity<dimension.Time>;
+export type Time<NumberType = number> = Quantity<NumberType, dimension.Time>;
 
 /**
  * The second, symbol `s`, is the SI base unit of time. All other units in

@@ -6,10 +6,13 @@ import {meters} from '../../length';
 import {seconds} from '../../time';
 
 /** A quantity of electrical capacitance. */
-export type Capacitance = Quantity<dimension.Capacitance>;
+export type Capacitance<NumberType = number> = Quantity<
+  NumberType,
+  dimension.Capacitance
+>;
 
 /** The farad, symbol `F`, is the SI unit for electrical capacitance. */
-export const farads: Unit<dimension.Capacitance> = seconds
+export const farads: Unit<number, dimension.Capacitance> = seconds
   .squared()
   .squared()
   .times(amperes.squared())

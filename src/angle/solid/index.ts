@@ -1,7 +1,10 @@
 import * as dimension from './dimension';
 import {Quantity, makeUnit} from '../../unit';
 
-export type SolidAngle = Quantity<dimension.SolidAngle>;
+export type SolidAngle<NumberType = number> = Quantity<
+  NumberType,
+  dimension.SolidAngle
+>;
 
 export const steradians = makeUnit('sr', dimension.SolidAngle);
 export const squareDegrees = steradians

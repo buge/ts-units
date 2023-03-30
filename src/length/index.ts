@@ -2,7 +2,10 @@ import * as dimension from './dimension';
 import {Quantity, SiPrefix, makeUnit} from '../unit';
 
 /** A quantity of length. */
-export type Length = Quantity<dimension.Length>;
+export type Length<NumberType = number> = Quantity<
+  NumberType,
+  dimension.Length
+>;
 
 /**
  * The meter, symbol `m`, is the SI base unit of length. All other units in
@@ -28,8 +31,8 @@ export const microns = micrometers;
 
 // Imperial units
 export const yards = meters.times(0.9144).withSymbol('yd');
-export const feet = yards.times(1 / 3).withSymbol('ft');
-export const inches = feet.times(1 / 12).withSymbol('in');
+export const feet = yards.per(3).withSymbol('ft');
+export const inches = feet.per(12).withSymbol('in');
 export const chains = yards.times(22).withSymbol('ch');
 export const furlongs = chains.times(10).withSymbol('fur');
 export const miles = furlongs.times(8).withSymbol('mi');

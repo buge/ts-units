@@ -6,10 +6,13 @@ import {meters} from '../../length';
 import {seconds} from '../../time';
 
 /** A quantity of electrical inductance. */
-export type Inductance = Quantity<dimension.Inductance>;
+export type Inductance<NumberType = number> = Quantity<
+  NumberType,
+  dimension.Inductance
+>;
 
 /** The henry, symbol `H`, is the SI unit for electrical inductance. */
-export const henries: Unit<dimension.Inductance> = kilograms
+export const henries: Unit<number, dimension.Inductance> = kilograms
   .times(meters.squared())
   .per(seconds.squared())
   .per(amperes.squared())

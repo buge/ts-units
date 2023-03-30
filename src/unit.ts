@@ -1,3 +1,4 @@
+import {Arithmetic, NativeArithmetic} from './arithmetic';
 import {
   Cubed,
   Dimensions,
@@ -50,7 +51,7 @@ import {
  *   meters.per(seconds).withSymbol('m/s');
  * ```
  */
-export interface Unit<D extends Dimensions> {
+export interface Unit<NumberType, D extends Dimensions> {
   /**
    * The dimensions of this unit.
    *
@@ -75,7 +76,7 @@ export interface Unit<D extends Dimensions> {
    * For example, the kilometer as scale 1000 and the foot has a scale of
    * 0.3048 since the base unit for length is the meter.
    */
-  readonly scale: number;
+  readonly scale: NumberType;
 
   /**
    * An optional datum offset for the unit.
@@ -83,10 +84,10 @@ export interface Unit<D extends Dimensions> {
    * This is used for things like temperatures where degrees celsius has the
    * same scale as the base unit Kelvin but is offset by -273.15.
    */
-  readonly offset: number;
+  readonly offset: NumberType;
 
   /** Generate a new amount of this unit. */
-  (amount: number): Quantity<D>;
+  (amount: number): Quantity<NumberType, D>;
 
   /**
    * Returns the reciprocal unit to this one.
@@ -96,7 +97,7 @@ export interface Unit<D extends Dimensions> {
    * const hertz = seconds.reciprocal()
    * ```
    */
-  reciprocal(): Unit<Reciprocal<D>>;
+  reciprocal(): Unit<NumberType, Reciprocal<D>>;
 
   /**
    * Returns the squared unit of this one.
@@ -106,7 +107,7 @@ export interface Unit<D extends Dimensions> {
    * const squareMeter = meters.squared()
    * ```
    */
-  squared(): Unit<Squared<D>>;
+  squared(): Unit<NumberType, Squared<D>>;
 
   /**
    * Returns the cubed unit of this one.
@@ -116,13 +117,13 @@ export interface Unit<D extends Dimensions> {
    * const cubicMeter = meters.cubed()
    * ```
    */
-  cubed(): Unit<Cubed<D>>;
+  cubed(): Unit<NumberType, Cubed<D>>;
 
   /**
    * Returns a copy of this unit using the given symbol.
    * @param symbol The symbol to use for the new unit.
    */
-  withSymbol(symbol: string): Unit<D>;
+  withSymbol(symbol: string): Unit<NumberType, D>;
 
   /**
    * Returns this unit scaled by the given SI prefix.
@@ -134,7 +135,7 @@ export interface Unit<D extends Dimensions> {
    *
    * @param prefix An SI prefix
    */
-  withSiPrefix(prefix: SiPrefix): Unit<D>;
+  withSiPrefix(prefix: SiPrefix): Unit<NumberType, D>;
 
   /**
    * Multiplies a given unit with this one.
@@ -152,8 +153,10 @@ export interface Unit<D extends Dimensions> {
    *
    * @param unit The unit to multiply this one with.
    */
-  times(amount: number): Unit<D>;
-  times<D2 extends Multiplicand<D>>(unit: Unit<D2>): Unit<Times<D, D2>>;
+  times(amount: number): Unit<NumberType, D>;
+  times<D2 extends Multiplicand<D>>(
+    unit: Unit<NumberType, D2>
+  ): Unit<NumberType, Times<D, D2>>;
 
   /**
    * Derive a unit as a datum offset of this one.
@@ -163,19 +166,27 @@ export interface Unit<D extends Dimensions> {
    * const celsius = kelvin.withOffset(-273.15).withSymbol('ºC');
    * ```
    */
-  withOffset(offset: number): Unit<D>;
+  withOffset(offset: number): Unit<NumberType, D>;
 
   /**
    * Divides this one by another.
    *
-   * Example:
+   * This can be used to create scaled units:
+   *  ```
+   * const feet = yards.times(1 / 3).withSymbol('ft');
+   * ```
+   *
+   * As well as units with combined dimensions:
    * ```
    * const speed = meters.per(seconds);
    * ```
    *
    * @param unit The unit to divide this one with.
    */
-  per<D2 extends Divisor<D>>(unit: Unit<D2>): Unit<Over<D, D2>>;
+  per(amount: number): Unit<NumberType, D>;
+  per<D2 extends Divisor<D>>(
+    unit: Unit<NumberType, D2>
+  ): Unit<NumberType, Over<D, D2>>;
 }
 
 /**
@@ -198,7 +209,7 @@ export interface Unit<D extends Dimensions> {
  * const area: Area = centimeters(1.5).times(meters(2));
  * ```
  */
-export interface Quantity<D extends Dimensions> {
+export interface Quantity<NumberType, D extends Dimensions> {
   /**
    * The dimensions of this quantity.
    *
@@ -212,10 +223,10 @@ export interface Quantity<D extends Dimensions> {
   readonly dimension: D;
 
   /** The amount of “stuff” of the unit below. */
-  readonly amount: number;
+  readonly amount: NumberType;
 
   /** The unit that this quantity is being measured in. */
-  readonly unit: Unit<D>;
+  readonly unit: Unit<NumberType, D>;
 
   /**
    * Returns whether this quantity is close to another.
@@ -231,7 +242,7 @@ export interface Quantity<D extends Dimensions> {
    *   which this value is considered to be close to the comparing value
    *   (`|this - other| < epsilon` in the units of other).
    */
-  isCloseTo(other: Quantity<D>, epsilon: number): boolean;
+  isCloseTo(other: Quantity<NumberType, D>, epsilon: number): boolean;
 
   /**
    * Adds a quantity to this one, returning a new quantity in the units of the
@@ -244,8 +255,8 @@ export interface Quantity<D extends Dimensions> {
    *
    * @param quantity The quantity to add to this one.
    */
-  plus(quantity: number): Quantity<D>;
-  plus(quantity: Quantity<D>): Quantity<D>;
+  plus(quantity: number): Quantity<NumberType, D>;
+  plus(quantity: Quantity<NumberType, D>): Quantity<NumberType, D>;
 
   /**
    * Subtracts a quantity from this one, returning a new quantity in the units
@@ -258,8 +269,8 @@ export interface Quantity<D extends Dimensions> {
    *
    * @param quantity The quantity to subtract from this one.
    */
-  minus(quantity: number): Quantity<D>;
-  minus(quantity: Quantity<D>): Quantity<D>;
+  minus(quantity: number): Quantity<NumberType, D>;
+  minus(quantity: Quantity<NumberType, D>): Quantity<NumberType, D>;
 
   /**
    * Convert this quantity to another unit of the same dimensions.
@@ -271,7 +282,7 @@ export interface Quantity<D extends Dimensions> {
    *
    * @param unit The unit to convert this quantity to.
    */
-  in(unit: Unit<D>): Quantity<D>;
+  in(unit: Unit<NumberType, D>): Quantity<NumberType, D>;
 
   /**
    * Multiplies this quantity with another.
@@ -284,10 +295,10 @@ export interface Quantity<D extends Dimensions> {
    *
    * @param quantity The quantity to multiply this one with.
    */
-  times(quantity: number): Quantity<D>;
+  times(quantity: number): Quantity<NumberType, D>;
   times<D2 extends Multiplicand<D>>(
-    quantity: Quantity<D2>
-  ): Quantity<Times<D, D2>>;
+    quantity: Quantity<NumberType, D2>
+  ): Quantity<NumberType, Times<D, D2>>;
 
   /**
    * Divides this quantity by another.
@@ -299,8 +310,10 @@ export interface Quantity<D extends Dimensions> {
    *
    * @param quantity The quantity to divide this one with.
    */
-  per(quantity: number): Quantity<D>;
-  per<D2 extends Divisor<D>>(quantity: Quantity<D2>): Quantity<Over<D, D2>>;
+  per(quantity: number): Quantity<NumberType, D>;
+  per<D2 extends Divisor<D>>(
+    quantity: Quantity<NumberType, D2>
+  ): Quantity<NumberType, Over<D, D2>>;
 
   /**
    * Returns the reciprocal to this quantity.
@@ -310,7 +323,7 @@ export interface Quantity<D extends Dimensions> {
    * const frequency = seconds(5).reciprocal()
    * ```
    */
-  reciprocal(): Quantity<Reciprocal<D>>;
+  reciprocal(): Quantity<NumberType, Reciprocal<D>>;
 
   /**
    * Returns the squared quantity of this one.
@@ -320,7 +333,7 @@ export interface Quantity<D extends Dimensions> {
    * const area = meters(3).squared();
    * ```
    */
-  squared(): Quantity<Squared<D>>;
+  squared(): Quantity<NumberType, Squared<D>>;
 
   /**
    * Returns the cubed quantity of this one.
@@ -330,7 +343,7 @@ export interface Quantity<D extends Dimensions> {
    * const volume = meters(3).cubed();
    * ```
    */
-  cubed(): Quantity<Cubed<D>>;
+  cubed(): Quantity<NumberType, Cubed<D>>;
 
   /**
    * Returns whether this is a dimensionless quantity. Or, more accurately, a
@@ -348,6 +361,14 @@ export interface Quantity<D extends Dimensions> {
    * ```
    */
   toString(): string;
+
+  /**
+   * Returns the amount of this quantity in the base unit as a NumberType
+   * value.
+   *
+   * This allows for comparison of the quantity using custom arithmetic operators.
+   */
+  value(): NumberType;
 
   /**
    * Returns the amount of this quantity in the base unit as a primitive
@@ -395,322 +416,415 @@ const SI_PREFIX = {
  */
 const DEFAULT_LOCALE = 'en-us';
 
-/**
- * Creates a new unit.
- *
- * @param symbol The symbol to use for the unit (e.g. "m" or "m/s")
- * @param dimension The dimensions that this unit are defined over. For
- *   example, `{length: 1}` if unit of length
- * @param scale The ratio to the base unit. For example, the kilometer has a
- *   scale of 1000, the foot has a scale of 0.3048 given that the base unit of
- *   length is the meter.
- * @param offset An optional datum offset. For example, degrees celsius have a
- *   datum offset over the Kelvin of -273.15.
- */
-export function makeUnit<D extends Dimensions>(
-  symbol: string,
-  dimension: D,
-  scale = 1,
-  offset = 0
-): Unit<D> {
-  // Return a callable object that constructs a quantity of the given unit.
-  // See class comment for more details.
-  function makeQuantity(amount: number): Quantity<D> {
-    return new QuantityImpl<D>(amount, makeQuantity as Unit<D>);
-  }
+export const makeUnitFactory = <NumberType>(
+  arithmetic: Arithmetic<NumberType>
+) => {
+  const {fromNative, toNative, add, sub, mul, div, pow, abs, compare} =
+    arithmetic;
 
-  makeQuantity.symbol = symbol;
-  makeQuantity.dimension = dimension;
-  makeQuantity.scale = scale;
-  makeQuantity.offset = offset;
-
-  Object.setPrototypeOf(makeQuantity, UnitImpl.prototype);
-  return makeQuantity as unknown as Unit<D>;
-}
-
-/**
- * Prototype for `Unit`s so that methods (e.g. `withSymbol`, `withOffset`, etc.)
- * are only implemented once and passed to concrete units via prototype
- * inheritance.
- *
- * Because units are callable for concise syntax (e.g. `meters(5)`) we need to
- * employ a bit of a hack where this implementation extends `Function` and we
- * set the prototype in `makeQuantity`. We _could_ have also returned a
- * function with the prototype set from the constructor, but this makes it a
- * bit clearer that this class is used only for its prototype.
- */
-class UnitImpl<D extends Dimensions> extends Function implements UnitProps<D> {
-  readonly symbol: string;
-  readonly dimension: D;
-  readonly scale: number;
-  readonly offset: number;
-
-  constructor() {
-    super();
-    throw new Error(
-      'UnitImpl should never be instantiated but be used for its prototype ' +
-        'definition only.'
-    );
-  }
-
-  withSymbol(symbol: string): Unit<D> {
-    return makeUnit(symbol, this.dimension, this.scale, this.offset);
-  }
-
-  withOffset(offset: number): Unit<D> {
-    if (offset === 0) {
-      return this as unknown as Unit<D>;
+  /**
+   * Creates a new unit.
+   *
+   * @param symbol The symbol to use for the unit (e.g. "m" or "m/s")
+   * @param dimension The dimensions that this unit are defined over. For
+   *   example, `{length: 1}` if unit of length
+   * @param scale The ratio to the base unit. For example, the kilometer has a
+   *   scale of 1000, the foot has a scale of 0.3048 given that the base unit of
+   *   length is the meter.
+   * @param offset An optional datum offset. For example, degrees celsius have a
+   *   datum offset over the Kelvin of -273.15.
+   */
+  function makeUnit<D extends Dimensions>(
+    symbol: string,
+    dimension: D,
+    scale: NumberType = fromNative(1),
+    offset: NumberType = fromNative(0)
+  ): Unit<NumberType, D> {
+    // Return a callable object that constructs a quantity of the given unit.
+    // See class comment for more details.
+    // TODO: Check type of Amount
+    function makeQuantity(amount: number): Quantity<NumberType, D> {
+      return new QuantityImpl<D>(
+        fromNative(amount),
+        makeQuantity as Unit<NumberType, D>
+      );
     }
 
-    const sign = offset > 0 ? '+' : '-';
-    const symbol = `${this.symbol} ${sign} ${offset.toLocaleString(
-      DEFAULT_LOCALE
-    )}`;
+    makeQuantity.symbol = symbol;
+    makeQuantity.dimension = dimension;
+    makeQuantity.scale = scale;
+    makeQuantity.offset = offset;
 
-    return makeUnit(
-      symbol,
-      this.dimension,
-      this.scale,
-      this.offset / this.scale + offset
-    );
+    Object.setPrototypeOf(makeQuantity, UnitImpl.prototype);
+    return makeQuantity as unknown as Unit<NumberType, D>;
   }
 
-  withSiPrefix(prefix: SiPrefix): Unit<D> {
-    return this.times(1 * SI_PREFIX[prefix]).withSymbol(
-      `${prefix}${this.symbol}`
-    );
-  }
+  /**
+   * Prototype for `Unit`s so that methods (e.g. `withSymbol`, `withOffset`, etc.)
+   * are only implemented once and passed to concrete units via prototype
+   * inheritance.
+   *
+   * Because units are callable for concise syntax (e.g. `meters(5)`) we need to
+   * employ a bit of a hack where this implementation extends `Function` and we
+   * set the prototype in `makeQuantity`. We _could_ have also returned a
+   * function with the prototype set from the constructor, but this makes it a
+   * bit clearer that this class is used only for its prototype.
+   */
+  class UnitImpl<D extends Dimensions>
+    extends Function
+    implements UnitProps<NumberType, D>
+  {
+    readonly symbol: string;
+    readonly dimension: D;
+    readonly scale: NumberType;
+    readonly offset: NumberType;
 
-  times<D2 extends Multiplicand<D>>(other: Unit<D2>): Unit<Times<D, D2>>;
-  times(amount: number): Unit<D>;
-  times<D2 extends Multiplicand<D>>(
-    amountOrUnit: number | Unit<D2>
-  ): Unit<D> | Unit<Times<D, D2>> {
-    if (typeof amountOrUnit === 'number') {
+    constructor() {
+      super();
+      throw new Error(
+        'UnitImpl should never be instantiated but be used for its prototype ' +
+          'definition only.'
+      );
+    }
+
+    withSymbol(symbol: string): Unit<NumberType, D> {
+      return makeUnit(symbol, this.dimension, this.scale, this.offset);
+    }
+
+    withOffset(offset: number): Unit<NumberType, D> {
+      if (offset === 0) {
+        return this as unknown as Unit<NumberType, D>;
+      }
+
+      const sign = offset > 0 ? '+' : '-';
+      const symbol = `${this.symbol} ${sign} ${offset.toLocaleString(
+        DEFAULT_LOCALE
+      )}`;
+
       return makeUnit(
-        this.symbol,
+        symbol,
         this.dimension,
-        this.scale * amountOrUnit,
-        this.offset
+        this.scale,
+        add(div(this.offset, this.scale), fromNative(offset))
       );
     }
 
-    const other = amountOrUnit;
-    if (this.offset || other.offset) {
-      throw new Error(
-        `Cannot multiply units with offsets (unit ${this.symbol} has offset ` +
-          `${this.offset} and unit ${other.symbol} has offset ${other.offset}`
+    withSiPrefix(prefix: SiPrefix): Unit<NumberType, D> {
+      return this.times(1 * SI_PREFIX[prefix]).withSymbol(
+        `${prefix}${this.symbol}`
       );
     }
 
-    return makeUnit(
-      `${this.symbol}⋅${other.symbol}`,
-      Times(this.dimension, other.dimension),
-      this.scale * other.scale
-    );
+    times<D2 extends Multiplicand<D>>(
+      other: Unit<NumberType, D2>
+    ): Unit<NumberType, Times<D, D2>>;
+    times(amount: number): Unit<NumberType, D>;
+    times<D2 extends Multiplicand<D>>(
+      amountOrUnit: number | Unit<NumberType, D2>
+    ): Unit<NumberType, D> | Unit<NumberType, Times<D, D2>> {
+      if (typeof amountOrUnit === 'number') {
+        return makeUnit(
+          this.symbol,
+          this.dimension,
+          mul(this.scale, fromNative(amountOrUnit)),
+          this.offset
+        );
+      }
+
+      const other = amountOrUnit;
+      if (this.offset || other.offset) {
+        throw new Error(
+          `Cannot multiply units with offsets (unit ${this.symbol} has offset ` +
+            `${this.offset} and unit ${other.symbol} has offset ${other.offset}`
+        );
+      }
+
+      return makeUnit(
+        `${this.symbol}⋅${other.symbol}`,
+        Times(this.dimension, other.dimension),
+        mul(this.scale, other.scale)
+      );
+    }
+
+    per<D2 extends Divisor<D>>(
+      other: Unit<NumberType, D2>
+    ): Unit<NumberType, Over<D, D2>>;
+    per(amount: number): Unit<NumberType, D>;
+    per<D2 extends Divisor<D>>(
+      amountOrUnit: number | Unit<NumberType, D2>
+    ): Unit<NumberType, D> | Unit<NumberType, Over<D, D2>> {
+      if (typeof amountOrUnit === 'number') {
+        return makeUnit(
+          this.symbol,
+          this.dimension,
+          div(this.scale, fromNative(amountOrUnit)),
+          this.offset
+        );
+      }
+
+      const other = amountOrUnit;
+      if (this.offset || other.offset) {
+        throw new Error(
+          `Cannot divide units with offsets (unit ${this.symbol} has offset ` +
+            `${this.offset} and unit ${other.symbol} has offset ${other.offset}`
+        );
+      }
+
+      return makeUnit(
+        `${this.symbol}/${other.symbol}`,
+        Over(this.dimension, other.dimension),
+        div(this.scale, other.scale)
+      );
+    }
+
+    reciprocal() {
+      if (this.offset) {
+        throw new Error(
+          'Cannot take the reciprocal of a unit with offset (unit ' +
+            `${this.symbol} has offset ${this.offset})`
+        );
+      }
+
+      return makeUnit(
+        `1/${this.symbol}`,
+        Reciprocal(this.dimension),
+        div(fromNative(1), this.scale)
+      );
+    }
+
+    squared(this: Unit<NumberType, D>) {
+      if (this.offset) {
+        throw new Error(
+          `Cannot square a unit with an offset (unit ${this.symbol} has ` +
+            `offset ${this.offset})`
+        );
+      }
+
+      return makeUnit(
+        `${this.symbol}²`,
+        Squared(this.dimension),
+        pow(this.scale, fromNative(2))
+      );
+    }
+
+    cubed() {
+      if (this.offset) {
+        throw new Error(
+          `Cannot cube a unit with an offset (unit ${this.symbol} has ` +
+            `offset ${this.offset})`
+        );
+      }
+
+      return makeUnit(
+        `${this.symbol}³`,
+        Cubed(this.dimension),
+        pow(this.scale, fromNative(3))
+      );
+    }
   }
 
-  per<D2 extends Divisor<D>>(this: Unit<D>, other: Unit<D2>) {
-    if (this.offset || other.offset) {
-      throw new Error(
-        `Cannot divide units with offsets (unit ${this.symbol} has offset ` +
-          `${this.offset} and unit ${other.symbol} has offset ${other.offset}`
+  /**
+   * Utility type that lists all properties of Unit<D> minus the callable one to
+   * ensure (at compile time) that `UnitImpl` implements all members that we want
+   * in the prototype.
+   *
+   * This works because `keyof Unit<D>` does not list the callable.
+   */
+  type UnitProps<NumberType, D extends Dimensions> = {
+    [P in keyof Unit<NumberType, D>]: Unit<NumberType, D>[P];
+  };
+
+  /**
+   * Creates a new quantity.
+   * @param amount The amount of quantity in the given unit.
+   * @param unit The unit of the quantity measurement.
+   */
+  function makeQuantity<D extends Dimensions>(
+    amount: NumberType,
+    unit: Unit<NumberType, D>
+  ): Quantity<NumberType, D> {
+    return new QuantityImpl(amount, unit);
+  }
+
+  class QuantityImpl<D extends Dimensions> implements Quantity<NumberType, D> {
+    readonly dimension: D;
+
+    constructor(
+      readonly amount: NumberType,
+      readonly unit: Unit<NumberType, D>
+    ) {
+      this.dimension = unit.dimension;
+    }
+
+    isCloseTo(other: Quantity<NumberType, D>, epsilon: number) {
+      return (
+        compare(
+          fromNative(epsilon),
+          abs(sub(this.in(other.unit).amount, other.amount))
+        ) >= 0
       );
     }
 
-    return makeUnit(
-      `${this.symbol}/${other.symbol}`,
-      Over(this.dimension, other.dimension),
-      this.scale / other.scale
-    );
-  }
+    in(other: Unit<NumberType, D>): Quantity<NumberType, D> {
+      // If the unit requested is our unit, don't do any work.
+      if (this.unit === other) {
+        return this;
+      }
 
-  reciprocal() {
-    if (this.offset) {
-      throw new Error(
-        'Cannot take the reciprocal of a unit with offset (unit ' +
-          `${this.symbol} has offset ${this.offset})`
+      return new QuantityImpl(
+        add(div(this.value(), other.scale), other.offset),
+        other
       );
     }
 
-    return makeUnit(
-      `1/${this.symbol}`,
-      Reciprocal(this.dimension),
-      1 / this.scale
-    );
-  }
+    plus(quantity: number): Quantity<NumberType, D>;
+    plus(quantity: Quantity<NumberType, D>): Quantity<NumberType, D>;
+    plus(quantity: number | Quantity<NumberType, D>) {
+      if (typeof quantity === 'number') {
+        return new QuantityImpl(
+          add(this.amount, fromNative(quantity)),
+          this.unit
+        );
+      }
 
-  squared(this: Unit<D>) {
-    if (this.offset) {
-      throw new Error(
-        `Cannot square a unit with an offset (unit ${this.symbol} has ` +
-          `offset ${this.offset})`
+      return new QuantityImpl(
+        add(this.in(quantity.unit).amount, quantity.amount),
+        quantity.unit
       );
     }
 
-    return makeUnit(
-      `${this.symbol}²`,
-      Squared(this.dimension),
-      this.scale ** 2
-    );
-  }
+    minus(quantity: number): Quantity<NumberType, D>;
+    minus(quantity: Quantity<NumberType, D>): Quantity<NumberType, D>;
+    minus(quantity: number | Quantity<NumberType, D>) {
+      if (typeof quantity === 'number') {
+        return new QuantityImpl(
+          sub(this.amount, fromNative(quantity)),
+          this.unit
+        );
+      }
 
-  cubed() {
-    if (this.offset) {
-      throw new Error(
-        `Cannot cube a unit with an offset (unit ${this.symbol} has ` +
-          `offset ${this.offset})`
+      return new QuantityImpl(
+        sub(this.in(quantity.unit).amount, quantity.amount),
+        quantity.unit
       );
     }
 
-    return makeUnit(`${this.symbol}³`, Cubed(this.dimension), this.scale ** 3);
-  }
-}
+    times(other: number): Quantity<NumberType, D>;
+    times<D2 extends Multiplicand<D>>(
+      other: Quantity<NumberType, D2>
+    ): Quantity<NumberType, Times<D, D2>>;
+    times<D2 extends Multiplicand<D>>(
+      this: Quantity<NumberType, D>,
+      other: number | Quantity<NumberType, D2>
+    ): Quantity<NumberType, D> | Quantity<NumberType, Times<D, D2>> {
+      if (typeof other === 'number') {
+        return new QuantityImpl(mul(this.amount, fromNative(other)), this.unit);
+      }
 
-/**
- * Utility type that lists all properties of Unit<D> minus the callable one to
- * ensure (at compile time) that `UnitImpl` implements all members that we want
- * in the prototype.
- *
- * This works because `keyof Unit<D>` does not list the callable.
- */
-type UnitProps<D extends Dimensions> = {
-  [P in keyof Unit<D>]: Unit<D>[P];
+      if (this.isDimensionless()) {
+        return new QuantityImpl(
+          mul(mul(other.amount, this.amount), this.unit.scale),
+          other.unit
+        ) as unknown as Quantity<NumberType, Times<D, D2>>;
+      }
+
+      if (other.isDimensionless()) {
+        return new QuantityImpl(
+          mul(mul(this.amount, other.amount), other.unit.scale),
+          this.unit
+        ) as unknown as Quantity<NumberType, Times<D, D2>>;
+      }
+
+      return new QuantityImpl(
+        mul(this.amount, other.amount),
+        this.unit.times(other.unit)
+      );
+    }
+
+    per(amount: number): Quantity<NumberType, D>;
+    per<D2 extends Divisor<D>>(
+      quantity: Quantity<NumberType, D2>
+    ): Quantity<NumberType, Over<D, D2>>;
+    per<D2 extends Divisor<D>>(
+      other: number | Quantity<NumberType, D2>
+    ): Quantity<NumberType, D> | Quantity<NumberType, Over<D, D2>> {
+      if (typeof other === 'number') {
+        return new QuantityImpl(div(this.amount, fromNative(other)), this.unit);
+      }
+
+      if (other.isDimensionless()) {
+        return new QuantityImpl(
+          div(div(this.amount, other.amount), other.unit.scale),
+          this.unit
+        ) as unknown as Quantity<NumberType, Over<D, D2>>;
+      }
+
+      return new QuantityImpl(
+        div(this.amount, other.amount),
+        this.unit.per(other.unit)
+      );
+    }
+
+    reciprocal() {
+      return new QuantityImpl(
+        div(fromNative(1), this.amount),
+        this.unit.reciprocal()
+      );
+    }
+
+    squared() {
+      return new QuantityImpl(
+        pow(this.amount, fromNative(2)),
+        this.unit.squared()
+      );
+    }
+
+    cubed() {
+      return new QuantityImpl(
+        pow(this.amount, fromNative(3)),
+        this.unit.cubed()
+      );
+    }
+
+    isDimensionless() {
+      return Object.keys(this.dimension).length === 0;
+    }
+
+    toString() {
+      return `${toNative(this.amount).toLocaleString(DEFAULT_LOCALE)}${
+        this.unit.symbol
+      }`;
+    }
+
+    valueOf() {
+      return toNative(this.value());
+    }
+
+    value() {
+      return mul(sub(this.amount, this.unit.offset), this.unit.scale);
+    }
+  }
+
+  function makeUnitFromNative<D extends Dimensions>(
+    symbol: string,
+    dimension: D,
+    scale = 1,
+    offset = 0
+  ): Unit<NumberType, D> {
+    return makeUnit(symbol, dimension, fromNative(scale), fromNative(offset));
+  }
+
+  function makeQuantityFromNative<D extends Dimensions>(
+    amount: number,
+    unit: Unit<NumberType, D>
+  ): Quantity<NumberType, D> {
+    return makeQuantity(fromNative(amount), unit);
+  }
+
+  return {
+    makeUnit: makeUnitFromNative,
+    makeQuantity: makeQuantityFromNative
+  };
 };
 
-/**
- * Creates a new quantity.
- * @param amount The amount of quantity in the given unit.
- * @param unit The unit of the quantity measurement.
- */
-export function makeQuantity<D extends Dimensions>(
-  amount: number,
-  unit: Unit<D>
-): Quantity<D> {
-  return new QuantityImpl(amount, unit);
-}
-
-class QuantityImpl<D extends Dimensions> implements Quantity<D> {
-  readonly dimension: D;
-
-  constructor(readonly amount: number, readonly unit: Unit<D>) {
-    this.dimension = unit.dimension;
-  }
-
-  isCloseTo(other: Quantity<D>, epsilon: number) {
-    return Math.abs(this.in(other.unit).amount - other.amount) < epsilon;
-  }
-
-  in(other: Unit<D>): Quantity<D> {
-    // If the unit requested is our unit, don't do any work.
-    if (this.unit === other) {
-      return this;
-    }
-
-    return new QuantityImpl(this.valueOf() / other.scale + other.offset, other);
-  }
-
-  plus(quantity: number): Quantity<D>;
-  plus(quantity: Quantity<D>): Quantity<D>;
-  plus(quantity: number | Quantity<D>) {
-    if (typeof quantity === 'number') {
-      return new QuantityImpl(this.amount + quantity, this.unit);
-    }
-
-    return new QuantityImpl(
-      this.in(quantity.unit).amount + quantity.amount,
-      quantity.unit
-    );
-  }
-
-  minus(quantity: number): Quantity<D>;
-  minus(quantity: Quantity<D>): Quantity<D>;
-  minus(quantity: number | Quantity<D>) {
-    if (typeof quantity === 'number') {
-      return new QuantityImpl(this.amount - quantity, this.unit);
-    }
-
-    return new QuantityImpl(
-      this.in(quantity.unit).amount - quantity.amount,
-      quantity.unit
-    );
-  }
-
-  times(other: number): Quantity<D>;
-  times<D2 extends Multiplicand<D>>(
-    other: Quantity<D2>
-  ): Quantity<Times<D, D2>>;
-  times<D2 extends Multiplicand<D>>(
-    this: Quantity<D>,
-    other: number | Quantity<D2>
-  ): Quantity<D> | Quantity<Times<D, D2>> {
-    if (typeof other === 'number') {
-      return new QuantityImpl(this.amount * other, this.unit);
-    }
-
-    if (this.isDimensionless()) {
-      return new QuantityImpl(
-        other.amount * this.amount * this.unit.scale,
-        other.unit
-      ) as unknown as Quantity<Times<D, D2>>;
-    }
-
-    if (other.isDimensionless()) {
-      return new QuantityImpl(
-        this.amount * other.amount * other.unit.scale,
-        this.unit
-      ) as unknown as Quantity<Times<D, D2>>;
-    }
-
-    return new QuantityImpl(
-      this.amount * other.amount,
-      this.unit.times(other.unit)
-    );
-  }
-
-  per(amount: number): Quantity<D>;
-  per<D2 extends Divisor<D>>(quantity: Quantity<D2>): Quantity<Over<D, D2>>;
-  per<D2 extends Divisor<D>>(
-    other: number | Quantity<D2>
-  ): Quantity<D> | Quantity<Over<D, D2>> {
-    if (typeof other === 'number') {
-      return new QuantityImpl(this.amount / other, this.unit);
-    }
-
-    if (other.isDimensionless()) {
-      return new QuantityImpl(
-        this.amount / other.amount / other.unit.scale,
-        this.unit
-      ) as unknown as Quantity<Over<D, D2>>;
-    }
-
-    return new QuantityImpl(
-      this.amount / other.amount,
-      this.unit.per(other.unit)
-    );
-  }
-
-  reciprocal() {
-    return new QuantityImpl(1 / this.amount, this.unit.reciprocal());
-  }
-
-  squared() {
-    return new QuantityImpl(this.amount ** 2, this.unit.squared());
-  }
-
-  cubed() {
-    return new QuantityImpl(this.amount ** 3, this.unit.cubed());
-  }
-
-  isDimensionless() {
-    return Object.keys(this.dimension).length === 0;
-  }
-
-  toString() {
-    return `${this.amount.toLocaleString(DEFAULT_LOCALE)}${this.unit.symbol}`;
-  }
-
-  valueOf() {
-    return (this.amount - this.unit.offset) * this.unit.scale;
-  }
-}
+export const {makeUnit, makeQuantity} = makeUnitFactory(NativeArithmetic);
