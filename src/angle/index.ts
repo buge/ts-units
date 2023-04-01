@@ -70,7 +70,6 @@ export function withValueType<NumberType>(
      * @param y A numeric expression representing the cartesian y-coordinate.
      */
     static atan2(x: NumberType, y: NumberType): Angle<NumberType> {
-      // TODO: Ideally, we should not use toNative here
       return WithValueType.radians(toNative(atan2(x, y)));
     }
   }
@@ -78,7 +77,6 @@ export function withValueType<NumberType>(
   function liftRet(
     f: (x: NumberType) => NumberType
   ): (x: NumberType) => Angle<NumberType> {
-    // TODO: Ideally, we should not use toNative here
     return x => WithValueType.radians(toNative(f(x)));
   }
 
