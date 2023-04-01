@@ -1,3 +1,15 @@
+/**
+ * An arithmetic representation of a particular number type.
+ *
+ * The library is using by default the native number of JavaScript.
+ * As we know, it is not precise, and could lead to a calculation error.
+ * The most infamous example being (0.1 + 0.2).
+ *
+ * By implementing this interface, you will be able to write your own
+ * implementation of the arithmetic.
+ *
+ * For instance, you could implement it using [decimal.js]{@link https://github.com/MikeMcl/decimal.js}.
+ */
 export interface Arithmetic<NumberType> {
   fromNative(value: number): NumberType;
   toNative(value: NumberType): number;
@@ -11,17 +23,12 @@ export interface Arithmetic<NumberType> {
   // 0 => left === 0
   // -1 => left < right
   compare(left: NumberType, right: NumberType): number;
-
-  // Needed for the calculation of angles
-  sin(value: NumberType): NumberType;
-  cos(value: NumberType): NumberType;
-  tan(value: NumberType): NumberType;
-  asin(value: NumberType): NumberType;
-  acos(value: NumberType): NumberType;
-  atan(value: NumberType): NumberType;
-  atan2(left: NumberType, right: NumberType): NumberType;
 }
 
+/**
+ * Default implementation of the arithmetic interface
+ * based on the native number of JavaScript.
+ */
 export const NativeArithmetic: Arithmetic<number> = {
   fromNative: function (value: number): number {
     return value;
@@ -49,26 +56,5 @@ export const NativeArithmetic: Arithmetic<number> = {
   },
   compare: function (left: number, right: number): number {
     return left - right;
-  },
-  sin: function (value: number): number {
-    return Math.sin(value);
-  },
-  cos: function (value: number): number {
-    return Math.cos(value);
-  },
-  tan: function (value: number): number {
-    return Math.tan(value);
-  },
-  asin: function (value: number): number {
-    return Math.asin(value);
-  },
-  acos: function (value: number): number {
-    return Math.acos(value);
-  },
-  atan: function (value: number): number {
-    return Math.atan(value);
-  },
-  atan2: function (left: number, right: number): number {
-    return Math.atan2(left, right);
   }
 };

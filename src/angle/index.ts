@@ -1,12 +1,17 @@
 import * as dimension from './dimension';
 import {Arithmetic, NativeArithmetic} from '../arithmetic';
+import {Geometric, NativeGeometric} from '../geometric';
 import {Quantity, makeUnitFactory} from '../unit';
 
 export type Angle<NumberType = number> = Quantity<NumberType, dimension.Angle>;
 
-export function withValueType<NumberType>(arithmetic: Arithmetic<NumberType>) {
+export function withValueType<NumberType>(
+  arithmetic: Arithmetic<NumberType>,
+  geometric: Geometric<NumberType>
+) {
   const {makeUnit} = makeUnitFactory(arithmetic);
-  const {toNative, sin, cos, tan, asin, acos, atan, atan2} = arithmetic;
+  const {toNative} = arithmetic;
+  const {sin, cos, tan, asin, acos, atan, atan2} = geometric;
 
   class WithValueType {
     private constructor() {}
@@ -87,4 +92,4 @@ export function withValueType<NumberType>(arithmetic: Arithmetic<NumberType>) {
 }
 
 export const {radians, degrees, turns, sin, cos, tan, asin, acos, atan, atan2} =
-  withValueType(NativeArithmetic);
+  withValueType(NativeArithmetic, NativeGeometric);
