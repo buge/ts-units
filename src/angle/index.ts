@@ -10,7 +10,6 @@ export function withValueType<NumberType>(
   geometric: Geometric<NumberType>
 ) {
   const {makeUnit} = makeUnitFactory(arithmetic);
-  const {toNative} = arithmetic;
   const {sin, cos, tan, asin, acos, atan, atan2} = geometric;
 
   class WithValueType {
@@ -70,14 +69,14 @@ export function withValueType<NumberType>(
      * @param y A numeric expression representing the cartesian y-coordinate.
      */
     static atan2(x: NumberType, y: NumberType): Angle<NumberType> {
-      return WithValueType.radians(toNative(atan2(x, y)));
+      return WithValueType.radians(atan2(x, y));
     }
   }
 
   function liftRet(
     f: (x: NumberType) => NumberType
   ): (x: NumberType) => Angle<NumberType> {
-    return x => WithValueType.radians(toNative(f(x)));
+    return x => WithValueType.radians(f(x));
   }
 
   function liftUnary(

@@ -1,3 +1,5 @@
+import {assert} from './utils';
+
 /**
  * An arithmetic representation of a particular number type.
  *
@@ -11,7 +13,13 @@
  * For instance, you could implement it using [decimal.js]{@link https://github.com/MikeMcl/decimal.js}.
  */
 export interface Arithmetic<NumberType> {
-  fromNative(value: number): NumberType;
+  /**
+   * Return a NumberType of the input.
+   * If it is not possible, it should throw an error.
+   *
+   * @param value The value to convert to NumberType
+   */
+  from(value: number | string | NumberType): NumberType;
   toNative(value: NumberType): number;
   add(left: NumberType, right: NumberType): NumberType;
   sub(left: NumberType, right: NumberType): NumberType;
@@ -30,8 +38,13 @@ export interface Arithmetic<NumberType> {
  * based on the native number of JavaScript.
  */
 export const NativeArithmetic: Arithmetic<number> = {
-  fromNative: function (value: number): number {
-    return value;
+  from: function (value: number | string): number {
+    const convertedValue = Number(value);
+    assert(
+      !isNaN(convertedValue),
+      `Input '${value}' cannot be converted to a number`
+    );
+    return convertedValue;
   },
   toNative: function (value: number): number {
     return value;
