@@ -6,7 +6,9 @@ describe('time smoke tests', () => {
     {a: nanoseconds(1234), b: usec(1.234)},
     {a: usec(1234), b: msec(1.234)},
     {a: msec(1234), b: s(1.234)},
+    // eslint-disable-next-line @typescript-eslint/no-loss-of-precision
     {a: s(1234), b: minutes(20.566666666666667)},
+    // eslint-disable-next-line @typescript-eslint/no-loss-of-precision
     {a: minutes(1234), b: hours(20.566666666666667)}
   ];
 

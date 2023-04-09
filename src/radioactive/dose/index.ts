@@ -1,19 +1,33 @@
 import * as dimension from './dimension';
+import {Arithmetic, NativeArithmetic} from '../../arithmetic';
 import {Quantity, Unit} from '../../unit';
-import {meters} from '../../length';
-import {seconds} from '../../time';
+import {withValueType as lengthWithValueType} from '../../length';
+import {withValueType as timeWithValueType} from '../../time';
 
 /** A quantity of a radioactive dose. */
-export type Dose = Quantity<dimension.Dose>;
+export type Dose<NumberType = number> = Quantity<NumberType, dimension.Dose>;
 
-/** The gray, symbol `Gy`, is the SI unit for absorbed dose. */
-export const grays: Unit<dimension.Dose> = meters
-  .squared()
-  .per(seconds.squared())
-  .withSymbol('Gy');
+export function withValueType<NumberType>(arithmetic: Arithmetic<NumberType>) {
+  const {meters} = lengthWithValueType(arithmetic);
+  const {seconds} = timeWithValueType(arithmetic);
 
-/** The sievert, symbol `Sv`, is the SI unit for equivalent dose. */
-export const sieverts: Unit<dimension.Dose> = meters
-  .squared()
-  .per(seconds.squared())
-  .withSymbol('Sv');
+  class WithValueType {
+    private constructor() {}
+
+    /** The gray, symbol `Gy`, is the SI unit for absorbed dose. */
+    static grays: Unit<NumberType, dimension.Dose> = meters
+      .squared()
+      .per(seconds.squared())
+      .withSymbol('Gy');
+
+    /** The sievert, symbol `Sv`, is the SI unit for equivalent dose. */
+    static sieverts: Unit<NumberType, dimension.Dose> = meters
+      .squared()
+      .per(seconds.squared())
+      .withSymbol('Sv');
+  }
+
+  return WithValueType;
+}
+
+export const {grays, sieverts} = withValueType(NativeArithmetic);

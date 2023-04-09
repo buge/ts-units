@@ -102,8 +102,8 @@ describe('angle', () => {
 
 // TODO(bunge): Move this to a Chai method instead.
 function expectCloseTo<D extends Dimensions>(
-  actual: Quantity<D>,
-  expected: Quantity<D>
+  actual: Quantity<number, D>,
+  expected: Quantity<number, D>
 ) {
   return expect(
     actual.isCloseTo(expected, 0.0001),

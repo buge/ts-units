@@ -1,22 +1,42 @@
 import * as dimension from './dimension';
-import {Quantity, SiPrefix, Unit} from '../../unit';
-import {amperes} from '../current';
-import {kilograms} from '../../mass';
-import {meters} from '../../length';
-import {seconds} from '../../time';
+import {Arithmetic, NativeArithmetic} from '../../arithmetic';
+import {Quantity, Unit} from '../../unit';
+import {withValueType as currentWithValueType} from '../current';
+import {withValueType as lengthWithValueType} from '../../length';
+import {withValueType as massWithValueType} from '../../mass';
+import {withValueType as timeWithValueType} from '../../time';
 
 /** A quantity of electrical capacitance. */
-export type Capacitance = Quantity<dimension.Capacitance>;
+export type Capacitance<NumberType = number> = Quantity<
+  NumberType,
+  dimension.Capacitance
+>;
 
-/** The farad, symbol `F`, is the SI unit for electrical capacitance. */
-export const farads: Unit<dimension.Capacitance> = seconds
-  .squared()
-  .squared()
-  .times(amperes.squared())
-  .per(kilograms)
-  .per(meters.squared())
-  .withSymbol('F');
+export function withValueType<NumberType>(arithmetic: Arithmetic<NumberType>) {
+  const {amperes} = currentWithValueType(arithmetic);
+  const {meters} = lengthWithValueType(arithmetic);
+  const {kilograms} = massWithValueType(arithmetic);
+  const {seconds} = timeWithValueType(arithmetic);
 
-export const [microfarads, nanofarads, picofarads] = (
-  ['μ', 'n', 'p'] as SiPrefix[]
-).map(x => farads.withSiPrefix(x));
+  class WithValueType {
+    private constructor() {}
+
+    /** The farad, symbol `F`, is the SI unit for electrical capacitance. */
+    static farads: Unit<NumberType, dimension.Capacitance> = seconds
+      .squared()
+      .squared()
+      .times(amperes.squared())
+      .per(kilograms)
+      .per(meters.squared())
+      .withSymbol('F');
+
+    static microfarads = WithValueType.farads.withSiPrefix('μ');
+    static nanofarads = WithValueType.farads.withSiPrefix('n');
+    static picofarads = WithValueType.farads.withSiPrefix('p');
+  }
+
+  return WithValueType;
+}
+
+export const {farads, microfarads, nanofarads, picofarads} =
+  withValueType(NativeArithmetic);

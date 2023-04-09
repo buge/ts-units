@@ -540,14 +540,103 @@ US dollar as the base unit:
 ```ts
 // In money/units.ts
 import * as dimension from './dimension';
-export type Money = Quantity<dimension.Money>;
-export const dollars: Unit<dimension.Money> = makeUnit('$', dimension.Money);
+export type Money = Quantity<number, dimension.Money>;
+export const dollars: Unit<number, dimension.Money> = makeUnit('$', dimension.Money);
 ```
 
 You can now use your new dimension and unit to define quantities:
 
 ```ts
 const pleaseDonateToACharityOfYourChoice: Money = usd(10);
+```
+
+## Defining new Arithmetic
+
+The default units provided by the library are all based on the native representation of JavaScript number which could lead to a precision error.
+The most infamous example being (0.1 + 0.2).
+
+The library provides a way to avoid this problem by giving you the possibility to implement your own arithmetic.
+Each group of units exposes a function `withValueType` that returns the units using your own arithmetic.
+
+Concretely, you can use other external library that provides more robust representation of numbers.
+For instance [decimal.js](https://github.com/MikeMcl/decimal.js):
+
+```ts
+import {Arithmetic, Geometric} from "@buge/ts-units";
+import {Decimal } from 'decimal.js';
+import {withValueType as temperatureWithValueType} from '@buge/ts-units/temperature';
+import {withValueType as angleWithValueType} from '@buge/ts-units/angle';
+
+const DecimalArithmetic: Arithmetic<Decimal> = {
+  fromNative(value: number): Decimal {
+    return new Decimal(value);
+  },
+  toNative(value: Decimal): number {
+    return value.toNumber();
+  }
+  add(left: Decimal, right: Decimal): Decimal {
+    return left.add(right);
+  },
+  sub(left: Decimal, right: Decimal): Decimal {
+    return left.sub(right);
+  },
+  mul(left: Decimal, right: Decimal): Decimal {
+    return left.mul(right);
+  },
+  div(left: Decimal, right: Decimal): Decimal {
+    return left.div(right);
+  },
+  pow(base: Decimal, exponent: Decimal): Decimal {
+    return base.pow(exponent);
+  },
+  abs(value: Decimal): Decimal {
+    return value.abs();
+  },
+  compare(left: Decimal, right: Decimal): number {
+    return left.comparedTo(right);
+  }
+};
+
+const {celsius} = temperatureWithValueType(DecimalArithmetic);
+
+// Planar Angles needs also an implementation of geometric.
+const DecimalGeometric: Geometric<Decimal> = {
+    sin(value: Decimal): Decimal {
+        return value.sin();
+    },
+    cos(value: Decimal): Decimal {
+        return value.cos();
+    },
+    tan(value: Decimal): Decimal {
+        return value.tan();
+    },
+    asin(value: Decimal): Decimal {
+        return value.asin();
+    },
+    acos(value: Decimal): Decimal {
+        return value.acos();
+    },
+    atan(value: Decimal): Decimal {
+        return value.atan();
+    },
+    atan2(left: Decimal, right: Decimal): Decimal {
+        return Decimal.atan2(left, right);
+    }
+};
+
+const {radians, sin, cos} = angleWithValueType(DecimalArithmetic, DecimalGeometric);
+```
+
+Finally, if you want to create your units from scratch using your own arithmetic, you can use the function `makeUnitFactory`.
+
+```ts
+import * as dimension from './dimension';
+import {DecimalArithmetic} from './arithmetic'
+
+const {makeUnit} = makeUnitFactory(DecimalArithmetic);
+
+export type Money = Quantity<Decimal, dimension.Money>;
+export const dollars: Unit<Decimal, dimension.Money> = makeUnit('$', dimension.Money);
 ```
 
 ## Limitations
@@ -579,3 +668,24 @@ respectively, we model these as:
 type Angle = {angle: 1};
 type SolidAngle = {angle: 2};
 ```
+
+### Lack of input flexibility
+
+Currently when declaring quantities you can only use native number as input.
+
+```ts
+import {meters} from '@buge/ts-units/length';
+// It won't work
+const length = meters('5');
+```
+
+```ts
+import {withValueType} from '@buge/ts-units/length';
+const { meters } = withValueType(DecimalArithmetic);
+// It won't work
+const length = meters(new Decimal(5));
+```
+
+Moreover, the arithmetic function of `Unit` and `Quantity` also support only native number.
+
+It could be improve in future

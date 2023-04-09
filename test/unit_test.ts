@@ -1,4 +1,5 @@
-import {Quantity, Unit, makeUnit} from '../src/unit';
+import {Quantity, Unit, makeUnit, makeUnitFactory} from '../src/unit';
+import {Arithmetic} from '../src/arithmetic';
 import {expect} from 'chai';
 
 type Temperature = {temperature: 1};
@@ -21,6 +22,36 @@ const Frequency: Frequency = {time: -1};
 
 type Speed = {length: 1; time: -1};
 const Speed: Speed = {length: 1, time: -1};
+
+export const StringArithmetic: Arithmetic<string> = {
+  fromNative: function (value: number): string {
+    return value.toString();
+  },
+  toNative: function (value: string): number {
+    return Number(value);
+  },
+  add: function (left: string, right: string): string {
+    return (Number(left) + Number(right)).toString();
+  },
+  sub: function (left: string, right: string): string {
+    return (Number(left) - Number(right)).toString();
+  },
+  mul: function (left: string, right: string): string {
+    return (Number(left) * Number(right)).toString();
+  },
+  div: function (left: string, right: string): string {
+    return (Number(left) / Number(right)).toString();
+  },
+  pow: function (base: string, exponent: string): string {
+    return (Number(base) ** Number(exponent)).toString();
+  },
+  abs: function (value: string): string {
+    return Math.abs(Number(value)).toString();
+  },
+  compare: function (left: string, right: string): number {
+    return Number(left) - Number(right);
+  }
+};
 
 describe('unit', () => {
   describe('Unit', () => {
@@ -78,6 +109,24 @@ describe('unit', () => {
       });
     });
 
+    describe('per number', () => {
+      it('sets correct scale', () => {
+        const kelvin = makeUnit('K', Temperature);
+        const rankine = kelvin.per(1.8);
+
+        expect(rankine.scale).to.equal(1 / 1.8);
+        expect(rankine.offset).to.equal(0);
+      });
+
+      it('secondary scaled sets correct scale', () => {
+        const yards = makeUnit('yd', Length);
+        const feet = yards.per(3);
+        const inches = feet.per(12);
+
+        expect(inches.scale).to.equal(1 / 36);
+      });
+    });
+
     describe('withOffset', () => {
       it('sets correct offset', () => {
         const kelvin = makeUnit('K', Temperature);
@@ -111,7 +160,7 @@ describe('unit', () => {
         const meters = makeUnit('m', Length);
         const hertz = makeUnit('Hz', Frequency);
 
-        const speed: Unit<Speed> = meters.times(hertz);
+        const speed: Unit<number, Speed> = meters.times(hertz);
         expect(speed.dimension).to.deep.equal({length: 1, time: -1});
       });
 
@@ -119,7 +168,7 @@ describe('unit', () => {
         const feet = makeUnit('m', Length).times(0.3048);
         const bpm = makeUnit('Hz', Frequency).times(60);
 
-        const speed: Unit<Speed> = feet.times(bpm);
+        const speed: Unit<number, Speed> = feet.times(bpm);
         expect(speed.scale).to.be.closeTo(18.29, 0.01);
       });
     });
@@ -129,7 +178,7 @@ describe('unit', () => {
         const meters = makeUnit('m', Length);
         const seconds = makeUnit('s', Time);
 
-        const speed: Unit<Speed> = meters.per(seconds);
+        const speed: Unit<number, Speed> = meters.per(seconds);
         expect(speed.dimension).to.deep.equal({length: 1, time: -1});
       });
 
@@ -137,7 +186,7 @@ describe('unit', () => {
         const feet = makeUnit('m', Length).times(0.3048);
         const minutes = makeUnit('s', Time).times(60);
 
-        const speed: Unit<Speed> = feet.per(minutes);
+        const speed: Unit<number, Speed> = feet.per(minutes);
         expect(speed.scale).to.be.closeTo(0.00508, 0.01);
       });
     });
@@ -146,14 +195,14 @@ describe('unit', () => {
       it('negates exponents', () => {
         const seconds = makeUnit('s', Time);
 
-        const hertz: Unit<Frequency> = seconds.reciprocal();
+        const hertz: Unit<number, Frequency> = seconds.reciprocal();
         expect(hertz.dimension).to.deep.equal({time: -1});
       });
 
       it('inverts the scale', () => {
         const minutes = makeUnit('s', Time).times(60);
 
-        const bpm: Unit<Frequency> = minutes.reciprocal();
+        const bpm: Unit<number, Frequency> = minutes.reciprocal();
         expect(bpm.scale).to.be.closeTo(0.01666, 0.00001);
       });
     });
@@ -162,14 +211,14 @@ describe('unit', () => {
       it('doubles exponents', () => {
         const meters = makeUnit('m', Length);
 
-        const squareMeter: Unit<Area> = meters.squared();
+        const squareMeter: Unit<number, Area> = meters.squared();
         expect(squareMeter.dimension).to.deep.equal({length: 2});
       });
 
       it('squares the scale', () => {
         const feet = makeUnit('m', Length).times(0.3048);
 
-        const squareFeet: Unit<Area> = feet.squared();
+        const squareFeet: Unit<number, Area> = feet.squared();
         expect(squareFeet.scale).to.be.closeTo(0.092903, 0.000001);
       });
     });
@@ -178,14 +227,14 @@ describe('unit', () => {
       it('triples exponents', () => {
         const meters = makeUnit('m', Length);
 
-        const cubicMeter: Unit<Volume> = meters.cubed();
+        const cubicMeter: Unit<number, Volume> = meters.cubed();
         expect(cubicMeter.dimension).to.deep.equal({length: 3});
       });
 
       it('cubes the scale', () => {
         const feet = makeUnit('m', Length).times(0.3048);
 
-        const cubicFeet: Unit<Volume> = feet.cubed();
+        const cubicFeet: Unit<number, Volume> = feet.cubed();
         expect(cubicFeet.scale).to.be.closeTo(0.028316, 0.000001);
       });
     });
@@ -383,7 +432,7 @@ describe('unit', () => {
         const meters = makeUnit('m', Length);
         const seconds = makeUnit('s', Time);
 
-        const speed: Quantity<Speed> = meters(5).per(seconds(3));
+        const speed: Quantity<number, Speed> = meters(5).per(seconds(3));
         expect(speed.amount).to.be.closeTo(1.666, 0.001);
       });
 
@@ -391,7 +440,7 @@ describe('unit', () => {
         const feet = makeUnit('m', Length).times(0.3048);
         const minutes = makeUnit('s', Time).times(60);
 
-        const speed: Quantity<Speed> = feet(5).per(minutes(3));
+        const speed: Quantity<number, Speed> = feet(5).per(minutes(3));
         expect(speed.amount).to.be.closeTo(1.666, 0.001);
         expect(speed.unit.scale).to.be.closeTo(0.00508, 0.01);
       });
@@ -400,7 +449,7 @@ describe('unit', () => {
         const meters = makeUnit('m', Length);
         const seconds = makeUnit('s', Time);
 
-        const speed: Quantity<Speed> = meters(5).per(seconds(0));
+        const speed: Quantity<number, Speed> = meters(5).per(seconds(0));
         expect(speed.amount).to.equal(Infinity);
       });
 
@@ -534,6 +583,30 @@ describe('unit', () => {
 
         const temperature = fahrenheit(305.15);
         expect(temperature.valueOf()).to.be.closeTo(424.9, 0.0000001);
+      });
+    });
+  });
+
+  describe('Factory', () => {
+    describe('given custom arithmetic', () => {
+      it('generates a quantity with the given amount', () => {
+        const {makeUnit} = makeUnitFactory(StringArithmetic);
+        const meters = makeUnit('m', Length);
+        const length = meters(3.8);
+
+        expect(length.amount).to.equal('3.8');
+        expect(length.unit).to.equal(meters);
+        expect(length.dimension).to.deep.equal(Length);
+      });
+
+      it('generates a quantity with the given amount for scaled units', () => {
+        const {makeUnit} = makeUnitFactory(StringArithmetic);
+        const feet = makeUnit('m', Length).times(0.3048);
+        const length = feet(3.8);
+
+        expect(length.amount).to.equal('3.8');
+        expect(length.unit).to.equal(feet);
+        expect(length.dimension).to.deep.equal(Length);
       });
     });
   });
