@@ -18,6 +18,8 @@ export function withValueType<NumberType>(arithmetic: Arithmetic<NumberType>) {
     static kilograms = makeUnit('kg', dimension.Mass);
 
     static grams = WithValueType.kilograms.times(1e-3).withSymbol('g');
+
+    static pounds = WithValueType.kilogram(4.535924e-1).withSymbol('lb');
   }
 
   return WithValueType;
