@@ -30,6 +30,7 @@
   "homepage": "https://github.com/buge/ts-units#readme",
   "files": [
     "angle",
+    "area",
     "electric",
     "energy",
     "force",
