@@ -17,7 +17,7 @@ export function withValueType<NumberType>(arithmetic: Arithmetic<NumberType>) {
 
     static steradians = makeUnit('sr', dimension.SolidAngle);
     static squareDegrees = WithValueType.steradians
-      .times(scalar(Math.PI).per(180).cubed().valueOf())
+      .times(scalar(Math.PI).per(180).cubed().value())
       .withSymbol('deg²');
   };
 }

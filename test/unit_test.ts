@@ -1,5 +1,4 @@
-import {Quantity, Unit, makeUnit, makeUnitFactory} from '../src/unit';
-import {Arithmetic} from '../src/arithmetic';
+import {Quantity, Unit, makeUnit} from '../src/unit';
 import {expect} from 'chai';
 
 type Temperature = {temperature: 1};
@@ -22,36 +21,6 @@ const Frequency: Frequency = {time: -1};
 
 type Speed = {length: 1; time: -1};
 const Speed: Speed = {length: 1, time: -1};
-
-export const StringArithmetic: Arithmetic<string> = {
-  fromNative: function (value: number): string {
-    return value.toString();
-  },
-  toNative: function (value: string): number {
-    return Number(value);
-  },
-  add: function (left: string, right: string): string {
-    return (Number(left) + Number(right)).toString();
-  },
-  sub: function (left: string, right: string): string {
-    return (Number(left) - Number(right)).toString();
-  },
-  mul: function (left: string, right: string): string {
-    return (Number(left) * Number(right)).toString();
-  },
-  div: function (left: string, right: string): string {
-    return (Number(left) / Number(right)).toString();
-  },
-  pow: function (base: string, exponent: string): string {
-    return (Number(base) ** Number(exponent)).toString();
-  },
-  abs: function (value: string): string {
-    return Math.abs(Number(value)).toString();
-  },
-  compare: function (left: string, right: string): number {
-    return Number(left) - Number(right);
-  }
-};
 
 describe('unit', () => {
   describe('Unit', () => {
@@ -583,30 +552,6 @@ describe('unit', () => {
 
         const temperature = fahrenheit(305.15);
         expect(temperature.valueOf()).to.be.closeTo(424.9, 0.0000001);
-      });
-    });
-  });
-
-  describe('Factory', () => {
-    describe('given custom arithmetic', () => {
-      it('generates a quantity with the given amount', () => {
-        const {makeUnit} = makeUnitFactory(StringArithmetic);
-        const meters = makeUnit('m', Length);
-        const length = meters(3.8);
-
-        expect(length.amount).to.equal('3.8');
-        expect(length.unit).to.equal(meters);
-        expect(length.dimension).to.deep.equal(Length);
-      });
-
-      it('generates a quantity with the given amount for scaled units', () => {
-        const {makeUnit} = makeUnitFactory(StringArithmetic);
-        const feet = makeUnit('m', Length).times(0.3048);
-        const length = feet(3.8);
-
-        expect(length.amount).to.equal('3.8');
-        expect(length.unit).to.equal(feet);
-        expect(length.dimension).to.deep.equal(Length);
       });
     });
   });

@@ -568,7 +568,7 @@ import {withValueType as temperatureWithValueType} from '@buge/ts-units/temperat
 import {withValueType as angleWithValueType} from '@buge/ts-units/angle';
 
 const DecimalArithmetic: Arithmetic<Decimal> = {
-  fromNative(value: number): Decimal {
+  from(value: number | string | Decimal): Decimal {
     return new Decimal(value);
   },
   toNative(value: Decimal): number {
@@ -668,24 +668,3 @@ respectively, we model these as:
 type Angle = {angle: 1};
 type SolidAngle = {angle: 2};
 ```
-
-### Lack of input flexibility
-
-Currently when declaring quantities you can only use native number as input.
-
-```ts
-import {meters} from '@buge/ts-units/length';
-// It won't work
-const length = meters('5');
-```
-
-```ts
-import {withValueType} from '@buge/ts-units/length';
-const { meters } = withValueType(DecimalArithmetic);
-// It won't work
-const length = meters(new Decimal(5));
-```
-
-Moreover, the arithmetic function of `Unit` and `Quantity` also support only native number.
-
-It could be improve in future
