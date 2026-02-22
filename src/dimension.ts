@@ -232,24 +232,36 @@ function combineExponents(
   d2: Dimensions,
   f: (e1: number, e2: number) => number
 ): Dimensions {
-  const keys = new Set<string>();
-  Object.keys(d1).forEach(x => keys.add(x));
-  Object.keys(d2).forEach(x => keys.add(x));
-
   const ret: Record<string, Exponent> = {};
-  for (const key of keys) {
+
+  const keys1 = Object.keys(d1);
+  for (let i = 0; i < keys1.length; i++) {
+    const key = keys1[i];
     const val = f(d1[key] || 0, d2[key] || 0);
-    if (!val) {
-      continue;
+    if (val) {
+      if (!exp.isExponent(val)) {
+        throw new Error(
+          `Overflow in ${key} when combining ${d1[key]} and ${d2[key]}`
+        );
+      }
+      ret[key] = val;
     }
+  }
 
-    if (!exp.isExponent(val)) {
-      throw new Error(
-        `Overflow in ${key} when combining ${d1[key]} and ${d2[key]}`
-      );
+  const keys2 = Object.keys(d2);
+  for (let i = 0; i < keys2.length; i++) {
+    const key = keys2[i];
+    if (!(key in d1)) {
+      const val = f(0, d2[key] || 0);
+      if (val) {
+        if (!exp.isExponent(val)) {
+          throw new Error(
+            `Overflow in ${key} when combining 0 and ${d2[key]}`
+          );
+        }
+        ret[key] = val;
+      }
     }
-
-    ret[key] = val;
   }
 
   return ret;
