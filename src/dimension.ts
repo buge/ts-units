@@ -255,9 +255,7 @@ function combineExponents(
       const val = f(0, d2[key] || 0);
       if (val) {
         if (!exp.isExponent(val)) {
-          throw new Error(
-            `Overflow in ${key} when combining 0 and ${d2[key]}`
-          );
+          throw new Error(`Overflow in ${key} when combining 0 and ${d2[key]}`);
         }
         ret[key] = val;
       }

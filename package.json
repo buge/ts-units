@@ -68,17 +68,21 @@
     "postversion": "git push && git push --tags",
     "release": "release-it"
   },
+  "overrides": {
+    "diff": "^8.0.3",
+    "serialize-javascript": "^7.0.4"
+  },
   "devDependencies": {
     "@types/chai": "^4.3.4",
     "@types/mocha": "^10.0.1",
-    "@typescript-eslint/eslint-plugin": "^6.2.0",
-    "@typescript-eslint/parser": "^6.2.0",
+    "@typescript-eslint/eslint-plugin": "^8.56.1",
+    "@typescript-eslint/parser": "^8.56.1",
     "chai": "^4.3.7",
-    "eslint": "^8.46.0",
+    "eslint": "^8.57.1",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-prettier": "^5.0.0",
     "kelonio": "^0.9.0",
-    "mocha": "^10.2.0",
+    "mocha": "^11.0.1",
     "mocha-multi": "^1.1.7",
     "prettier": "^3.0.0",
     "release-it": "*",
