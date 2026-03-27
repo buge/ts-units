@@ -81,8 +81,22 @@
     "mocha": "^10.2.0",
     "mocha-multi": "^1.1.7",
     "prettier": "^3.0.0",
-    "release-it": "*",
+    "release-it": "^19.2.4",
     "ts-node": "^10.9.1",
     "typescript": "^5.0.3"
+  },
+  "overrides": {
+    "mocha": {
+      "serialize-javascript": "^7.0.5",
+      "diff": "^8.0.4"
+    },
+    "release-it": {
+      "undici": "^6.24.0"
+    },
+    "@typescript-eslint/parser": {
+      "@typescript-eslint/typescript-estree": {
+        "minimatch": "^9.0.5"
+      }
+    }
   }
 }
