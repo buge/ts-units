@@ -525,14 +525,14 @@ describe('unit', () => {
         const unit = makeUnit('', {});
         const quantity = unit(5);
 
-        expect(quantity.isDimensionless()).to.be.true;
+        expect(quantity.isDimensionless()).to.equal(true);
       });
 
       it('returns false for quantities with dimensions', () => {
         const unit = makeUnit('m', Length);
         const quantity = unit(5);
 
-        expect(quantity.isDimensionless()).to.be.false;
+        expect(quantity.isDimensionless()).to.equal(false);
       });
     });
 
