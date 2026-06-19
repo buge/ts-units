@@ -71,8 +71,8 @@
   "devDependencies": {
     "@types/chai": "^4.3.4",
     "@types/mocha": "^10.0.1",
-    "@typescript-eslint/eslint-plugin": "^6.2.0",
-    "@typescript-eslint/parser": "^6.2.0",
+    "@typescript-eslint/eslint-plugin": "^7.18.0",
+    "@typescript-eslint/parser": "^7.18.0",
     "chai": "^4.3.7",
     "eslint": "^8.46.0",
     "eslint-config-prettier": "^9.0.0",
@@ -81,8 +81,20 @@
     "mocha": "^10.2.0",
     "mocha-multi": "^1.1.7",
     "prettier": "^3.0.0",
-    "release-it": "*",
+    "release-it": "^20.2.0",
     "ts-node": "^10.9.1",
-    "typescript": "^5.0.3"
+    "typescript": "^5.0.4"
+  },
+  "overrides": {
+    "mocha": {
+      "serialize-javascript": ">=7.0.5"
+    },
+    "release-it": {
+      "undici": ">=7.28.2"
+    },
+    "eslint": {
+      "minimatch": ">=3.1.2",
+      "brace-expansion": ">=1.1.12"
+    }
   }
 }
